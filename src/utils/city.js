@@ -1,45 +1,77 @@
 import * as THREE from 'three';
 
+const ROAD_CORNER_DIR = {
+    DOWN_RIGHT: "down_right",
+    DOWN_LEFT: "down_left",
+    UP_RIGHT: "up_right",
+    UP_LEFT: "up_left",
+};
+
+const ROAD_DIR = {
+    UP: 0,
+    DOWN: Math.PI,
+    LEFT: Math.PI/2,
+    RIGHT: -Math.PI/2,
+};
+
 function make_city() {
     const city = new THREE.Object3D();
     city.add(make_tree(0, 0, 0));
 
+    let [road, endpoint] = make_road(10, 0, ROAD_DIR.UP, 10);
+    city.add(road);
+    console.log(endpoint);
+
+    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.LEFT, 10);
+    city.add(road);
+    console.log(endpoint);
+
     return city
 }
 
-function make_tree_old(x, y, z) {
-    const tree = new THREE.Object3D();
+function make_road(x, z, direction, num_parts) {
+    const road = new THREE.Object3D();
 
-    const logHeight = 20;
-    const logGeo = new THREE.CylinderGeometry(0.3, 1, logHeight, 16);
-    const logMat = new THREE.MeshToonMaterial({ color: 0x8B5A2B });
-    const log = new THREE.Mesh(logGeo, logMat);
-    log.position.set(0, logHeight/2, 0);
+    const part_length = 6;
+    const part_width = 1;
+    const between_parts_length = part_length*0.66;
 
-    const leafSpacing = 2;
-    const topOffset = 4;
+    const road_length = (num_parts * part_length) + ((num_parts-1) * between_parts_length) + (2*between_parts_length/2);
+    const road_width = 40;
 
-    for (let i = 0; i < 10; i++) {
-        const height = (11 - i)*0.6;
-        const radius = i*i*0.01 + i*0.6;
-        const ypos = logHeight + topOffset - i*leafSpacing;
-        const light = 1;
+    const roadGeo = new THREE.PlaneGeometry(road_width, road_length);
+    const roadMat = new THREE.MeshToonMaterial({color: 0x444444});
+    const roadMesh = new THREE.Mesh(roadGeo, roadMat);
+    roadMesh.rotateX(-Math.PI/2);
+    roadMesh.position.z -= road_length/2;
 
-        const leavesGeo = new THREE.ConeGeometry(radius, height, 6 + i, 1, true);
-        const leavesMat = new THREE.MeshToonMaterial({
-            color: new THREE.Color().setHSL(107, 72/255, light),
-            side: THREE.DoubleSide,
-        });
-        const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+    const partGeo = new THREE.PlaneGeometry(part_width, part_length);
+    const partMat = new THREE.MeshToonMaterial({color: 0xDDDDDD});
+    for (let i = 0; i < num_parts; i++) {
+        const partMesh = new THREE.Mesh(partGeo, partMat);
+        partMesh.rotateX(-Math.PI/2);
 
-        leaves.position.set(0, ypos, 0);
-        tree.add(leaves);
+        partMesh.position.z = -(i*(between_parts_length + part_length) + between_parts_length/2 + part_length/2);
+        partMesh.position.y = 0.01;
+
+        road.add(partMesh);
     }
+    road.add(roadMesh);
+    
+    road.position.set(-x, 0, -z);
+    road.rotateY(direction);
+    road.position.set(x, 0, z);
+    
+    const endPoint = new THREE.Vector3(x + road_length*Math.sin(direction), 0, z - road_length*Math.cos(direction));
 
-    tree.add(log);
-    tree.position.set(x, y, z);
+    return [road, endPoint];
+}
 
-    return tree;
+function make_road_corner(direction) {
+    const road = new THREE.Object3D();
+
+    
+    return road;
 }
 
 function make_tree(x, y, z) {
@@ -101,6 +133,41 @@ function make_tree(x, y, z) {
     }
 
     tree.position.set(x, y, z);
+    return tree;
+}
+
+function make_tree_old(x, y, z) {
+    const tree = new THREE.Object3D();
+
+    const logHeight = 20;
+    const logGeo = new THREE.CylinderGeometry(0.3, 1, logHeight, 16);
+    const logMat = new THREE.MeshToonMaterial({ color: 0x8B5A2B });
+    const log = new THREE.Mesh(logGeo, logMat);
+    log.position.set(0, logHeight/2, 0);
+
+    const leafSpacing = 2;
+    const topOffset = 4;
+
+    for (let i = 0; i < 10; i++) {
+        const height = (11 - i)*0.6;
+        const radius = i*i*0.01 + i*0.6;
+        const ypos = logHeight + topOffset - i*leafSpacing;
+        const light = 1;
+
+        const leavesGeo = new THREE.ConeGeometry(radius, height, 6 + i, 1, true);
+        const leavesMat = new THREE.MeshToonMaterial({
+            color: new THREE.Color().setHSL(107, 72/255, light),
+            side: THREE.DoubleSide,
+        });
+        const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+
+        leaves.position.set(0, ypos, 0);
+        tree.add(leaves);
+    }
+
+    tree.add(log);
+    tree.position.set(x, y, z);
+
     return tree;
 }
 
