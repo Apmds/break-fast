@@ -1,5 +1,10 @@
 import * as THREE from 'three';
 
+const road_width = 40;
+const part_length = 6;
+const part_width = 1;
+const between_parts_length = part_length*0.66;
+
 const ROAD_CORNER_DIR = {
     DOWN_LEFT: {"angle": 0, "offset": new THREE.Vector2(0, 0)},
     LEFT_DOWN: {"angle": 0, "offset": new THREE.Vector2(0.5, 0.5)},
@@ -25,86 +30,47 @@ function make_city() {
     const city = new THREE.Object3D();
     //city.add(make_tree(0, 0, 0));
 
-    let [road, endpoint] = make_road(0, 0, ROAD_DIR.UP, 10);
+    let [road, endpoint] = make_road_corner(-50, 400, ROAD_CORNER_DIR.LEFT_UP, 50);
     city.add(road);
-    console.log(endpoint);
 
-    [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.DOWN_LEFT);
+    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.UP, 50);
     city.add(road);
-    console.log(endpoint);
-    
-    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.LEFT, 10);
+
+    // TODO: rotunda
+
+    [road, endpoint] = make_road(endpoint.x, endpoint.z - 150, ROAD_DIR.UP, 50);
     city.add(road);
-    console.log(endpoint);
-
-    [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.RIGHT_DOWN);
-    city.add(road);
-    console.log(endpoint);
-
-    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.DOWN, 10);
-    city.add(road);
-    console.log(endpoint);
-
-    [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.UP_RIGHT);
-    city.add(road);
-    console.log(endpoint);
-
-    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.RIGHT, 10);
-    city.add(road);
-    console.log(endpoint);
-
-    [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.LEFT_UP);
-    city.add(road);
-    console.log(endpoint);
-
-
-
-
-
-    [road, endpoint] = make_road(100, 0, ROAD_DIR.UP, 10);
-    city.add(road);
-    console.log(endpoint);
 
     [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.DOWN_RIGHT);
     city.add(road);
-    console.log(endpoint);
-    
-    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.RIGHT, 10);
+
+    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.RIGHT, 30);
     city.add(road);
-    console.log(endpoint);
 
     [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.LEFT_DOWN);
     city.add(road);
-    console.log(endpoint);
 
-    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.DOWN, 10);
+    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.DOWN, 50);
     city.add(road);
-    console.log(endpoint);
 
-    [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.UP_LEFT);
+    // TODO: estrada com 3 caminhos
+    
+    [road] = make_road(endpoint.x - 75, endpoint.z + 75, ROAD_DIR.LEFT, 20);
     city.add(road);
-    console.log(endpoint);
+    
+    [road] = make_road(endpoint.x, endpoint.z + 150, ROAD_DIR.DOWN, 50);
+    city.add(road);
 
-    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.LEFT, 10);
-    city.add(road);
-    console.log(endpoint);
+    // TODO: estrada sem saída
 
-    [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.RIGHT_UP);
-    city.add(road);
-    console.log(endpoint);
 
     return city
 }
 
 function make_road(x, z, direction, num_parts) {
-    const road = new THREE.Object3D();
-
-    const part_length = 6;
-    const part_width = 1;
-    const between_parts_length = part_length*0.66;
+    const road = new THREE.Object3D();    
 
     const road_length = (num_parts * part_length) + ((num_parts-1) * between_parts_length) + (2*between_parts_length/2);
-    const road_width = 40;
 
     const roadGeo = new THREE.PlaneGeometry(road_width, road_length);
     const roadMat = new THREE.MeshToonMaterial({color: 0x444444});
@@ -137,10 +103,6 @@ function make_road(x, z, direction, num_parts) {
 function make_road_corner(x, z, direction) {
     const road = new THREE.Object3D();
 
-    const road_width = 40;
-    const part_length = 6;
-    const part_width = 1;
-    const between_parts_length = part_length*0.66;
     const num_parts = 3;
 
     const roadGeo = new THREE.CircleGeometry(road_width, 10, 0, Math.PI/2);
@@ -164,8 +126,6 @@ function make_road_corner(x, z, direction) {
 
         const arcOffset = i*(between_parts_length + part_length) + between_parts_length/2 + part_length/2;
         const partAngle = arcOffset/partRadius;
-        console.log(180 * partAngle / Math.PI)
-        
 
         partMesh.position.x = partCenterX + partRadius*Math.cos(partAngle-Math.PI/2);
         partMesh.position.y = 0.01;

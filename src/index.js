@@ -6,7 +6,7 @@ import make_city from './utils/city.js';
 function init() {
     const scene = new THREE.Scene();
 
-    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 400);
+    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
     camera.lookAt(0, 10, 0);
     camera.position.set(0, 10, 50);
     scene.add(camera)
