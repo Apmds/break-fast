@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 
 const ROAD_CORNER_DIR = {
-    DOWN_RIGHT: "down_right",
-    DOWN_LEFT: "down_left",
-    UP_RIGHT: "up_right",
-    UP_LEFT: "up_left",
+    DOWN_RIGHT: Math.PI/2,
+    DOWN_LEFT: 0,
+    UP_RIGHT: Math.PI,
+    UP_LEFT: -Math.PI/2,
 };
 
 const ROAD_DIR = {
@@ -22,6 +22,10 @@ function make_city() {
     city.add(road);
     console.log(endpoint);
 
+    [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.DOWN_LEFT);
+    city.add(road);
+    console.log(endpoint);
+    
     [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.LEFT, 10);
     city.add(road);
     console.log(endpoint);
@@ -67,11 +71,57 @@ function make_road(x, z, direction, num_parts) {
     return [road, endPoint];
 }
 
-function make_road_corner(direction) {
+function make_road_corner(x, z, direction) {
     const road = new THREE.Object3D();
 
+    const road_width = 40;
+    const part_length = 6;
+    const part_width = 1;
+    const between_parts_length = part_length*0.66;
+    const num_parts = 3;
+
+    const roadGeo = new THREE.CircleGeometry(road_width, 10, 0, Math.PI/2);
+    const roadMat = new THREE.MeshToonMaterial({color: 0x444444});
+    const roadMesh = new THREE.Mesh(roadGeo, roadMat);
+    roadMesh.rotateX(-Math.PI/2);
+    roadMesh.position.x = -road_width/2;
+
+    const partGeo = new THREE.PlaneGeometry(part_width, part_length);
+    const partMat = new THREE.MeshToonMaterial({color: 0xDDDDDD});
+    const partRadius = road_width/2;
+    const partCenterX = -road_width/2;
+    const partCenterZ = 0;
+
+    for (let i = 0; i < num_parts; i++) {
+        const partMesh = new THREE.Mesh(partGeo, partMat);
+        partMesh.rotateX(-Math.PI/2);
+
+        const arcOffset = i*(between_parts_length + part_length) + between_parts_length/2 + part_length/2;
+        const partAngle = arcOffset/partRadius;
+        console.log(180 * partAngle / Math.PI)
+        
+
+        partMesh.position.x = partCenterX + partRadius*Math.cos(partAngle-Math.PI/2);
+        partMesh.position.y = 0.01;
+        partMesh.position.z = partCenterZ + partRadius*Math.sin(partAngle-Math.PI/2);
+        partMesh.rotateZ(-partAngle+Math.PI/2);
+
+        road.add(partMesh);
+    }
+
+    road.add(roadMesh);
+
     
-    return road;
+    
+    road.position.set(-x, 0, -z);
+    road.rotateY(direction);
+    road.position.set(x, 0, z);
+
+    const endOffset = new THREE.Vector3(-road_width/2, 0, -road_width/2)
+        .applyAxisAngle(new THREE.Vector3(0, 1, 0), direction);
+    const endPoint = new THREE.Vector3(x + endOffset.x, 0, z + endOffset.z);
+
+    return [road, endPoint];
 }
 
 function make_tree(x, y, z) {
