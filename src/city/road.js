@@ -5,7 +5,7 @@ export const part_length = 3;
 export const part_width = 0.33;
 export const between_parts_length = part_length*0.66;
 
-export function make_road(x, y, z, direction, num_parts, tilt_angle) {
+export function make_road(x, y, z, direction, num_parts, tilt_angle = 0, has_barriers = false) {
     const road = new THREE.Object3D();    
 
     const road_length = (num_parts * part_length) + ((num_parts-1) * between_parts_length) + (2*between_parts_length/2);
@@ -28,6 +28,49 @@ export function make_road(x, y, z, direction, num_parts, tilt_angle) {
         road.add(partMesh);
     }
     road.add(roadMesh);
+
+    if (has_barriers) {
+        const railHeightBottom = 0.8;
+        const railHeightTop = 1.2;
+        const railThickness = 0.14;
+        const postHeight = 1.3;
+        const postThickness = 0.2;
+        const sideOffset = road_width / 2 - postThickness / 2;
+        const postSpacing = 5;
+
+        const railGeo = new THREE.BoxGeometry(railThickness, railThickness, road_length);
+        const postGeo = new THREE.BoxGeometry(postThickness, postHeight, postThickness);
+        const barrierMat = new THREE.MeshToonMaterial({ color: 0xd7d7d7 });
+
+        const leftRailTop = new THREE.Mesh(railGeo, barrierMat);
+        leftRailTop.position.set(-sideOffset, railHeightTop, -road_length / 2);
+        road.add(leftRailTop);
+
+        const leftRailBottom = new THREE.Mesh(railGeo, barrierMat);
+        leftRailBottom.position.set(-sideOffset, railHeightBottom, -road_length / 2);
+        road.add(leftRailBottom);
+
+        const rightRailTop = new THREE.Mesh(railGeo, barrierMat);
+        rightRailTop.position.set(sideOffset, railHeightTop, -road_length / 2);
+        road.add(rightRailTop);
+
+        const rightRailBottom = new THREE.Mesh(railGeo, barrierMat);
+        rightRailBottom.position.set(sideOffset, railHeightBottom, -road_length / 2);
+        road.add(rightRailBottom);
+
+        const postCount = Math.floor(road_length / postSpacing) + 1;
+        for (let i = 0; i < postCount; i++) {
+            const z = -i * postSpacing;
+
+            const leftPost = new THREE.Mesh(postGeo, barrierMat);
+            leftPost.position.set(-sideOffset, postHeight / 2, z);
+            road.add(leftPost);
+
+            const rightPost = new THREE.Mesh(postGeo, barrierMat);
+            rightPost.position.set(sideOffset, postHeight / 2, z);
+            road.add(rightPost);
+        }
+    }
     
     road.position.set(-x, y, -z);
     road.rotateY(direction);
