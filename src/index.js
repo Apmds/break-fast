@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
 
-import make_skybox from './utils/skybox.js';
-import make_city from './utils/city.js';
+import make_skybox from './city/skybox.js';
+import make_city from './city/city.js';
 
 function init() {
     const scene = new THREE.Scene();
