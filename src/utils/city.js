@@ -38,15 +38,23 @@ function make_city() {
     city.add(road);
 
     road_start = endpoint.clone();
-    [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.UP, 50);
+    [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.UP, 50, 0);
     city.add(road);
     city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.UP, 50));
 
     const [roundabout, endpoint_front, endpoint_left, endpoint_right] = make_roundabout(endpoint.x, endpoint.z - 50, 50);
     city.add(roundabout);
 
+    {
+        const [road_to_bridge, endpoint] = make_road(endpoint_left.x, 0, endpoint_right.z, ROAD_DIR.LEFT, 10, 0);
+        city.add(road_to_bridge)
+
+        const [bridge_ramp] = make_road(endpoint.x, endpoint.y, endpoint.z, ROAD_DIR.LEFT, 16, THREE.MathUtils.degToRad(10));
+        city.add(bridge_ramp);
+    }
+
     road_start = new THREE.Vector3(endpoint_front.x, 0, endpoint_front.z);
-    [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.UP, 50);
+    [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.UP, 50, 0);
     city.add(road);
     city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.UP, 50));
 
@@ -54,7 +62,7 @@ function make_city() {
     city.add(road);
 
     road_start = endpoint.clone();
-    [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.RIGHT, 30);
+    [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.RIGHT, 30, 0);
     city.add(road);
     city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.RIGHT, 30));
 
@@ -62,18 +70,18 @@ function make_city() {
     city.add(road);
 
     road_start = endpoint.clone();
-    [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.DOWN, 58);
+    [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 58, 0);
     city.add(road);
     city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.DOWN, 58));
 
     
     road_start = new THREE.Vector3(endpoint.x - road_width / 2, 0, endpoint.z + (road_width / 2));
-    [road] = make_road(road_start.x, road_start.z, ROAD_DIR.LEFT, 22);
+    [road] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.LEFT, 22, 0);
     city.add(road);
     city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.LEFT, 22));
     
     road_start = new THREE.Vector3(endpoint.x, 0, endpoint.z);
-    [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.DOWN, 4);
+    [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 4, 0);
     city.add(road);
     let [single_path] = make_path_parts(0, 0, 4, 'right');
     single_path.position.set(-road_start.x - road_width/2 - path_width/2, 0, -road_start.z);
@@ -82,7 +90,7 @@ function make_city() {
     city.add(single_path);
 
     road_start = new THREE.Vector3(endpoint.x, 0, endpoint.z);
-    [road] = make_road(road_start.x, road_start.z, ROAD_DIR.DOWN, 50);
+    [road] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 50, 0);
     city.add(road);
     city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.DOWN, 50));
 
@@ -97,7 +105,7 @@ function make_city() {
     return city
 }
 
-function make_road(x, z, direction, num_parts) {
+function make_road(x, y, z, direction, num_parts, tilt_angle) {
     const road = new THREE.Object3D();    
 
     const road_length = (num_parts * part_length) + ((num_parts-1) * between_parts_length) + (2*between_parts_length/2);
@@ -121,11 +129,17 @@ function make_road(x, z, direction, num_parts) {
     }
     road.add(roadMesh);
     
-    road.position.set(-x, 0, -z);
+    road.position.set(-x, y, -z);
     road.rotateY(direction);
-    road.position.set(x, 0, z);
+    road.rotateX(tilt_angle);
+    road.position.set(x, y, z);
     
-    const endPoint = new THREE.Vector3(x - road_length*Math.sin(direction), 0, z - road_length*Math.cos(direction));
+    const horizontal_length = road_length * Math.cos(tilt_angle);
+    const endPoint = new THREE.Vector3(
+        x - horizontal_length*Math.sin(direction),
+        y + road_length*Math.sin(tilt_angle),
+        z - horizontal_length*Math.cos(direction)
+    );
 
     return [road, endPoint];
 }
