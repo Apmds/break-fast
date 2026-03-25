@@ -1,14 +1,15 @@
 import * as THREE from 'three';
 import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
 
+import make_skybox from './utils/skybox.js';
 import make_city from './utils/city.js';
 
 function init() {
     const scene = new THREE.Scene();
 
-    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.lookAt(0, 10, 0);
+    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
     camera.position.set(0, 10, 50);
+    camera.lookAt(0, 10, 0);
     scene.add(camera)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -30,11 +31,12 @@ function init() {
 
 
     const controls = new FirstPersonControls(camera, renderer.domElement);
-    controls.movementSpeed = 25;
-    controls.lookSpeed = 0.08;
+    controls.movementSpeed = 100;
+    controls.lookSpeed = 0.2;
     controls.lookVertical = true;
+    controls.lookAt(0, 10, 0);
 
-    const clock = new THREE.Clock();
+    const clock = new THREE.Timer();
 
     window.addEventListener('resize', () => {  
         // Update camera
@@ -51,9 +53,13 @@ function init() {
     const city = make_city();
     scene.add(city);
 
+    scene.add(make_skybox());
+
     function animate() {
         requestAnimationFrame(animate);
         controls.update(clock.getDelta());
+
+        clock.update();
         renderer.render(scene, camera);
     }
     animate();

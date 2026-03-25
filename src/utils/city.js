@@ -42,9 +42,10 @@ function make_city() {
     city.add(road);
     city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.UP, 50));
 
-    city.add(make_roundabout(endpoint.x, endpoint.z - 50, 50));
+    const [roundabout, endpoint_front, endpoint_left, endpoint_right] = make_roundabout(endpoint.x, endpoint.z - 50, 50);
+    city.add(roundabout);
 
-    road_start = new THREE.Vector3(endpoint.x, 0, endpoint.z - 100);
+    road_start = new THREE.Vector3(endpoint_front.x, 0, endpoint_front.z);
     [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.UP, 50);
     city.add(road);
     city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.UP, 50));
@@ -188,14 +189,14 @@ function make_roundabout(x, z, radius) {
     const roundabout = new THREE.Object3D();
 
     const roadGeo = new THREE.RingGeometry(radius - road_width, radius, 40);
-    const roadMat = new THREE.MeshToonMaterial({ color: 0x444444, side: THREE.DoubleSide });
+    const roadMat = new THREE.MeshToonMaterial({ color: 0x444444 });
     const roadMesh = new THREE.Mesh(roadGeo, roadMat);
     roadMesh.rotateX(-Math.PI/2);
     roundabout.add(roadMesh);
 
     // Blend pads remove tiny visual seams where straight roads meet the ring.
     const joinGeo = new THREE.PlaneGeometry(road_width, road_width);
-    const joinMat = new THREE.MeshToonMaterial({ color: 0x444444, side: THREE.DoubleSide });
+    const joinMat = new THREE.MeshToonMaterial({ color: 0x444444 });
     const joinOffsets = [
         new THREE.Vector2(0, radius - road_width/2),
         new THREE.Vector2(0, -(radius - road_width/2)),
@@ -219,7 +220,7 @@ function make_roundabout(x, z, radius) {
     roundabout.add(baseMesh);
 
     const curbGeo = new THREE.CylinderGeometry(baseRadius + 1.1, baseRadius + 1.1, 0.35, 24, 1, true);
-    const curbMat = new THREE.MeshToonMaterial({ color: 0xcccccc, side: THREE.DoubleSide });
+    const curbMat = new THREE.MeshToonMaterial({ color: 0xcccccc });
     const curbMesh = new THREE.Mesh(curbGeo, curbMat);
     curbMesh.position.y = 0.175;
     roundabout.add(curbMesh);
@@ -241,7 +242,11 @@ function make_roundabout(x, z, radius) {
 
     roundabout.position.set(x, 0, z);
 
-    return roundabout;
+    const frontEndpoint = new THREE.Vector3(x, 0, z - radius);
+    const leftEndpoint = new THREE.Vector3(x - radius, 0, z);
+    const rightEndpoint = new THREE.Vector3(x + radius, 0, z);
+
+    return [roundabout, frontEndpoint, leftEndpoint, rightEndpoint];
 }
 
 function make_road_paths(x, z, direction, num_parts) {
@@ -283,14 +288,14 @@ function make_path(x, z, length, gray_side) {
     const yellowMesh = new THREE.Mesh(yellowGeo, yellowMat);
 
     if (gray_side === 'left') {
-        grayMesh.position.x = -(path_width/2 - path_gray_width/2);
+        grayMesh.position.x = -(path_width/2 - path_gray_width/2 + 0.01);
         yellowMesh.position.x = path_gray_width/2;
     } else {
-        grayMesh.position.x = path_width/2 - path_gray_width/2;
+        grayMesh.position.x = path_width/2 - path_gray_width/2 + 0.01;
         yellowMesh.position.x = -path_gray_width/2;
     }
 
-    grayMesh.position.y = path_height/2;
+    grayMesh.position.y = path_height/2 + 0.01;
     grayMesh.position.z = -length/2;
     yellowMesh.position.y = path_height/2;
     yellowMesh.position.z = -length/2;
