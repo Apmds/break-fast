@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
 
 import make_city from './utils/city.js';
 
@@ -29,8 +29,12 @@ function init() {
     scene.add(fillLight);
 
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+    const controls = new FirstPersonControls(camera, renderer.domElement);
+    controls.movementSpeed = 25;
+    controls.lookSpeed = 0.08;
+    controls.lookVertical = true;
+
+    const clock = new THREE.Clock();
 
     window.addEventListener('resize', () => {  
         // Update camera
@@ -40,6 +44,8 @@ function init() {
         // Update renderer
         renderer.setSize(window.innerWidth, window.innerHeight)
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+        controls.handleResize();
     });
 
     const city = make_city();
@@ -47,7 +53,7 @@ function init() {
 
     function animate() {
         requestAnimationFrame(animate);
-        controls.update();
+        controls.update(clock.getDelta());
         renderer.render(scene, camera);
     }
     animate();

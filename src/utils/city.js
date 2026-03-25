@@ -65,7 +65,6 @@ function make_city() {
     city.add(road);
     city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.DOWN, 58));
 
-    // TODO: estrada com 3 caminhos
     
     road_start = new THREE.Vector3(endpoint.x - road_width / 2, 0, endpoint.z + (road_width / 2));
     [road] = make_road(road_start.x, road_start.z, ROAD_DIR.LEFT, 22);
