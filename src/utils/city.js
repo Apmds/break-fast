@@ -1,9 +1,13 @@
 import * as THREE from 'three';
 
-const road_width = 40;
-const part_length = 6;
-const part_width = 1;
+const road_width = 20;
+const part_length = 3;
+const part_width = 0.33;
 const between_parts_length = part_length*0.66;
+
+const path_width = 5;
+const path_height = 0.4;
+const path_gray_width = 1.2;
 
 const ROAD_CORNER_DIR = {
     DOWN_LEFT: {"angle": 0, "offset": new THREE.Vector2(0, 0)},
@@ -28,41 +32,58 @@ const ROAD_DIR = {
 
 function make_city() {
     const city = new THREE.Object3D();
-    //city.add(make_tree(0, 0, 0));
+    let road_start;
 
-    let [road, endpoint] = make_road_corner(-50, 400, ROAD_CORNER_DIR.LEFT_UP, 50);
+    let [road, endpoint] = make_road_corner(0, 0, ROAD_CORNER_DIR.LEFT_UP, 50);
     city.add(road);
 
-    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.UP, 50);
+    road_start = endpoint.clone();
+    [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.UP, 50);
     city.add(road);
+    city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.UP, 50));
 
     // TODO: rotunda
 
-    [road, endpoint] = make_road(endpoint.x, endpoint.z - 150, ROAD_DIR.UP, 50);
+    road_start = new THREE.Vector3(endpoint.x, 0, endpoint.z - 150);
+    [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.UP, 50);
     city.add(road);
+    city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.UP, 50));
 
     [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.DOWN_RIGHT);
     city.add(road);
 
-    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.RIGHT, 30);
+    road_start = endpoint.clone();
+    [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.RIGHT, 30);
     city.add(road);
+    city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.RIGHT, 30));
 
     [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.LEFT_DOWN);
     city.add(road);
 
-    [road, endpoint] = make_road(endpoint.x, endpoint.z, ROAD_DIR.DOWN, 50);
+    road_start = endpoint.clone();
+    [road, endpoint] = make_road(road_start.x, road_start.z, ROAD_DIR.DOWN, 50);
     city.add(road);
+    city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.DOWN, 50));
 
     // TODO: estrada com 3 caminhos
     
-    [road] = make_road(endpoint.x - 75, endpoint.z + 75, ROAD_DIR.LEFT, 20);
+    road_start = new THREE.Vector3(endpoint.x - 75, 0, endpoint.z + 75);
+    [road] = make_road(road_start.x, road_start.z, ROAD_DIR.LEFT, 20);
     city.add(road);
+    city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.LEFT, 20));
     
-    [road] = make_road(endpoint.x, endpoint.z + 150, ROAD_DIR.DOWN, 50);
+    road_start = new THREE.Vector3(endpoint.x, 0, endpoint.z + 150);
+    [road] = make_road(road_start.x, road_start.z, ROAD_DIR.DOWN, 50);
     city.add(road);
+    city.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.DOWN, 50));
 
     // TODO: estrada sem saída
 
+
+    city.add(make_tree(-40, 0, 200, 2));
+    city.add(make_tree(-10, 0, 220, 1.5));
+    city.add(make_tree(-30, 0, 230, 1.7));
+    
 
     return city
 }
@@ -155,7 +176,62 @@ function make_road_corner(x, z, direction) {
     return [road, endPoint];
 }
 
-function make_tree(x, y, z) {
+function make_road_paths(x, z, direction, num_parts) {
+    const paths = new THREE.Object3D();
+
+    const road_length = (num_parts * part_length) + ((num_parts-1) * between_parts_length) + (2*between_parts_length/2);
+    const path_offset = road_width/2 + path_width/2;
+
+    let [left_path] = make_path(-path_offset, 0, road_length, 'right');
+    let [right_path] = make_path(path_offset, 0, road_length, 'left');
+
+    paths.add(left_path);
+    paths.add(right_path);
+
+    paths.position.set(-x, 0, -z);
+    paths.rotateY(direction);
+    paths.position.set(x, 0, z);
+
+    return paths;
+}
+
+function make_path(x, z, length, gray_side) {
+    const path = new THREE.Object3D();
+
+    const yellow_width = path_width - path_gray_width;
+
+    const grayGeo = new THREE.BoxGeometry(path_gray_width, path_height, length);
+    const grayMat = new THREE.MeshToonMaterial({ color: 0xD6D6D6 });
+    const grayMesh = new THREE.Mesh(grayGeo, grayMat);
+
+    const yellowGeo = new THREE.BoxGeometry(yellow_width, path_height, length);
+    const yellowMat = new THREE.MeshToonMaterial({ color: 0xEFE3B2 });
+    const yellowMesh = new THREE.Mesh(yellowGeo, yellowMat);
+
+    if (gray_side === 'left') {
+        grayMesh.position.x = -(path_width/2 - path_gray_width/2);
+        yellowMesh.position.x = path_gray_width/2;
+    } else {
+        grayMesh.position.x = path_width/2 - path_gray_width/2;
+        yellowMesh.position.x = -path_gray_width/2;
+    }
+
+    grayMesh.position.y = path_height/2;
+    grayMesh.position.z = -length/2;
+    yellowMesh.position.y = path_height/2;
+    yellowMesh.position.z = -length/2;
+
+    path.add(grayMesh);
+    path.add(yellowMesh);
+
+    path.position.set(x, 0, z);
+
+    const endPoint = new THREE.Vector3(x, 0, z - length);
+
+    return [path, endPoint];
+}
+
+function make_tree(x, y, z, scale) {
     const tree = new THREE.Object3D();
 
     const logHeight = 20;
@@ -214,6 +290,7 @@ function make_tree(x, y, z) {
     }
 
     tree.position.set(x, y, z);
+    tree.scale.set(scale, scale, scale);
     return tree;
 }
 
