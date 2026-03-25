@@ -2,32 +2,31 @@ import * as THREE from 'three';
 import { make_tree } from './trees.js';
 import { make_road, make_road_corner, make_roundabout, road_width } from './road.js';
 import { make_path_parts, make_road_paths, path_width } from './sidewalk.js';
-
-
-
-const ROAD_CORNER_DIR = {
-    DOWN_LEFT: {"angle": 0, "offset": new THREE.Vector2(0, 0)},
-    LEFT_DOWN: {"angle": 0, "offset": new THREE.Vector2(0.5, 0.5)},
-    
-    UP_RIGHT: {"angle": Math.PI, "offset": new THREE.Vector2(0, 0)},
-    RIGHT_UP: {"angle": Math.PI, "offset": new THREE.Vector2(0.5, 0.5)},
-    
-    DOWN_RIGHT: {"angle": Math.PI/2, "offset": new THREE.Vector2(0.5, 0.5)},
-    RIGHT_DOWN: {"angle": Math.PI/2, "offset": new THREE.Vector2(0, 0)},
-    
-    UP_LEFT: {"angle": -Math.PI/2, "offset": new THREE.Vector2(0.5, 0.5)},
-    LEFT_UP: {"angle": -Math.PI/2, "offset": new THREE.Vector2(0, 0)},
-};
-
-const ROAD_DIR = {
-    UP: 0,
-    DOWN: Math.PI,
-    LEFT: Math.PI/2,
-    RIGHT: -Math.PI/2,
-};
+import { make_bridge } from './bridge.js';
+import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 
 function make_city() {
     const city = new THREE.Object3D();
+
+    // Base ground
+    const base_ground = new THREE.Mesh(
+        new THREE.BoxGeometry(600, 100, 900),
+        new THREE.MeshToonMaterial({color: 0xAAAAAA})
+    );
+    base_ground.position.x = 100;
+    base_ground.position.z = -300;
+    base_ground.position.y = -51;
+    city.add(base_ground);
+
+    const base_grass = new THREE.Mesh(
+        new THREE.BoxGeometry(1000, 100, 1500),
+        new THREE.MeshToonMaterial({color: 0x8f994e})
+    );
+    base_grass.position.x = 400;
+    base_grass.position.z = -300;
+    base_grass.position.y = -52;
+    city.add(base_grass);
+
     let road_start;
 
     let [road, endpoint] = make_road_corner(0, 0, ROAD_CORNER_DIR.LEFT_UP, 50);
@@ -41,12 +40,15 @@ function make_city() {
     const [roundabout, endpoint_front, endpoint_left, endpoint_right] = make_roundabout(endpoint.x, endpoint.z - 50, 50);
     city.add(roundabout);
 
+    // Bridge stuff
     {
         const [road_to_bridge, endpoint] = make_road(endpoint_left.x, 0, endpoint_right.z, ROAD_DIR.LEFT, 10, 0);
         city.add(road_to_bridge)
 
-        const [bridge_ramp] = make_road(endpoint.x, endpoint.y, endpoint.z, ROAD_DIR.LEFT, 16, THREE.MathUtils.degToRad(10));
+        const [bridge_ramp, endpoint_ramp] = make_road(endpoint.x, endpoint.y, endpoint.z, ROAD_DIR.LEFT, 16, THREE.MathUtils.degToRad(10));
         city.add(bridge_ramp);
+
+        city.add(make_bridge(endpoint_ramp.x, endpoint_ramp.y, endpoint_ramp.z, ROAD_DIR.LEFT))
     }
 
     road_start = new THREE.Vector3(endpoint_front.x, 0, endpoint_front.z);
