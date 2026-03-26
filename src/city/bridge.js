@@ -105,6 +105,41 @@ export function make_bridge(x, y, z, direction) {
         bridge.add(nut);
     }
 
+    // Longitudinal stay cables: 4 per side, same start per side, anchors until 50% of bridge length.
+    const stayCableGeo = new THREE.CylinderGeometry(0.22, 0.22, 1, 10);
+    const stayCableMat = new THREE.MeshToonMaterial({ color: 0xb0b0b0 });
+
+    const leftStart = new THREE.Vector3(-1, 147.5, -136);
+    const rightStart = new THREE.Vector3(1, 147.5, -136);
+
+    const anchorY = 1.1;
+    const anchorZStart = -bridge_length * 0.245;
+    const anchorZEnd = -bridge_length * 0.5;
+
+    const totalCableSlots = 5; // 1 pillar slot + 4 visible cable slots
+    const anchorStep = (anchorZEnd - anchorZStart) / (totalCableSlots - 1);
+
+    for (let i = 1; i < totalCableSlots; i++) {
+        const anchorZ = anchorZStart + anchorStep * i;
+
+        const leftEnd = new THREE.Vector3(-road_width * 0.52, anchorY, anchorZ);
+        const rightEnd = new THREE.Vector3(road_width * 0.52, anchorY, anchorZ);
+
+        const leftDir = new THREE.Vector3().subVectors(leftEnd, leftStart);
+        const leftCable = new THREE.Mesh(stayCableGeo, stayCableMat);
+        leftCable.position.copy(leftStart).add(leftEnd).multiplyScalar(0.5);
+        leftCable.scale.y = leftDir.length();
+        leftCable.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), leftDir.normalize());
+        bridge.add(leftCable);
+
+        const rightDir = new THREE.Vector3().subVectors(rightEnd, rightStart);
+        const rightCable = new THREE.Mesh(stayCableGeo, stayCableMat);
+        rightCable.position.copy(rightStart).add(rightEnd).multiplyScalar(0.5);
+        rightCable.scale.y = rightDir.length();
+        rightCable.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), rightDir.normalize());
+        bridge.add(rightCable);
+    }
+
     // Support pillars
     const supportPillarHeight = 90;
     const supportPillarGeo = new THREE.CylinderGeometry(7, 9, supportPillarHeight, 14);
