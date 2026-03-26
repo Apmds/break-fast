@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { make_tree } from './trees.js';
+import { make_tree, make_tree_crowns } from './trees.js';
 import { make_road, make_road_corner, make_roundabout, road_width } from './road.js';
 import { make_path_parts, make_road_paths, path_width } from './sidewalk.js';
 import { make_bridge } from './bridge.js';
@@ -98,6 +98,7 @@ function make_city() {
     city.add(make_tree(-40, 0, 200, 2));
     city.add(make_tree(-10, 0, 220, 1.5));
     city.add(make_tree(-30, 0, 230, 1.7));
+    city.add(make_tree_crowns(90, 0, 170, 1));
 
     // Ensure every city mesh participates in shadow rendering.
     city.traverse((node) => {

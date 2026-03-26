@@ -5,7 +5,7 @@ export function make_tree(x, y, z, scale) {
 
     const logHeight = 20;
     const logGeo = new THREE.CylinderGeometry(0.5, 0.8, logHeight, 8);
-    const logMat = new THREE.MeshToonMaterial({ color: 0x1a0a00 });
+    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a });
     const log = new THREE.Mesh(logGeo, logMat);
     log.position.set(0, logHeight / 2, 0);
     tree.add(log);
@@ -66,7 +66,8 @@ export function make_tree(x, y, z, scale) {
 export function make_tree_crowns(x, y, z, scale) {
     const tree = new THREE.Object3D();
 
-    const logMat = new THREE.MeshToonMaterial({ color: 0x1a0a00 });
+    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a });
+
     const logSegments = [
         {
             position: new THREE.Vector3(0, 0, 0),
@@ -90,21 +91,21 @@ export function make_tree_crowns(x, y, z, scale) {
             height: 3.5,
         },
         {
-            position: new THREE.Vector3(0.1, 10, 0.2),
+            position: new THREE.Vector3(0.1, 10, 0.3),
             rotation: new THREE.Vector3(THREE.MathUtils.degToRad(-5), 0.0, THREE.MathUtils.degToRad(-6)),
             topRadius: 0.5,
             bottomRadius: 0.5,
             height: 1.2,
         },
         {
-            position: new THREE.Vector3(0.15, 11, 0),
+            position: new THREE.Vector3(0.2, 11, 0.2),
             rotation: new THREE.Vector3(0.0, 0.0, THREE.MathUtils.degToRad(0)),
             topRadius: 0.4,
             bottomRadius: 0.5,
             height: 1.6,
         },
         {
-            position: new THREE.Vector3(0.15, 12, 0),
+            position: new THREE.Vector3(0.15, 12.5, 0.2),
             rotation: new THREE.Vector3(0.0, 0.0, THREE.MathUtils.degToRad(-2)),
             topRadius: 0.3,
             bottomRadius: 0.4,
@@ -113,30 +114,51 @@ export function make_tree_crowns(x, y, z, scale) {
 
 
 
-
-        /*
         {
             position: new THREE.Vector3(0, 11.6, 0),
-            rotation: new THREE.Vector3(0.0, THREE.MathUtils.degToRad(125), THREE.MathUtils.degToRad(19)),
-            topRadius: 0.5,
-            bottomRadius: 0.82,
-            height: 8,
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(8), 0.0, THREE.MathUtils.degToRad(-70)),
+            topRadius: 0.3,
+            bottomRadius: 0.3,
+            height: 3,
         },
         {
-            position: new THREE.Vector3(0, 11.1, 0),
-            rotation: new THREE.Vector3(0.0, THREE.MathUtils.degToRad(-120), THREE.MathUtils.degToRad(18)),
-            topRadius: 0.5,
-            bottomRadius: 0.8,
-            height: 7.5,
+            position: new THREE.Vector3(2.7, 12.5, 0),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(0), 0.0, THREE.MathUtils.degToRad(-37)),
+            topRadius: 0.26,
+            bottomRadius: 0.3,
+            height: 1.5,
+        },
+
+
+        {
+            position: new THREE.Vector3(0, 13, 0),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(60), 0.0, 0.0),
+            topRadius: 0.25,
+            bottomRadius: 0.3,
+            height: 2,
         },
         {
-            position: new THREE.Vector3(0, 14.8, 0),
-            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(18), 0.0, 0.0),
-            topRadius: 0.35,
-            bottomRadius: 0.52,
-            height: 5.5,
+            position: new THREE.Vector3(0, 13.9, 1.7),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(20), 0.0, 0.0),
+            topRadius: 0.2,
+            bottomRadius: 0.25,
+            height: 2,
         },
-        */
+
+        {
+            position: new THREE.Vector3(0, 14.1, 0),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(-60), 0.0, 0.0),
+            topRadius: 0.25,
+            bottomRadius: 0.3,
+            height: 2,
+        },
+        {
+            position: new THREE.Vector3(0, 15, -1.7),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(-20), 0.0, 0.0),
+            topRadius: 0.2,
+            bottomRadius: 0.25,
+            height: 1.4,
+        },
     ];
 
     for (let i = 0; i < logSegments.length; i++) {
