@@ -24,7 +24,7 @@ function make_city() {
     );
     base_grass.position.x = 400;
     base_grass.position.z = -300;
-    base_grass.position.y = -50.02;
+    base_grass.position.y = -50.2;
     city.add(base_grass);
 
     let road_start;

@@ -4,24 +4,10 @@ import CameraControls from './utils/camera_controls.js';
 
 import make_skybox from './city/skybox.js';
 import make_city from './city/city.js';
+import { gameManager } from './utils/game_manager.js';
 
 function init() {
-    const scene = new THREE.Scene();
-
-    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
-    camera.position.set(0, 10, 50);
-    camera.lookAt(0, 10, 0);
-    scene.add(camera)
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setClearColor(new THREE.Color(0xffffff));
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    document.body.appendChild(renderer.domElement);
+    const scene = gameManager.scene;
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
     scene.add(ambientLight);
@@ -55,41 +41,25 @@ function init() {
     rimLight.position.set(80, 80, 350);
     scene.add(rimLight);
 
-    const controls = new CameraControls(camera, renderer.domElement);
+    // GUI
     const gui = new GUI({ title: 'Camera Position' });
-    gui.add(camera.position, 'x').name('x').listen();
-    gui.add(camera.position, 'y').name('y').listen();
-    gui.add(camera.position, 'z').name('z').listen();
+    gui.add(gameManager.camera.position, 'x').name('x').listen();
+    gui.add(gameManager.camera.position, 'y').name('y').listen();
+    gui.add(gameManager.camera.position, 'z').name('z').listen();
     const lightFolder = gui.addFolder('Lighting');
     lightFolder.add(keyLight, 'intensity', 0, 5, 0.01).name('key intensity');
     lightFolder.add(fillLight, 'intensity', 0, 2, 0.01).name('fill intensity');
     lightFolder.add(rimLight, 'intensity', 0, 2, 0.01).name('rim intensity');
     lightFolder.add(hemisphereLight, 'intensity', 0, 2, 0.01).name('hemi intensity');
 
-    const clock = new THREE.Timer();
-
-    window.addEventListener('resize', () => {  
-        // Update camera
-        camera.aspect = window.innerWidth / window.innerHeight
-        camera.updateProjectionMatrix()
-        
-        // Update renderer
-        renderer.setSize(window.innerWidth, window.innerHeight)
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    });
-
     const city = make_city();
     scene.add(city);
-
     scene.add(make_skybox());
 
     function animate() {
         requestAnimationFrame(animate);
-        const delta = clock.getDelta();
-        controls.update(delta);
-
-        clock.update();
-        renderer.render(scene, camera);
+        gameManager.update();
+        gameManager.render();
     }
     animate();
 }

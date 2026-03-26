@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { gameManager } from './game_manager.js';
+import { inputManager } from './input_manager.js';
 
 class CameraControls {
     constructor(camera, domElement = document.body) {
@@ -56,13 +56,13 @@ class CameraControls {
         let moveForward = 0;
         let moveRight = 0;
 
-        if (gameManager.keyPressed("KeyW")) moveForward += 1;
-        if (gameManager.keyPressed("KeyS")) moveForward -= 1;
-        if (gameManager.keyPressed("KeyD")) moveRight += 1;
-        if (gameManager.keyPressed("KeyA")) moveRight -= 1;
+        if (inputManager.keyPressed("KeyW")) moveForward += 1;
+        if (inputManager.keyPressed("KeyS")) moveForward -= 1;
+        if (inputManager.keyPressed("KeyD")) moveRight += 1;
+        if (inputManager.keyPressed("KeyA")) moveRight -= 1;
 
         let movSpeed = this.speed;
-        if (gameManager.keyPressed("ShiftLeft")) {
+        if (inputManager.keyPressed("ShiftLeft")) {
             movSpeed *= 2.5;
         }
 
