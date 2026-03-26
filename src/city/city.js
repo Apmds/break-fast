@@ -15,7 +15,7 @@ function make_city() {
     );
     base_ground.position.x = 100;
     base_ground.position.z = -300;
-    base_ground.position.y = -51;
+    base_ground.position.y = -50.01;
     city.add(base_ground);
 
     const base_grass = new THREE.Mesh(
@@ -24,7 +24,7 @@ function make_city() {
     );
     base_grass.position.x = 400;
     base_grass.position.z = -300;
-    base_grass.position.y = -52;
+    base_grass.position.y = -50.02;
     city.add(base_grass);
 
     let road_start;
@@ -98,7 +98,14 @@ function make_city() {
     city.add(make_tree(-40, 0, 200, 2));
     city.add(make_tree(-10, 0, 220, 1.5));
     city.add(make_tree(-30, 0, 230, 1.7));
-    
+
+    // Ensure every city mesh participates in shadow rendering.
+    city.traverse((node) => {
+        if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+        }
+    });
 
     return city
 }

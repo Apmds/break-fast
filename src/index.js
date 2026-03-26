@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
+import GUI from 'lil-gui';
+import CameraControls from './utils/camera_controls.js';
 
 import make_skybox from './city/skybox.js';
 import make_city from './city/city.js';
@@ -16,25 +17,54 @@ function init() {
     renderer.setClearColor(new THREE.Color(0xffffff));
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.18);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.25);
-    keyLight.position.set(40, 50, 20);
+    const hemisphereLight = new THREE.HemisphereLight(0xd8ecff, 0x9bb07a, 0.55);
+    scene.add(hemisphereLight);
+
+    const keyLight = new THREE.DirectionalLight(0xfff3dc, 2.2);
+    keyLight.position.set(260, 360, 120);
+    const keyTarget = new THREE.Object3D();
+    keyTarget.position.set(100, 0, -250);
+    scene.add(keyTarget);
+    keyLight.target = keyTarget;
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.shadow.camera.near = 1;
+    keyLight.shadow.camera.far = 1000;
+    keyLight.shadow.camera.left = -500;
+    keyLight.shadow.camera.right = 500;
+    keyLight.shadow.camera.top = 500;
+    keyLight.shadow.camera.bottom = -500;
+    keyLight.shadow.bias = -0.0003;
+    keyLight.shadow.normalBias = 0.02;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xb8d4ff, 0.35);
-    fillLight.position.set(-20, 12, -18);
+    const fillLight = new THREE.DirectionalLight(0xbfd9ff, 0.55);
+    fillLight.position.set(-180, 120, -220);
     scene.add(fillLight);
 
+    const rimLight = new THREE.DirectionalLight(0xffe8c9, 0.35);
+    rimLight.position.set(80, 80, 350);
+    scene.add(rimLight);
 
-    const controls = new FirstPersonControls(camera, renderer.domElement);
-    controls.movementSpeed = 100;
-    controls.lookSpeed = 0.2;
-    controls.lookVertical = true;
-    controls.lookAt(0, 10, 0);
+    const controls = new CameraControls(camera, renderer.domElement);
+    const gui = new GUI({ title: 'Camera Position' });
+    gui.add(camera.position, 'x').name('x').listen();
+    gui.add(camera.position, 'y').name('y').listen();
+    gui.add(camera.position, 'z').name('z').listen();
+    const lightFolder = gui.addFolder('Lighting');
+    lightFolder.add(keyLight, 'intensity', 0, 5, 0.01).name('key intensity');
+    lightFolder.add(fillLight, 'intensity', 0, 2, 0.01).name('fill intensity');
+    lightFolder.add(rimLight, 'intensity', 0, 2, 0.01).name('rim intensity');
+    lightFolder.add(hemisphereLight, 'intensity', 0, 2, 0.01).name('hemi intensity');
 
     const clock = new THREE.Timer();
 
@@ -46,8 +76,6 @@ function init() {
         // Update renderer
         renderer.setSize(window.innerWidth, window.innerHeight)
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
-        controls.handleResize();
     });
 
     const city = make_city();
@@ -57,7 +85,8 @@ function init() {
 
     function animate() {
         requestAnimationFrame(animate);
-        controls.update(clock.getDelta());
+        const delta = clock.getDelta();
+        controls.update(delta);
 
         clock.update();
         renderer.render(scene, camera);
