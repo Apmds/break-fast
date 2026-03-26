@@ -69,6 +69,7 @@ export function make_tree_crowns(x, y, z, scale) {
     const logMat = new THREE.MeshToonMaterial({ color: 0x47300a });
 
     const logSegments = [
+        // Main log
         {
             position: new THREE.Vector3(0, 0, 0),
             rotation: new THREE.Vector3(0, 0, 0),
@@ -113,7 +114,7 @@ export function make_tree_crowns(x, y, z, scale) {
         },
 
 
-
+        // Branch 1
         {
             position: new THREE.Vector3(0, 11.6, 0),
             rotation: new THREE.Vector3(THREE.MathUtils.degToRad(8), 0.0, THREE.MathUtils.degToRad(-70)),
@@ -130,6 +131,7 @@ export function make_tree_crowns(x, y, z, scale) {
         },
 
 
+        // Branch 2
         {
             position: new THREE.Vector3(0, 13, 0),
             rotation: new THREE.Vector3(THREE.MathUtils.degToRad(60), 0.0, 0.0),
@@ -145,6 +147,8 @@ export function make_tree_crowns(x, y, z, scale) {
             height: 2,
         },
 
+
+        // Branch 3
         {
             position: new THREE.Vector3(0, 14.1, 0),
             rotation: new THREE.Vector3(THREE.MathUtils.degToRad(-60), 0.0, 0.0),
@@ -177,10 +181,100 @@ export function make_tree_crowns(x, y, z, scale) {
         tree.add(pivot);
     }
 
-    //const crownLeafMat = new THREE.MeshToonMaterial({ color: 0x3caf1d });
-    //const crownLeaf = new THREE.Mesh(new THREE.SphereGeometry(4.7, 10, 8), crownLeafMat);
-    //crownLeaf.position.set(0, 18.5, 0);
-    //tree.add(crownLeaf);
+    const crownLayers = [
+        // Bottom-wide base layer — anchors the whole canopy low and wide
+        {
+            position: new THREE.Vector3(0.0, 11.5, 0.0),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(5), THREE.MathUtils.degToRad(0), THREE.MathUtils.degToRad(0)),
+            radius: 6.5,
+            color: 0x2d8a14,
+        },
+        // Left lobe
+        {
+            position: new THREE.Vector3(-5.0, 12.0, 0.5),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(-9), THREE.MathUtils.degToRad(30), THREE.MathUtils.degToRad(14)),
+            radius: 5.2,
+            color: 0x3aa31e,
+        },
+        // Right lobe
+        {
+            position: new THREE.Vector3(5.2, 12.0, -0.5),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(-8), THREE.MathUtils.degToRad(-32), THREE.MathUtils.degToRad(-27)),
+            radius: 5.0,
+            color: 0x34951b,
+        },
+        // Front lobe
+        {
+            position: new THREE.Vector3(0.5, 12.8, 4.8),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(17), THREE.MathUtils.degToRad(20), THREE.MathUtils.degToRad(7)),
+            radius: 4.8,
+            color: 0x3fa826,
+        },
+        // Back lobe
+        {
+            position: new THREE.Vector3(-0.5, 12.5, -4.8),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(-15), THREE.MathUtils.degToRad(-20), THREE.MathUtils.degToRad(-8)),
+            radius: 4.7,
+            color: 0x2e9016,
+        },
+        // Mid-left upper
+        {
+            position: new THREE.Vector3(-3.5, 14.5, 1.5),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(20), THREE.MathUtils.degToRad(40), THREE.MathUtils.degToRad(-15)),
+            radius: 4.4,
+            color: 0x48b52c,
+        },
+        // Mid-right upper
+        {
+            position: new THREE.Vector3(3.8, 14.5, -1.0),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(-18), THREE.MathUtils.degToRad(-35), THREE.MathUtils.degToRad(14)),
+            radius: 4.3,
+            color: 0x46ad2a,
+        },
+        // Center upper
+        {
+            position: new THREE.Vector3(0.5, 15.5, 0.5),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(10), THREE.MathUtils.degToRad(15), THREE.MathUtils.degToRad(5)),
+            radius: 4.8,
+            color: 0x3aa31e,
+        },
+        // Top cap
+        {
+            position: new THREE.Vector3(0.2, 17.5, 0.2),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(5), THREE.MathUtils.degToRad(10), THREE.MathUtils.degToRad(-5)),
+            radius: 3.8,
+            color: 0x52c233,
+        },
+        // Extra front-left fill
+        {
+            position: new THREE.Vector3(-2.5, 13.5, 3.5),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(12), THREE.MathUtils.degToRad(25), THREE.MathUtils.degToRad(-10)),
+            radius: 4.0,
+            color: 0x339719,
+        },
+        // Extra back-right fill
+        {
+            position: new THREE.Vector3(2.5, 13.5, -3.5),
+            rotation: new THREE.Vector3(THREE.MathUtils.degToRad(-12), THREE.MathUtils.degToRad(-22), THREE.MathUtils.degToRad(10)),
+            radius: 3.9,
+            color: 0x3fa826,
+        },
+    ];
+
+    for (let i = 0; i < crownLayers.length; i++) {
+        const layer = crownLayers[i];
+        const crownMat = new THREE.MeshToonMaterial({
+            color: layer.color,
+            side: THREE.DoubleSide,
+        });
+        const crown = new THREE.Mesh(
+            new THREE.SphereGeometry(layer.radius, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2),
+            crownMat
+        );
+        crown.position.copy(layer.position);
+        crown.rotation.set(layer.rotation.x, layer.rotation.y, layer.rotation.z);
+        tree.add(crown);
+    }
 
     tree.position.set(x, y, z);
     tree.scale.set(scale, scale, scale);
