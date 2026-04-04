@@ -1,13 +1,20 @@
 import * as THREE from 'three';
 import GUI from 'lil-gui';
 import CameraControls from './utils/camera_controls.js';
+import Stats from 'three/addons/libs/stats.module.js';
 
 import make_skybox from './city/skybox.js';
 import make_city from './city/city.js';
 import { gameManager } from './utils/game_manager.js';
 
+const stats = new Stats();
+
 function init() {
     const scene = gameManager.scene;
+
+    // Add stats monitor
+    stats.showPanel(0); // 0: fps, 1: ms, 2: mb
+    document.body.appendChild(stats.dom);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
     scene.add(ambientLight);
@@ -22,7 +29,7 @@ function init() {
     scene.add(keyTarget);
     keyLight.target = keyTarget;
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.shadow.mapSize.set(4096, 4096);
     keyLight.shadow.camera.near = 1;
     keyLight.shadow.camera.far = 1000;
     keyLight.shadow.camera.left = -500;
@@ -58,8 +65,10 @@ function init() {
 
     function animate() {
         requestAnimationFrame(animate);
+        stats.begin();
         gameManager.update();
         gameManager.render();
+        stats.end();
     }
     animate();
 }
