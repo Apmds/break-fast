@@ -28,31 +28,17 @@ function init() {
     keyLight.lookAt(scene.position)
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(2048, 2048);
-    
-    //keyLight.shadow.camera.near = 1;
-    //keyLight.shadow.camera.far = 2000;
-    //keyLight.shadow.camera.left = -1000;
-    //keyLight.shadow.camera.right = 1000;
-    //keyLight.shadow.camera.top = 1000;
-    //keyLight.shadow.camera.bottom = -1000;
 
-    keyLight.shadow.camera.near = 10;    // Increased to save precision
-    keyLight.shadow.camera.far = 1000;   // Decreased (distance from light to ground)
-    keyLight.shadow.camera.left = -200;  // Much tighter window around player
+    keyLight.shadow.camera.near = 10;
+    keyLight.shadow.camera.far = 1000;
+    keyLight.shadow.camera.left = -200;
     keyLight.shadow.camera.right = 200;
     keyLight.shadow.camera.top = 200;
     keyLight.shadow.camera.bottom = -200;
-    
-    //keyLight.shadow.bias = -0.0006;
-    //keyLight.shadow.normalBias = 0.04;
-    
+
     // Adjust biases
-    keyLight.shadow.bias = -0.001;      // Start very small
-    keyLight.shadow.normalBias = 0.07;   // Helps with stripes on sloped surfaces
-
-
-    
-
+    keyLight.shadow.bias = -0.001;
+    keyLight.shadow.normalBias = 0.07;
 
     scene.add(keyLight);
 
@@ -87,8 +73,6 @@ function init() {
         const thing = new THREE.Vector3();
         thing.addVectors(gameManager.player.position, sunpos)
         
-        
-        console.log(thing)
         keyLight.position.copy(thing);
         
         keyLight.target.position.copy(gameManager.player.position);

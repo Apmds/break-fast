@@ -9,7 +9,7 @@ class CameraControls {
         this.pitch = 0;
         this.yaw = 0;
         this.sensitivity = 0.002;
-        this.speed = 70;
+        this.speed = 30;
         this.isLocked = false;
 
         this.forward = new THREE.Vector3();
@@ -44,7 +44,7 @@ class CameraControls {
         this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch));
     }
 
-    update(delta) {
+    update(delta, physicsBody = null, moveVelocity = null) {
         this.euler.set(this.pitch, this.yaw, 0);
         this.camera.quaternion.setFromEuler(this.euler);
 
@@ -66,12 +66,38 @@ class CameraControls {
             movSpeed *= 2.5;
         }
 
-        if (moveForward !== 0) {
-            this.camera.position.addScaledVector(this.forward, moveForward * movSpeed * delta);
-        }
+        // If physics body provided, apply velocity instead of direct position
+        if (physicsBody && moveVelocity) {
+            moveVelocity.x = 0;
+            moveVelocity.z = 0;
 
-        if (moveRight !== 0) {
-            this.camera.position.addScaledVector(this.right, moveRight * movSpeed * delta);
+            if (moveForward !== 0) {
+                moveVelocity.x += this.forward.x * moveForward * movSpeed;
+                moveVelocity.z += this.forward.z * moveForward * movSpeed;
+            }
+
+            if (moveRight !== 0) {
+                moveVelocity.x += this.right.x * moveRight * movSpeed * 0.5;
+                moveVelocity.z += this.right.z * moveRight * movSpeed * 0.5;
+            }
+
+            // Apply velocity, preserving vertical velocity for gravity
+            physicsBody.velocity.x = moveVelocity.x;
+            physicsBody.velocity.z = moveVelocity.z;
+
+            // Jump
+            if (inputManager.keyPressed("Space")) {
+                physicsBody.velocity.y = 15; // Jump force
+            }
+        } else {
+            // Fallback movement for non-physics mode
+            if (moveForward !== 0) {
+                this.camera.position.addScaledVector(this.forward, moveForward * movSpeed * delta);
+            }
+
+            if (moveRight !== 0) {
+                this.camera.position.addScaledVector(this.right, moveRight * movSpeed * delta);
+            }
         }
     }
 
