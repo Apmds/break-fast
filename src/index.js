@@ -23,21 +23,37 @@ function init() {
     scene.add(hemisphereLight);
 
     const keyLight = new THREE.DirectionalLight(0xfff3dc, 2.2);
-    keyLight.position.set(260, 360, 120);
-    const keyTarget = new THREE.Object3D();
-    keyTarget.position.set(100, 0, -250);
-    scene.add(keyTarget);
-    keyLight.target = keyTarget;
+    const sunpos = new THREE.Vector3(150, 300, 150);
+    keyLight.position.copy(sunpos);
+    keyLight.lookAt(scene.position)
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(4096, 4096);
-    keyLight.shadow.camera.near = 1;
-    keyLight.shadow.camera.far = 1000;
-    keyLight.shadow.camera.left = -500;
-    keyLight.shadow.camera.right = 500;
-    keyLight.shadow.camera.top = 500;
-    keyLight.shadow.camera.bottom = -500;
-    keyLight.shadow.bias = -0.0003;
-    keyLight.shadow.normalBias = 0.02;
+    keyLight.shadow.mapSize.set(2048, 2048);
+    
+    //keyLight.shadow.camera.near = 1;
+    //keyLight.shadow.camera.far = 2000;
+    //keyLight.shadow.camera.left = -1000;
+    //keyLight.shadow.camera.right = 1000;
+    //keyLight.shadow.camera.top = 1000;
+    //keyLight.shadow.camera.bottom = -1000;
+
+    keyLight.shadow.camera.near = 10;    // Increased to save precision
+    keyLight.shadow.camera.far = 1000;   // Decreased (distance from light to ground)
+    keyLight.shadow.camera.left = -200;  // Much tighter window around player
+    keyLight.shadow.camera.right = 200;
+    keyLight.shadow.camera.top = 200;
+    keyLight.shadow.camera.bottom = -200;
+    
+    //keyLight.shadow.bias = -0.0006;
+    //keyLight.shadow.normalBias = 0.04;
+    
+    // Adjust biases
+    keyLight.shadow.bias = -0.001;      // Start very small
+    keyLight.shadow.normalBias = 0.07;   // Helps with stripes on sloped surfaces
+
+
+    
+
+
     scene.add(keyLight);
 
     const fillLight = new THREE.DirectionalLight(0xbfd9ff, 0.55);
@@ -67,6 +83,17 @@ function init() {
         requestAnimationFrame(animate);
         stats.begin();
         gameManager.update();
+
+        const thing = new THREE.Vector3();
+        thing.addVectors(gameManager.player.position, sunpos)
+        
+        
+        console.log(thing)
+        keyLight.position.copy(thing);
+        
+        keyLight.target.position.copy(gameManager.player.position);
+        keyLight.target.updateMatrixWorld();
+        
         gameManager.render();
         stats.end();
     }

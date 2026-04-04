@@ -1,6 +1,6 @@
 import { inputManager } from "./input_manager.js";
 import * as THREE from 'three';
-import CameraControls from './camera_controls.js';
+import Player from './player.js';
 
 class GameManager {
     constructor() {
@@ -21,8 +21,7 @@ class GameManager {
         this.camera.lookAt(0, 10, 0);
         this.scene.add(this.camera);
 
-
-        this.controls = new CameraControls(this.camera, this.renderer.domElement);
+        this.player = new Player(this.camera, this.renderer.domElement);
     
         this.clock = new THREE.Timer();
 
@@ -41,7 +40,7 @@ class GameManager {
         const delta = this.clock.getDelta();
 
         inputManager.update();
-        this.controls.update(delta);
+        this.player.update(delta);
 
         this.clock.update();
     }
