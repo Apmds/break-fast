@@ -19,7 +19,7 @@ async function make_house(x, y, z) {
     };
 
 
-    const house = await objectManager.loadObject('../../assets/models/house.glb', houseMaterials);
+    const house = await objectManager.loadObject('/assets/models/house.glb', houseMaterials);
     house.position.set(x, y, z);
     
     // Enable shadows for the house and all its children
