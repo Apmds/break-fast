@@ -6,10 +6,12 @@ class ObjectManager {
         this.cache = {};
     }
 
-    async loadObject(path) {
+    async loadObject(path, material_map = null) {
         // If not in cache, load it
-        if (!this.cache[path]) {
-            this.cache[path] = await new Promise((resolve, reject) => {
+        const needs_loading = !this.cache[path];
+
+        if (needs_loading) {
+            const scene = await new Promise((resolve, reject) => {
                 this.loader.load(path, (gltf) => {
                     resolve(gltf.scene);
                 }, undefined, (error) => {
@@ -17,10 +19,31 @@ class ObjectManager {
                     reject(error);
                 });
             });
+            
+            // Apply materials
+            if (material_map) {
+                scene.traverse((node) => {
+                    if (node.isMesh && material_map[node.name]) {
+                        node.material = material_map[node.name];
+                    }
+                });
+            }
+            
+            this.cache[path] = scene;
         }
 
-        // Return a clone of the cached scene so each instance is independent
-        return this.cache[path].clone();
+        // Return a clone
+        const clone = this.cache[path].clone();
+
+        if (!needs_loading && material_map) {
+            this.cache[path].traverse((node) => {
+                if (node.isMesh && material_map[node.name]) {
+                    node.material = material_map[node.name];
+                }
+            });
+        }
+
+        return clone;
     }
 
     getObject(path) {
