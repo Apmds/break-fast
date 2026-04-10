@@ -8,7 +8,7 @@ class Player {
         this.physicsWorld = physicsWorld;
 
         // Create physics body for player
-        const physicsShape = new CANNON.Sphere(0.5); // 0.5m radius
+        const physicsShape = new CANNON.Sphere(2); // 0.5m radius
         this.physicsBody = new CANNON.Body({
             mass: 1,
             shape: physicsShape,
