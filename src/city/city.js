@@ -4,6 +4,22 @@ import { make_road, make_road_corner, make_roundabout, road_width } from './road
 import { make_path_parts, make_road_paths, path_width } from './sidewalk.js';
 import { make_bridge } from './bridge.js';
 import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
+import objectManager from '../utils/object_manager.js';
+
+async function make_house(x, y, z) {
+    const house = await objectManager.loadObject('../../assets/models/house.glb');
+    house.position.set(x, y, z);
+    
+    // Enable shadows for the house and all its children
+    house.traverse((node) => {
+        if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+        }
+    });
+    
+    return house;
+}
 
 function make_city() {
     const city = new THREE.Object3D();
@@ -100,6 +116,13 @@ function make_city() {
     city.add(make_tree(-30, 0, 230, 1.7));
     city.add(make_tree_crowns(90, 0, 170, 1));
 
+    // Add multiple houses
+    (async () => {
+        city.add(await make_house(50, 0, 150));
+        city.add(await make_house(100, 0, 100));
+        city.add(await make_house(150, 0, 200));
+    })();
+
     // Ensure every city mesh participates in shadow rendering.
     city.traverse((node) => {
         if (node.isMesh) {
@@ -112,3 +135,4 @@ function make_city() {
 }
 
 export default make_city;
+export { make_house };
