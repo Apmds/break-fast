@@ -11,6 +11,7 @@ import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 import Citizen from '../people/citizen.js';
 import make_house from './house.js';
 import Scene from '../utils/scene.js';
+import { gameManager } from '../utils/game_manager.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -27,10 +28,12 @@ class City extends Scene {
         const hemisphereLight = new THREE.HemisphereLight(0xd8ecff, 0x9bb07a, 0.55);
         hemisphereLight.name = "hemisphereLight";
         this.add(hemisphereLight);
+
+        // Position of the sun (keylight)
+        this.sunpos = new THREE.Vector3(150, 300, 150);
     
         const keyLight = new THREE.DirectionalLight(0xfff3dc, 2.2);
-        const sunpos = new THREE.Vector3(150, 300, 150);
-        keyLight.position.copy(sunpos);
+        keyLight.position.copy(this.sunpos);
         keyLight.lookAt(this.scene.position)
         keyLight.castShadow = true;
         keyLight.shadow.mapSize.set(2048, 2048);
@@ -85,6 +88,16 @@ class City extends Scene {
         this.gui.add('Lighting', 'fill intensity', fillLight, 'intensity', 0, 2, 0.01);
         this.gui.add('Lighting', 'rim intensity', rimLight, 'intensity', 0, 2, 0.01);
         this.gui.add('Lighting', 'hemi intensity', hemisphereLight, 'intensity', 0, 2, 0.01);
+    }
+
+    update(delta) {
+        super.update(delta)
+        
+        const keyLight = this.getObject("keyLight");
+        keyLight.position.copy(new THREE.Vector3().addVectors(gameManager.player.position, this.sunpos));
+        
+        keyLight.target.position.copy(gameManager.player.position);
+        keyLight.target.updateMatrixWorld();
     }
 }
 

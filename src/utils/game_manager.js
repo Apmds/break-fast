@@ -13,7 +13,7 @@ class GameManager {
         this.scene.setAsCurrent();
 
         this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld);
-    
+
         this.clock = new THREE.Timer();
 
         window.addEventListener('resize', () => {

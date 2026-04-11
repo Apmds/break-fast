@@ -28,6 +28,10 @@ class Scene {
         return this.renderer.domElement;
     }
 
+    getObject(name) {
+        return this.scene.getObjectByName(name);
+    }
+
     add(obj) {
         this.scene.add(obj);
     }
