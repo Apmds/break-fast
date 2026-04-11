@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import GUI from 'lil-gui';
-import CameraControls from './utils/camera_controls.js';
 import Stats from 'three/addons/libs/stats.module.js';
 
 import make_skybox from './city/skybox.js';

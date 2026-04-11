@@ -2,25 +2,19 @@ import { inputManager } from "./input_manager.js";
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import Player from './player.js';
+import Renderer from "./render.js";
 
 class GameManager {
     constructor() {
         this.scene = new THREE.Scene();
         
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.renderer.setClearColor(new THREE.Color(0xffffff));
-        this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1.0;
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFShadowMap;
-        document.body.appendChild(this.renderer.domElement);
-        
         this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
         this.camera.position.set(0, 10, 50);
         this.camera.lookAt(0, 10, 0);
         this.scene.add(this.camera);
+        
+        this.renderer = new Renderer(camera);
+        this.renderer.addToDom();
 
         // Physics world
         this.physicsWorld = new CANNON.World();
@@ -46,8 +40,7 @@ class GameManager {
             this.camera.updateProjectionMatrix()
             
             // Update renderer
-            this.renderer.setSize(window.innerWidth, window.innerHeight)
-            this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+            this.renderer.update()
         });
     }
 
