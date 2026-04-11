@@ -5,6 +5,7 @@ import { make_path_parts, make_road_paths, path_width } from './sidewalk.js';
 import { make_bridge } from './bridge.js';
 import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 import objectManager from '../utils/object_manager.js';
+import Citizen from '../people/citizen.js';
 
 async function make_house(x, y, z) {
     const houseMaterials = {
@@ -132,6 +133,21 @@ function make_city() {
         city.add(await make_house(50, 0, 150));
         city.add(await make_house(100, 0, 100));
         city.add(await make_house(150, 0, 200));
+    })();
+
+    // Add citizens
+    (async () => {
+        const citizen1 = new Citizen(-20, 0, 100, 0, 0, 0);
+        city.add(await citizen1.load());
+
+        const citizen2 = new Citizen(30, 0, 80, 0, Math.PI / 2, 0);
+        city.add(await citizen2.load());
+
+        const citizen3 = new Citizen(94, 0, 95, 0, 0, 0);
+        city.add(await citizen3.load());
+
+        const citizen4 = new Citizen(10, 0, 60, 0, Math.PI, 0);
+        city.add(await citizen4.load());
     })();
 
     // Ensure every city mesh participates in shadow rendering.

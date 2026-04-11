@@ -8,7 +8,7 @@ class Player {
         this.physicsWorld = physicsWorld;
 
         // Create physics body for player
-        const physicsShape = new CANNON.Sphere(2); // 0.5m radius
+        const physicsShape = new CANNON.Sphere(1.2);
         this.physicsBody = new CANNON.Body({
             mass: 1,
             shape: physicsShape,
@@ -27,7 +27,7 @@ class Player {
         // Update camera position to match physics body
         this.camera.position.copy(this.physicsBody.position);
         // Keep camera slightly above the body center
-        this.camera.position.y += 0.2;
+        this.camera.position.y += 1.2;
     }
 
     lock() {
