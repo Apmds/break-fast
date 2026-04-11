@@ -1,21 +1,38 @@
+import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 class ObjectManager {
     constructor() {
-        this.loader = new GLTFLoader();
+        this.gltfloader = new GLTFLoader();
+        this.textureLoader = new THREE.TextureLoader();
         this.cache = {};
     }
 
-    async loadObject(path, material_map = null) {
+    async loadTexture(path, id) {
         // If not in cache, load it
-        const needs_loading = !this.cache[path];
+        const needs_loading = !this.cache[id];
+
+        if (needs_loading) {
+            const texture = await this.textureLoader.loadAsync(path);
+            this.cache[id] = texture;
+        }
+
+        // Return a clone
+        const clone = this.cache[id].clone();
+
+        return clone;
+    }
+
+    async loadGLTF(path, id, material_map = null) {
+        // If not in cache, load it
+        const needs_loading = !this.cache[id];
 
         if (needs_loading) {
             const scene = await new Promise((resolve, reject) => {
-                this.loader.load(path, (gltf) => {
+                this.gltfloader.load(path, (gltf) => {
                     resolve(gltf.scene);
                 }, undefined, (error) => {
-                    console.error(`Failed to load object at ${path}:`, error);
+                    console.error(`Failed to load GTLF model object ${id} at ${path}:`, error);
                     reject(error);
                 });
             });
@@ -29,14 +46,14 @@ class ObjectManager {
                 });
             }
             
-            this.cache[path] = scene;
+            this.cache[id] = scene;
         }
 
         // Return a clone
-        const clone = this.cache[path].clone();
+        const clone = this.cache[id].clone();
 
         if (!needs_loading && material_map) {
-            this.cache[path].traverse((node) => {
+            this.cache[id].traverse((node) => {
                 if (node.isMesh && material_map[node.name]) {
                     node.material = material_map[node.name];
                 }
@@ -46,20 +63,20 @@ class ObjectManager {
         return clone;
     }
 
-    getObject(path) {
-        if (this.cache[path]) {
-            return this.cache[path].clone();
+    getObject(id) {
+        if (this.cache[id]) {
+            return this.cache[id].clone();
         }
         return null;
     }
 
-    isLoaded(path) {
-        return path in this.cache;
+    isLoaded(id) {
+        return id in this.cache;
     }
 
-    deleteObject(path) {
-        if (this.cache[path]) {
-            delete this.cache[path];
+    deleteObject(id) {
+        if (this.cache[id]) {
+            delete this.cache[id];
         }
     }
 

@@ -1,6 +1,25 @@
-import { gameManager } from './utils/game_manager.js';
+import GameManager from './utils/game_manager.js';
+import objectManager from './utils/object_manager.js';
+import objects from './utils/object_paths.js';
 
-function init() {
+async function preload_objects() {
+    const loadPromises = objects.map(async (obj) => {
+        switch (obj.type) {
+            case "gltf":
+                return await objectManager.loadGLTF(obj.path, obj.id, obj.material_map);
+                
+            case "texture":
+                return await objectManager.loadTexture(obj.path, obj.id);
+        }
+    });
+
+    await Promise.all(loadPromises);
+}
+
+async function init() {
+    await preload_objects();
+
+    const gameManager = new GameManager();
     function animate() {
         requestAnimationFrame(animate);
 

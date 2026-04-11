@@ -1,31 +1,32 @@
 
 import * as THREE from 'three';
+import objectManager from '../utils/object_manager.js';
 
 function make_skybox() {
     const geometry = new THREE.BoxGeometry(5000,5000,5000);
     var materials = [
          new THREE.MeshBasicMaterial({
-              map : new THREE.TextureLoader().load('../assets/skybox/px.png'),
+              map : objectManager.getObject('skybox_px'),
               side : THREE.BackSide,
          }),
          new THREE.MeshBasicMaterial({
-              map : new THREE.TextureLoader().load('../assets/skybox/nx.png'),
+              map : objectManager.getObject('skybox_nx'),
               side : THREE.BackSide,
          }),
          new THREE.MeshBasicMaterial({
-              map : new THREE.TextureLoader().load('../assets/skybox/py.png'),
+              map : objectManager.getObject('skybox_py'),
               side : THREE.BackSide,
          }),
          new THREE.MeshBasicMaterial({
-              map : new THREE.TextureLoader().load('../assets/skybox/ny.png'),
+              map : objectManager.getObject('skybox_ny'),
               side : THREE.BackSide,
          }),
          new THREE.MeshBasicMaterial({
-              map : new THREE.TextureLoader().load('../assets/skybox/pz.png'),
+              map : objectManager.getObject('skybox_pz'),
               side : THREE.BackSide,
          }),
          new THREE.MeshBasicMaterial({
-              map : new THREE.TextureLoader().load('../assets/skybox/nz.png'),
+              map : objectManager.getObject('skybox_nz'),
               side : THREE.BackSide,
          }),
     ];

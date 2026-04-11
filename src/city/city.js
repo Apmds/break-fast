@@ -11,7 +11,7 @@ import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 import Citizen from '../people/citizen.js';
 import make_house from './house.js';
 import Scene from '../utils/scene.js';
-import { gameManager } from '../utils/game_manager.js';
+import GameManager from '../utils/game_manager.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -93,11 +93,11 @@ class City extends Scene {
     update(delta) {
         super.update(delta)
         
-        const keyLight = this.getObject("keyLight");
-        keyLight.position.copy(new THREE.Vector3().addVectors(gameManager.player.position, this.sunpos));
+        //const keyLight = this.getObject("keyLight");
+        //keyLight.position.copy(new THREE.Vector3().addVectors(gameManager.player.position, this.sunpos));
         
-        keyLight.target.position.copy(gameManager.player.position);
-        keyLight.target.updateMatrixWorld();
+        //keyLight.target.position.copy(gameManager.player.position);
+        //keyLight.target.updateMatrixWorld();
     }
 }
 
@@ -197,26 +197,22 @@ function make_city() {
     city.add(make_tree_crowns(90, 0, 170, 1));
 
     // Add multiple houses
-    (async () => {
-        city.add(await make_house(50, 0, 150));
-        city.add(await make_house(100, 0, 100));
-        city.add(await make_house(150, 0, 200));
-    })();
+    city.add(make_house(50, 0, 150));
+    city.add(make_house(100, 0, 100));
+    city.add(make_house(150, 0, 200));
 
     // Add citizens
-    (async () => {
-        const citizen1 = new Citizen(-20, 0, 100, 0, 0, 0);
-        city.add(await citizen1.load());
+    const citizen1 = new Citizen(-20, 0, 100, 0, 0, 0);
+    city.add(citizen1.model);
 
-        const citizen2 = new Citizen(30, 0, 80, 0, Math.PI / 2, 0);
-        city.add(await citizen2.load());
+    const citizen2 = new Citizen(30, 0, 80, 0, Math.PI / 2, 0);
+    city.add(citizen2.model);
 
-        const citizen3 = new Citizen(94, 0, 95, 0, 0, 0);
-        city.add(await citizen3.load());
+    const citizen3 = new Citizen(94, 0, 95, 0, 0, 0);
+    city.add(citizen3.model);
 
-        const citizen4 = new Citizen(10, 0, 60, 0, Math.PI, 0);
-        city.add(await citizen4.load());
-    })();
+    const citizen4 = new Citizen(10, 0, 60, 0, Math.PI, 0);
+    city.add(citizen4.model);
 
     // Ensure every city mesh participates in shadow rendering.
     city.traverse((node) => {
