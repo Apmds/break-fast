@@ -1,36 +1,78 @@
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+
 import { make_tree, make_tree_crowns } from './trees.js';
 import { make_road, make_road_corner, make_roundabout, road_width } from './road.js';
 import { make_path_parts, make_road_paths, path_width } from './sidewalk.js';
 import { make_bridge } from './bridge.js';
+import make_skybox from './skybox.js';
 import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
-import objectManager from '../utils/object_manager.js';
+
 import Citizen from '../people/citizen.js';
+import make_house from './house.js';
+import Scene from '../utils/scene.js';
 
-async function make_house(x, y, z) {
-    const houseMaterials = {
-        "Ceiling": new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.5 }),
-        "Walls": new THREE.MeshStandardMaterial({ color: 0xebcbb0, roughness: 0.7 }),
-        "Garage Door": new THREE.MeshStandardMaterial({ color: 0x8b7355, roughness: 0.8, metalness: 0.3 }),
-        "Window": new THREE.MeshStandardMaterial({ color: 0x87ceeb, roughness: 0.1, metalness: 0.5 }),
-        "Door": new THREE.MeshStandardMaterial({ color: 0x654321, roughness: 0.6 }),
-        "Window Ceiling": new THREE.MeshStandardMaterial({ color: 0x87ceeb, roughness: 0.1, metalness: 0.5 }),
-        "Cover": new THREE.MeshStandardMaterial({ color: 0xa0522d, roughness: 0.8 }),
-        "Cover Pillars": new THREE.MeshStandardMaterial({ color: 0xdaa520, roughness: 0.6 })
-    };
+class City extends Scene {
+    constructor(camera) {
+        super(camera);
 
-    const house = await objectManager.loadObject('../assets/models/Buildings/house.glb', houseMaterials);
-    house.position.set(x, y, z);
+        this.scene.add(make_city());
+        this.scene.add(make_skybox());
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+        ambientLight.name = "ambientLight";
+        this.add(ambientLight);
     
-    // Enable shadows for the house and all its children
-    house.traverse((node) => {
-        if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-        }
-    });
+        const hemisphereLight = new THREE.HemisphereLight(0xd8ecff, 0x9bb07a, 0.55);
+        hemisphereLight.name = "hemisphereLight";
+        this.add(hemisphereLight);
     
-    return house;
+        const keyLight = new THREE.DirectionalLight(0xfff3dc, 2.2);
+        const sunpos = new THREE.Vector3(150, 300, 150);
+        keyLight.position.copy(sunpos);
+        keyLight.lookAt(this.scene.position)
+        keyLight.castShadow = true;
+        keyLight.shadow.mapSize.set(2048, 2048);
+    
+        keyLight.shadow.camera.near = 10;
+        keyLight.shadow.camera.far = 1000;
+        keyLight.shadow.camera.left = -200;
+        keyLight.shadow.camera.right = 200;
+        keyLight.shadow.camera.top = 200;
+        keyLight.shadow.camera.bottom = -200;
+    
+        // Adjust biases
+        keyLight.shadow.bias = -0.001;
+        keyLight.shadow.normalBias = 0.07;
+    
+        keyLight.name = "keyLight";
+        this.add(keyLight);
+    
+        const fillLight = new THREE.DirectionalLight(0xbfd9ff, 0.55);
+        fillLight.position.set(-180, 120, -220);
+        fillLight.name = "fillLight";
+        this.add(fillLight);
+    
+        const rimLight = new THREE.DirectionalLight(0xffe8c9, 0.35);
+        rimLight.position.set(80, 80, 350);
+        rimLight.name = "rimLight";
+        this.add(rimLight);
+
+        // Physics world
+        this.physicsWorld = new CANNON.World();
+        this.physicsWorld.gravity.set(0, -9.82*5, 0);
+        this.physicsWorld.defaultContactMaterial.friction = 0.1;
+
+        // Ground body - using a large flat box instead of plane
+        const groundShape = new CANNON.Box(new CANNON.Vec3(500, 1, 500)); // width, height, depth
+        this.groundBody = new CANNON.Body({
+            mass: 0,
+            shape: groundShape,
+        });
+        this.groundBody.position.y = 0; // Slightly below player spawn
+        this.physicsWorld.addBody(this.groundBody);
+    }
 }
 
 function make_city() {
@@ -161,5 +203,4 @@ function make_city() {
     return city
 }
 
-export default make_city;
-export { make_house };
+export default City;

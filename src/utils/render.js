@@ -16,6 +16,10 @@ class Renderer {
         document.body.appendChild(this.renderer.domElement);
     }
 
+    removeFromDom() {
+        document.body.removeChild(this.renderer.domElement);
+    }
+
     update() {
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
