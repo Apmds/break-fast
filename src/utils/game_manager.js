@@ -9,10 +9,11 @@ class GameManager {
         this.camera.position.set(0, 10, 50);
         this.camera.lookAt(0, 10, 0);
 
-        this.scene = new City(this.camera);
+        this.scene = new City(this.camera, this.player);
         this.scene.setAsCurrent();
 
         this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld);
+        this.scene.setPlayer(this.player);
 
         this.clock = new THREE.Timer();
 

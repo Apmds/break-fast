@@ -11,7 +11,6 @@ import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 import Citizen from '../people/citizen.js';
 import make_house from './house.js';
 import Scene from '../utils/scene.js';
-import GameManager from '../utils/game_manager.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -91,13 +90,13 @@ class City extends Scene {
     }
 
     update(delta) {
-        super.update(delta)
+        super.update(delta);
+
+        const keyLight = this.getObject("keyLight");
+        keyLight.position.copy(new THREE.Vector3().addVectors(this.player.position, this.sunpos));
         
-        //const keyLight = this.getObject("keyLight");
-        //keyLight.position.copy(new THREE.Vector3().addVectors(gameManager.player.position, this.sunpos));
-        
-        //keyLight.target.position.copy(gameManager.player.position);
-        //keyLight.target.updateMatrixWorld();
+        keyLight.target.position.copy(this.player.position);
+        keyLight.target.updateMatrixWorld();
     }
 }
 

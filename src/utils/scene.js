@@ -4,7 +4,8 @@ import Renderer from './render.js';
 import GUI from './GUI.js';
 
 class Scene {
-    constructor(camera) {
+    constructor(camera, player) {
+        this.player = player;
         this.camera = camera;
         this.renderer = new Renderer(this.camera);
 
@@ -14,6 +15,10 @@ class Scene {
         this.physicsWorld = new CANNON.World();
 
         this.gui = new GUI();
+    }
+
+    setPlayer(player) {
+        this.player = player;
     }
 
     setAsCurrent() {
