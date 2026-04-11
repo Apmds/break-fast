@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import Renderer from './render.js';
+import GUI from './GUI.js';
 
 class Scene {
     constructor(camera) {
@@ -11,6 +12,8 @@ class Scene {
         this.scene.add(camera);
 
         this.physicsWorld = new CANNON.World();
+
+        this.gui = new GUI();
     }
 
     setAsCurrent() {
@@ -50,6 +53,14 @@ class Scene {
     update(delta) {
         // Step physics world
         this.physicsWorld.step(1/60, delta, 3);
+    }
+
+    begin() {
+        this.gui.begin();
+    }
+
+    end() {
+        this.gui.end();
     }
 }
 

@@ -22,6 +22,13 @@ class GameManager {
         });
     }
 
+    frameUpdate() {
+        this.scene.begin();
+        this.update();
+        this.render();
+        this.scene.end();
+    }
+
     update() {
         const delta = this.clock.getDelta();
 
