@@ -18,8 +18,7 @@ async function make_house(x, y, z) {
         "Cover Pillars": new THREE.MeshStandardMaterial({ color: 0xdaa520, roughness: 0.6 })
     };
 
-
-    const house = await objectManager.loadObject('../assets/models/house.glb', houseMaterials);
+    const house = await objectManager.loadObject('../assets/models/Buildings/house.glb', houseMaterials);
     house.position.set(x, y, z);
     
     // Enable shadows for the house and all its children
