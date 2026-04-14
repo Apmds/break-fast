@@ -11,6 +11,13 @@ class Citizen extends WorldObject {
 
         this.model = 'citizen';
         this.model.userData.outline = false;
+
+
+    }
+
+    onInteract() {
+        // Start dialogue
+        console.log("YAY")
     }
 }
 

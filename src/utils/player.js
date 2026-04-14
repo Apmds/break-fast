@@ -1,6 +1,7 @@
 import CameraControls from './camera_controls.js';
 import * as CANNON from 'cannon-es';
 import * as THREE from 'three';
+import { inputManager } from './input_manager.js';
 
 class Player {
     constructor(camera, domElement = document.body, physicsWorld, scene = null) {
@@ -24,6 +25,8 @@ class Player {
         this.raycaster = new THREE.Raycaster();
         this.rayOrigin = new THREE.Vector2(0, 0);
         this.raycastDistance = 10;
+        this.currentHoveredObject = null;
+        this.interactionKey = 'KeyE';
     }
 
     update(delta) {
@@ -33,7 +36,14 @@ class Player {
         this.camera.position.copy(this.physicsBody.position);
         // Keep camera slightly above the body center
         this.camera.position.y += 1.2;
+        this.handleInteraction();
+    }
 
+    handleInteraction() {
+        if (inputManager.keyJustPressed(this.interactionKey) && this.currentHoveredObject) {
+            this.currentHoveredObject.onInteract();
+        }
+    
         this.updateRaycaster();
     }
 
@@ -49,17 +59,24 @@ class Player {
         let hitObject = null;
 
         for (const hit of intersections) {
-            const objRoot = this.findObjectRoot(hit.object);
-            if (objRoot) {
-                hitObject = objRoot;
+            const worldObject = this.findObjectRoot(hit.object);
+            if (worldObject) {
+                hitObject = worldObject;
+                this.currentHoveredObject = hitObject;
                 break;
             }
         }
 
+        const interactableObjects = new Set();
         this.scene.traverse((node) => {
-            if (node.userData?.interactable) {
-                node.userData.outline = node === hitObject;
+            const worldObject = node.userData?.worldObject;
+            if (worldObject?.interactable) {
+                interactableObjects.add(worldObject);
             }
+        });
+
+        interactableObjects.forEach((worldObject) => {
+            worldObject.setOutline(worldObject === hitObject);
         });
     }
 
@@ -67,8 +84,8 @@ class Player {
         let current = object;
 
         while (current) {
-            if (current.userData?.interactable) {
-                return current;
+            if (current.userData?.worldObject) {
+                return current.userData.worldObject;
             }
             current = current.parent;
         }

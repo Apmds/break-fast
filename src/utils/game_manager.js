@@ -33,10 +33,10 @@ class GameManager {
     update() {
         const delta = this.clock.getDelta();
 
-        inputManager.update();
         this.player.update(delta);
         this.scene.update(delta);
         this.clock.update();
+        inputManager.update();
     }
 
     render() {

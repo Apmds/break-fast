@@ -92,6 +92,7 @@ class WorldObject {
         this._model = objectManager.getObject(modelname);
         this.update_model_matrix();
 
+        this._model.userData.worldObject = this;
         this._model.userData.interactable = this._interactable;
         if (this._interactable) {
             this._model.userData.outline = false;
