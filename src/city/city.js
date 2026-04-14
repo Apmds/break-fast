@@ -203,7 +203,8 @@ function make_city() {
     // Add citizens
     const citizen1 = new Citizen(
         new THREE.Vector3(-20, 0, 100),
-        new THREE.Vector3(0, 0, 0)
+        new THREE.Vector3(0, 0, 0),
+        true
     );
     city.add(citizen1.model);
 

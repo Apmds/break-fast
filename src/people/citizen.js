@@ -3,15 +3,13 @@ import WorldObject from '../utils/world_object.js';
 
 
 class Citizen extends WorldObject {
-    constructor(position, rotation = new THREE.Vector3(), scale = 0.65) {
-        const normalizedScale = typeof scale === 'number'
-            ? new THREE.Vector3(scale, scale, scale)
-            : scale;
+    constructor(position, rotation = new THREE.Vector3(), interactable = false) {
+        const numberScale = 0.65;
+        const scale = new THREE.Vector3(numberScale, numberScale, numberScale);
 
-        super(position, rotation, normalizedScale, false);
+        super(position, rotation, scale, interactable);
 
         this.model = 'citizen';
-        this.model.userData.isCitizen = true;
         this.model.userData.outline = false;
     }
 }

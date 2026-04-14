@@ -34,10 +34,10 @@ class Player {
         // Keep camera slightly above the body center
         this.camera.position.y += 1.2;
 
-        this.updateCitizenOutline();
+        this.updateRaycaster();
     }
 
-    updateCitizenOutline() {
+    updateRaycaster() {
         if (!this.scene) {
             return;
         }
@@ -46,28 +46,28 @@ class Player {
         this.raycaster.far = this.raycastDistance;
 
         const intersections = this.raycaster.intersectObjects(this.scene.children, true);
-        let hitCitizen = null;
+        let hitObject = null;
 
         for (const hit of intersections) {
-            const citizenRoot = this.findCitizenRoot(hit.object);
-            if (citizenRoot) {
-                hitCitizen = citizenRoot;
+            const objRoot = this.findObjectRoot(hit.object);
+            if (objRoot) {
+                hitObject = objRoot;
                 break;
             }
         }
 
         this.scene.traverse((node) => {
-            if (node.userData?.isCitizen) {
-                node.userData.outline = node === hitCitizen;
+            if (node.userData?.interactable) {
+                node.userData.outline = node === hitObject;
             }
         });
     }
 
-    findCitizenRoot(object) {
+    findObjectRoot(object) {
         let current = object;
 
         while (current) {
-            if (current.userData?.isCitizen) {
+            if (current.userData?.interactable) {
                 return current;
             }
             current = current.parent;

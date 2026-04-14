@@ -122,6 +122,10 @@ class WorldObject {
         }
         return this._model.userData.interactable;
     }
+
+    onInteract() {
+        // Override when a subclass is interactable (to start a dialogue, for example)
+    }
 }
 
 export default WorldObject;
