@@ -12,7 +12,7 @@ class GameManager {
         this.scene = new City(this.camera, this.player);
         this.scene.setAsCurrent();
 
-        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld);
+        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene.scene);
         this.scene.setPlayer(this.player);
 
         this.clock = new THREE.Timer();
@@ -33,10 +33,10 @@ class GameManager {
     update() {
         const delta = this.clock.getDelta();
 
-        inputManager.update();
         this.player.update(delta);
         this.scene.update(delta);
         this.clock.update();
+        inputManager.update();
     }
 
     render() {
