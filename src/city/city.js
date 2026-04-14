@@ -1,36 +1,103 @@
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+
 import { make_tree, make_tree_crowns } from './trees.js';
 import { make_road, make_road_corner, make_roundabout, road_width } from './road.js';
 import { make_path_parts, make_road_paths, path_width } from './sidewalk.js';
 import { make_bridge } from './bridge.js';
+import make_skybox from './skybox.js';
 import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
-import objectManager from '../utils/object_manager.js';
+
 import Citizen from '../people/citizen.js';
+import make_house from './house.js';
+import Scene from '../utils/scene.js';
 
-async function make_house(x, y, z) {
-    const houseMaterials = {
-        "Ceiling": new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.5 }),
-        "Walls": new THREE.MeshStandardMaterial({ color: 0xebcbb0, roughness: 0.7 }),
-        "Garage Door": new THREE.MeshStandardMaterial({ color: 0x8b7355, roughness: 0.8, metalness: 0.3 }),
-        "Window": new THREE.MeshStandardMaterial({ color: 0x87ceeb, roughness: 0.1, metalness: 0.5 }),
-        "Door": new THREE.MeshStandardMaterial({ color: 0x654321, roughness: 0.6 }),
-        "Window Ceiling": new THREE.MeshStandardMaterial({ color: 0x87ceeb, roughness: 0.1, metalness: 0.5 }),
-        "Cover": new THREE.MeshStandardMaterial({ color: 0xa0522d, roughness: 0.8 }),
-        "Cover Pillars": new THREE.MeshStandardMaterial({ color: 0xdaa520, roughness: 0.6 })
-    };
+class City extends Scene {
+    constructor(camera) {
+        super(camera);
 
-    const house = await objectManager.loadObject('../assets/models/Buildings/house.glb', houseMaterials);
-    house.position.set(x, y, z);
+        this.scene.add(make_city());
+        this.scene.add(make_skybox());
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+        ambientLight.name = "ambientLight";
+        this.add(ambientLight);
     
-    // Enable shadows for the house and all its children
-    house.traverse((node) => {
-        if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-        }
-    });
+        const hemisphereLight = new THREE.HemisphereLight(0xd8ecff, 0x9bb07a, 0.55);
+        hemisphereLight.name = "hemisphereLight";
+        this.add(hemisphereLight);
+
+        // Position of the sun (keylight)
+        this.sunpos = new THREE.Vector3(150, 300, 150);
     
-    return house;
+        const keyLight = new THREE.DirectionalLight(0xfff3dc, 2.2);
+        keyLight.position.copy(this.sunpos);
+        keyLight.lookAt(this.scene.position)
+        keyLight.castShadow = true;
+        keyLight.shadow.mapSize.set(2048, 2048);
+    
+        keyLight.shadow.camera.near = 10;
+        keyLight.shadow.camera.far = 1000;
+        keyLight.shadow.camera.left = -200;
+        keyLight.shadow.camera.right = 200;
+        keyLight.shadow.camera.top = 200;
+        keyLight.shadow.camera.bottom = -200;
+    
+        // Adjust biases
+        keyLight.shadow.bias = -0.001;
+        keyLight.shadow.normalBias = 0.07;
+    
+        keyLight.name = "keyLight";
+        this.add(keyLight);
+    
+        const fillLight = new THREE.DirectionalLight(0xbfd9ff, 0.55);
+        fillLight.position.set(-180, 120, -220);
+        fillLight.name = "fillLight";
+        this.add(fillLight);
+    
+        const rimLight = new THREE.DirectionalLight(0xffe8c9, 0.35);
+        rimLight.position.set(80, 80, 350);
+        rimLight.name = "rimLight";
+        this.add(rimLight);
+
+        // Physics world
+        this.physicsWorld = new CANNON.World();
+        this.physicsWorld.gravity.set(0, -9.82*5, 0);
+        this.physicsWorld.defaultContactMaterial.friction = 0.1;
+
+        // Ground body - using a large flat box instead of plane
+        const groundShape = new CANNON.Box(new CANNON.Vec3(500, 1, 500)); // width, height, depth
+        this.groundBody = new CANNON.Body({
+            mass: 0,
+            shape: groundShape,
+        });
+        this.groundBody.position.y = 0; // Slightly below player spawn
+        this.physicsWorld.addBody(this.groundBody);
+
+        // GUI
+        this.gui.makeFolder('Camera Position');
+        this.gui.add('Camera Position', 'X', camera.position, 'x').listen();
+        this.gui.add('Camera Position', 'Y', camera.position, 'y').listen();
+        this.gui.add('Camera Position', 'Z', camera.position, 'z').listen();
+
+        this.gui.makeFolder('Lighting');
+        
+        this.gui.add('Lighting', 'key intensity', keyLight, 'intensity', 0, 5, 0.01);
+        this.gui.add('Lighting', 'fill intensity', fillLight, 'intensity', 0, 2, 0.01);
+        this.gui.add('Lighting', 'rim intensity', rimLight, 'intensity', 0, 2, 0.01);
+        this.gui.add('Lighting', 'hemi intensity', hemisphereLight, 'intensity', 0, 2, 0.01);
+    }
+
+    update(delta) {
+        super.update(delta);
+
+        const keyLight = this.getObject("keyLight");
+        keyLight.position.copy(new THREE.Vector3().addVectors(this.player.position, this.sunpos));
+        
+        keyLight.target.position.copy(this.player.position);
+        keyLight.target.updateMatrixWorld();
+    }
 }
 
 function make_city() {
@@ -129,26 +196,22 @@ function make_city() {
     city.add(make_tree_crowns(90, 0, 170, 1));
 
     // Add multiple houses
-    (async () => {
-        city.add(await make_house(50, 0, 150));
-        city.add(await make_house(100, 0, 100));
-        city.add(await make_house(150, 0, 200));
-    })();
+    city.add(make_house(50, 0, 150));
+    city.add(make_house(100, 0, 100));
+    city.add(make_house(150, 0, 200));
 
     // Add citizens
-    (async () => {
-        const citizen1 = new Citizen(-20, 0, 100, 0, 0, 0);
-        city.add(await citizen1.load());
+    const citizen1 = new Citizen(-20, 0, 100, 0, 0, 0);
+    city.add(citizen1.model);
 
-        const citizen2 = new Citizen(30, 0, 80, 0, Math.PI / 2, 0);
-        city.add(await citizen2.load());
+    const citizen2 = new Citizen(30, 0, 80, 0, Math.PI / 2, 0);
+    city.add(citizen2.model);
 
-        const citizen3 = new Citizen(94, 0, 95, 0, 0, 0);
-        city.add(await citizen3.load());
+    const citizen3 = new Citizen(94, 0, 95, 0, 0, 0);
+    city.add(citizen3.model);
 
-        const citizen4 = new Citizen(10, 0, 60, 0, Math.PI, 0);
-        city.add(await citizen4.load());
-    })();
+    const citizen4 = new Citizen(10, 0, 60, 0, Math.PI, 0);
+    city.add(citizen4.model);
 
     // Ensure every city mesh participates in shadow rendering.
     city.traverse((node) => {
@@ -161,5 +224,4 @@ function make_city() {
     return city
 }
 
-export default make_city;
-export { make_house };
+export default City;

@@ -1,85 +1,29 @@
-import * as THREE from 'three';
-import GUI from 'lil-gui';
-import CameraControls from './utils/camera_controls.js';
-import Stats from 'three/addons/libs/stats.module.js';
+import GameManager from './utils/game_manager.js';
+import objectManager from './utils/object_manager.js';
+import objects from './utils/object_paths.js';
 
-import make_skybox from './city/skybox.js';
-import make_city from './city/city.js';
-import { gameManager } from './utils/game_manager.js';
+async function preload_objects() {
+    const loadPromises = objects.map(async (obj) => {
+        switch (obj.type) {
+            case "gltf":
+                return await objectManager.loadGLTF(obj.path, obj.id, obj.material_map);
+                
+            case "texture":
+                return await objectManager.loadTexture(obj.path, obj.id);
+        }
+    });
 
-const stats = new Stats();
+    await Promise.all(loadPromises);
+}
 
-function init() {
-    const scene = gameManager.scene;
+async function init() {
+    await preload_objects();
 
-    // Add stats monitor
-    stats.showPanel(0); // 0: fps, 1: ms, 2: mb
-    document.body.appendChild(stats.dom);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
-    scene.add(ambientLight);
-
-    const hemisphereLight = new THREE.HemisphereLight(0xd8ecff, 0x9bb07a, 0.55);
-    scene.add(hemisphereLight);
-
-    const keyLight = new THREE.DirectionalLight(0xfff3dc, 2.2);
-    const sunpos = new THREE.Vector3(150, 300, 150);
-    keyLight.position.copy(sunpos);
-    keyLight.lookAt(scene.position)
-    keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(2048, 2048);
-
-    keyLight.shadow.camera.near = 10;
-    keyLight.shadow.camera.far = 1000;
-    keyLight.shadow.camera.left = -200;
-    keyLight.shadow.camera.right = 200;
-    keyLight.shadow.camera.top = 200;
-    keyLight.shadow.camera.bottom = -200;
-
-    // Adjust biases
-    keyLight.shadow.bias = -0.001;
-    keyLight.shadow.normalBias = 0.07;
-
-    scene.add(keyLight);
-
-    const fillLight = new THREE.DirectionalLight(0xbfd9ff, 0.55);
-    fillLight.position.set(-180, 120, -220);
-    scene.add(fillLight);
-
-    const rimLight = new THREE.DirectionalLight(0xffe8c9, 0.35);
-    rimLight.position.set(80, 80, 350);
-    scene.add(rimLight);
-
-    // GUI
-    const gui = new GUI({ title: 'Camera Position' });
-    gui.add(gameManager.camera.position, 'x').name('x').listen();
-    gui.add(gameManager.camera.position, 'y').name('y').listen();
-    gui.add(gameManager.camera.position, 'z').name('z').listen();
-    const lightFolder = gui.addFolder('Lighting');
-    lightFolder.add(keyLight, 'intensity', 0, 5, 0.01).name('key intensity');
-    lightFolder.add(fillLight, 'intensity', 0, 2, 0.01).name('fill intensity');
-    lightFolder.add(rimLight, 'intensity', 0, 2, 0.01).name('rim intensity');
-    lightFolder.add(hemisphereLight, 'intensity', 0, 2, 0.01).name('hemi intensity');
-
-    const city = make_city();
-    scene.add(city);
-    scene.add(make_skybox());
-
+    const gameManager = new GameManager();
     function animate() {
         requestAnimationFrame(animate);
-        stats.begin();
-        gameManager.update();
 
-        const thing = new THREE.Vector3();
-        thing.addVectors(gameManager.player.position, sunpos)
-        
-        keyLight.position.copy(thing);
-        
-        keyLight.target.position.copy(gameManager.player.position);
-        keyLight.target.updateMatrixWorld();
-        
-        gameManager.render();
-        stats.end();
+        gameManager.frameUpdate();
     }
     animate();
 }

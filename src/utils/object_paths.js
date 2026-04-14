@@ -1,0 +1,64 @@
+import * as THREE from 'three';
+
+const objects = [
+    {
+        "id": "house",
+        "path": "../assets/models/Buildings/house.glb",
+        "type": "gltf",
+        "material_map": {
+            "Ceiling": new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.5 }),
+            "Walls": new THREE.MeshStandardMaterial({ color: 0xebcbb0, roughness: 0.7 }),
+            "Garage Door": new THREE.MeshStandardMaterial({ color: 0x8b7355, roughness: 0.8, metalness: 0.3 }),
+            "Window": new THREE.MeshStandardMaterial({ color: 0x87ceeb, roughness: 0.1, metalness: 0.5 }),
+            "Door": new THREE.MeshStandardMaterial({ color: 0x654321, roughness: 0.6 }),
+            "Window Ceiling": new THREE.MeshStandardMaterial({ color: 0x87ceeb, roughness: 0.1, metalness: 0.5 }),
+            "Cover": new THREE.MeshStandardMaterial({ color: 0xa0522d, roughness: 0.8 }),
+            "Cover Pillars": new THREE.MeshStandardMaterial({ color: 0xdaa520, roughness: 0.6 })
+        },
+    },
+
+    {
+        "id": "citizen",
+        "path": "../assets/models/People/citizen.glb",
+        "type": "gltf",
+        "material_map": {
+            "Citizen": new THREE.MeshToonMaterial({color: 0xf4cb73}),
+        },
+    },
+
+    // Skybox textures
+    {
+        "id": "skybox_px",
+        "path": "../assets/skybox/px.png",
+        "type": "texture",
+    },
+    {
+        "id": "skybox_nx",
+        "path": "../assets/skybox/nx.png",
+        "type": "texture",
+    },
+
+    {
+        "id": "skybox_py",
+        "path": "../assets/skybox/py.png",
+        "type": "texture",
+    },
+    {
+        "id": "skybox_ny",
+        "path": "../assets/skybox/ny.png",
+        "type": "texture",
+    },
+
+    {
+        "id": "skybox_pz",
+        "path": "../assets/skybox/pz.png",
+        "type": "texture",
+    },
+    {
+        "id": "skybox_nz",
+        "path": "../assets/skybox/nz.png",
+        "type": "texture",
+    },
+];
+
+export default objects;
