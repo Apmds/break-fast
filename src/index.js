@@ -10,6 +10,9 @@ async function preload_objects() {
                 
             case "texture":
                 return await objectManager.loadTexture(obj.path, obj.id);
+
+            case "mp3":
+                return await objectManager.loadMP3(obj.path, obj.id);
         }
     });
 

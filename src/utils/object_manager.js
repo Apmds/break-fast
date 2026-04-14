@@ -5,6 +5,7 @@ class ObjectManager {
     constructor() {
         this.gltfloader = new GLTFLoader();
         this.textureLoader = new THREE.TextureLoader();
+        this.audioLoader = new THREE.AudioLoader();
         this.cache = {};
     }
 
@@ -63,9 +64,30 @@ class ObjectManager {
         return clone;
     }
 
-    getObject(id) {
+    async loadMP3(path, id) {
+        // If not in cache, load it
+        const needs_loading = !this.cache[id];
+
+        if (needs_loading) {
+            try {
+                const audioBuffer = await this.audioLoader.loadAsync(path);
+                this.cache[id] = audioBuffer;
+            } catch (error) {
+                console.error(`Failed to load MP3 audio ${id} at ${path}:`, error);
+                throw error;
+            }
+        }
+
+        return this.cache[id];
+    }
+
+    getObject(id, clone=true) {
         if (this.cache[id]) {
-            return this.cache[id].clone();
+            let returnval = this.cache[id];
+            if (clone) {
+                returnval = returnval.clone();
+            }
+            return returnval;
         }
         return null;
     }
