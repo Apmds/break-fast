@@ -40,7 +40,7 @@ class Player {
     }
 
     handleInteraction() {
-        if (inputManager.keyJustPressed(this.interactionKey) && this.currentHoveredObject) {
+        if (inputManager.keyJustPressed(this.interactionKey) && this.currentHoveredObject && this.currentHoveredObject.interactable) {
             this.currentHoveredObject.onInteract();
         }
     

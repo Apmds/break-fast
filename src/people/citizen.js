@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import WorldObject from '../utils/world_object.js';
+import Conversation from '../utils/conversation.js';
 
 
 class Citizen extends WorldObject {
@@ -12,12 +13,15 @@ class Citizen extends WorldObject {
         this.model = 'citizen';
         this.model.userData.outline = false;
 
-
+        this.dialogue = new Conversation("hello", "guy").next(new Conversation("hi", "me")).next(new Conversation("this is the end", "me", () => {
+            this.interactable = false;
+        }))
     }
 
     onInteract() {
         // Start dialogue
-        console.log("YAY")
+        console.log(`${this.dialogue.talker}: ${this.dialogue.text}`)
+        this.dialogue = this.dialogue.nextval;
     }
 }
 

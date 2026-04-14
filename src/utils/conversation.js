@@ -12,7 +12,7 @@ class Conversation {
         return this._next;
     }
 
-    get next() {
+    get nextval() {
         if (this._next === null && this.onEnd !== null) {
             this.onEnd();
         }
