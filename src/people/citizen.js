@@ -3,7 +3,7 @@ import objectManager from "../utils/object_manager.js";
 
 
 class Citizen {
-    constructor(x, y, z, rx = 0, ry = 0, rz = 0, outline = true) {
+    constructor(x, y, z, rx = 0, ry = 0, rz = 0) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -11,13 +11,13 @@ class Citizen {
         this.ry = ry;
         this.rz = rz;
         this.scale = 0.65;
-        this.outline = outline;
 
         this.model = objectManager.getObject("citizen");
         this.model.position.set(this.x, this.y, this.z);
         this.model.rotation.set(this.rx, this.ry, this.rz);
         this.model.scale.set(this.scale, this.scale, this.scale);
-        this.model.userData.outline = this.outline;
+        this.model.userData.isCitizen = true;
+        this.model.userData.outline = false;
     
         // Enable shadows for the citizen and all its children
         this.model.traverse((node) => {
@@ -29,7 +29,6 @@ class Citizen {
     }
 
     setOutline(enabled) {
-        this.outline = enabled;
         this.model.userData.outline = enabled;
     }
 }

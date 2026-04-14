@@ -1,11 +1,13 @@
 import CameraControls from './camera_controls.js';
 import * as CANNON from 'cannon-es';
+import * as THREE from 'three';
 
 class Player {
-    constructor(camera, domElement = document.body, physicsWorld) {
+    constructor(camera, domElement = document.body, physicsWorld, scene = null) {
         this.camera = camera;
         this.cameraControls = new CameraControls(camera, domElement);
         this.physicsWorld = physicsWorld;
+        this.scene = scene;
 
         // Create physics body for player
         const physicsShape = new CANNON.Sphere(1.2);
@@ -19,6 +21,9 @@ class Player {
         this.physicsWorld.addBody(this.physicsBody);
 
         this.moveVelocity = new CANNON.Vec3(0, 0, 0);
+        this.raycaster = new THREE.Raycaster();
+        this.rayOrigin = new THREE.Vector2(0, 0);
+        this.raycastDistance = 10;
     }
 
     update(delta) {
@@ -28,6 +33,47 @@ class Player {
         this.camera.position.copy(this.physicsBody.position);
         // Keep camera slightly above the body center
         this.camera.position.y += 1.2;
+
+        this.updateCitizenOutline();
+    }
+
+    updateCitizenOutline() {
+        if (!this.scene) {
+            return;
+        }
+
+        this.raycaster.setFromCamera(this.rayOrigin, this.camera);
+        this.raycaster.far = this.raycastDistance;
+
+        const intersections = this.raycaster.intersectObjects(this.scene.children, true);
+        let hitCitizen = null;
+
+        for (const hit of intersections) {
+            const citizenRoot = this.findCitizenRoot(hit.object);
+            if (citizenRoot) {
+                hitCitizen = citizenRoot;
+                break;
+            }
+        }
+
+        this.scene.traverse((node) => {
+            if (node.userData?.isCitizen) {
+                node.userData.outline = node === hitCitizen;
+            }
+        });
+    }
+
+    findCitizenRoot(object) {
+        let current = object;
+
+        while (current) {
+            if (current.userData?.isCitizen) {
+                return current;
+            }
+            current = current.parent;
+        }
+
+        return null;
     }
 
     lock() {
