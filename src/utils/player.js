@@ -76,7 +76,7 @@ class Player {
         });
 
         interactableObjects.forEach((worldObject) => {
-            worldObject.setOutline(worldObject === hitObject);
+            worldObject.outline = worldObject === hitObject;
         });
     }
 

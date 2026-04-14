@@ -13,9 +13,13 @@ class Citizen extends WorldObject {
         this.model = 'citizen';
         this.model.userData.outline = false;
 
-        this.dialogue = new Conversation("hello", "guy").next(new Conversation("hi", "me")).next(new Conversation("this is the end", "me", () => {
-            this.interactable = false;
-        }))
+        this.dialogue = 
+            new Conversation("hello", "guy").next(
+            new Conversation("hi", "me").next(
+            new Conversation("this is the end", "me", () => {
+                this.interactable = false;
+            }
+        )))
     }
 
     onInteract() {

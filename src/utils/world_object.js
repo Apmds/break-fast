@@ -86,6 +86,10 @@ class WorldObject {
         if (typeof this._model !== "undefined") {
             this._model.userData.interactable = val;
         }
+
+        if (!this._interactable) {
+            this.outline = false;
+        }
     }
 
     set model(modelname) {
@@ -111,7 +115,7 @@ class WorldObject {
         return this._model;
     }
 
-    setOutline(enabled) {
+    set outline(enabled) {
         if (typeof this._model !== "undefined") {
             this._model.userData.outline = enabled;
         }

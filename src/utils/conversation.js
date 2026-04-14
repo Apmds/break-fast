@@ -9,7 +9,7 @@ class Conversation {
 
     next(dialog) {
         this._next = dialog;
-        return this._next;
+        return this;
     }
 
     get nextval() {
