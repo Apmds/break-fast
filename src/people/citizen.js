@@ -1,35 +1,18 @@
 import * as THREE from 'three';
-import objectManager from "../utils/object_manager.js";
+import WorldObject from '../utils/world_object.js';
 
 
-class Citizen {
-    constructor(x, y, z, rx = 0, ry = 0, rz = 0) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.rx = rx;
-        this.ry = ry;
-        this.rz = rz;
-        this.scale = 0.65;
+class Citizen extends WorldObject {
+    constructor(position, rotation = new THREE.Vector3(), scale = 0.65) {
+        const normalizedScale = typeof scale === 'number'
+            ? new THREE.Vector3(scale, scale, scale)
+            : scale;
 
-        this.model = objectManager.getObject("citizen");
-        this.model.position.set(this.x, this.y, this.z);
-        this.model.rotation.set(this.rx, this.ry, this.rz);
-        this.model.scale.set(this.scale, this.scale, this.scale);
+        super(position, rotation, normalizedScale, false);
+
+        this.model = 'citizen';
         this.model.userData.isCitizen = true;
         this.model.userData.outline = false;
-    
-        // Enable shadows for the citizen and all its children
-        this.model.traverse((node) => {
-            if (node.isMesh) {
-                node.castShadow = true;
-                node.receiveShadow = true;
-            }
-        });
-    }
-
-    setOutline(enabled) {
-        this.model.userData.outline = enabled;
     }
 }
 

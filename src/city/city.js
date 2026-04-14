@@ -201,16 +201,28 @@ function make_city() {
     city.add(make_house(150, 0, 200));
 
     // Add citizens
-    const citizen1 = new Citizen(-20, 0, 100, 0, 0, 0);
+    const citizen1 = new Citizen(
+        new THREE.Vector3(-20, 0, 100),
+        new THREE.Vector3(0, 0, 0)
+    );
     city.add(citizen1.model);
 
-    const citizen2 = new Citizen(30, 0, 80, 0, Math.PI / 2, 0);
+    const citizen2 = new Citizen(
+        new THREE.Vector3(30, 0, 80),
+        new THREE.Vector3(0, Math.PI / 2, 0)
+    );
     city.add(citizen2.model);
 
-    const citizen3 = new Citizen(94, 0, 95, 0, 0, 0);
+    const citizen3 = new Citizen(
+        new THREE.Vector3(94, 0, 95),
+        new THREE.Vector3(0, 0, 0)
+    );
     city.add(citizen3.model);
 
-    const citizen4 = new Citizen(10, 0, 60, 0, Math.PI, 0);
+    const citizen4 = new Citizen(
+        new THREE.Vector3(10, 0, 60),
+        new THREE.Vector3(0, Math.PI, 0)
+    );
     city.add(citizen4.model);
 
     // Ensure every city mesh participates in shadow rendering.
