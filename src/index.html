@@ -5,11 +5,21 @@
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title>ICG project</title>
 
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+
     <style>
+		@keyframes pulse {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.5; }
+		}
+
 		body {
 			background-color: #ffffff;
 			margin: 0px;
 			overflow: hidden;
+			font-family: "Winky Sans";
 		}
 
 		.crossair {
@@ -18,14 +28,65 @@
 			border-radius: 50%;
 			background-color: #ffffff;
 			position: absolute;
-			top: 50%;
 			left: 50%;
+			top: 50%;
 			transform: translate(-50%, -50%);
+		}
+
+		.dialog-box {
+			width: 50%;
+			height: 25%;
+			
+			box-sizing: border-box;
+			position: absolute;
+			left: 25%;
+			top: 62%;
+
+			background-color: #FDFCDC;
+			border: 3px solid #FED9B7;
+			border-radius: 12px;
+			box-shadow: 
+				0 0 5px rgba(212, 175, 55, 0.4),
+				inset 0 0 5px rgba(0, 0, 0, 0.5),
+				0 8px 16px rgba(0, 0, 0, 0.4);
+
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.dialog-speaker {
+			background-color: rgba(212, 175, 55, 0.15);
+			border-bottom: 2px solid #FED9B7;
+			padding: 8px 15px;
+			color: #555555;
+			font-size: 25px;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+		.dialog-content {
+			flex: 1;
+			padding: 15px 20px;
+			color: #555555;
+			font-size: 18px;
+			line-height: 1.4;
+			overflow-y: auto;
+			display: flex;
+		}
+
+		.invisible {
+			display: none;
 		}
 	</style>
 </head>
 <body>
 	<div class="crossair"></div>
+
+	<div id="dialog-box" class="dialog-box invisible">
+		<div class="dialog-speaker" id="dialog-speaker"></div>
+		<div class="dialog-content" id="dialog-content"></div>
+	</div>
 
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
 	<script type="importmap">

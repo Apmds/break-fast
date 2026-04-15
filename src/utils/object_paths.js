@@ -59,6 +59,28 @@ const objects = [
         "path": "../assets/skybox/nz.png",
         "type": "texture",
     },
+
+    // Citizen grunt
+    {
+        "id": "grunt1",
+        "path": "../assets/sounds/grunt1.mp3",
+        "type": "mp3",
+    },
+    {
+        "id": "grunt2",
+        "path": "../assets/sounds/grunt2.mp3",
+        "type": "mp3",
+    },
+    {
+        "id": "grunt3",
+        "path": "../assets/sounds/grunt3.mp3",
+        "type": "mp3",
+    },
+    {
+        "id": "grunt4",
+        "path": "../assets/sounds/grunt4.mp3",
+        "type": "mp3",
+    },
 ];
 
 export default objects;

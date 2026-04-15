@@ -1,21 +1,29 @@
 class Conversation {
-    constructor(text, talker, onEnd = null) {
-        this.talker = talker;
+    constructor(text, speaker, onEnd = null) {
+        this.speaker = speaker;
         this.text = text;
 
         this.onEnd = onEnd;
         this._next = null;
+        this.ended = false;
     }
 
     next(dialog) {
         this._next = dialog;
-        return this._next;
+        return this;
     }
 
-    get next() {
+    get nextval() {
         if (this._next === null && this.onEnd !== null) {
-            this.onEnd();
+            if (!this.ended) {
+                this.ended = true;
+                return this;
+            }
+
+            this.ended = false;
+            return this.onEnd();
         }
+
         return this._next;
     }
 }

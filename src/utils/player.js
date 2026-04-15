@@ -40,8 +40,8 @@ class Player {
     }
 
     handleInteraction() {
-        if (inputManager.keyJustPressed(this.interactionKey) && this.currentHoveredObject) {
-            this.currentHoveredObject.onInteract();
+        if (inputManager.keyJustPressed(this.interactionKey) && this.currentHoveredObject && this.currentHoveredObject.interactable) {
+            this.currentHoveredObject.onInteract(this);
         }
     
         this.updateRaycaster();
@@ -58,6 +58,7 @@ class Player {
         const intersections = this.raycaster.intersectObjects(this.scene.children, true);
         let hitObject = null;
 
+        this.currentHoveredObject = null;
         for (const hit of intersections) {
             const worldObject = this.findObjectRoot(hit.object);
             if (worldObject) {
@@ -76,7 +77,7 @@ class Player {
         });
 
         interactableObjects.forEach((worldObject) => {
-            worldObject.setOutline(worldObject === hitObject);
+            worldObject.outline = worldObject === hitObject;
         });
     }
 
@@ -115,6 +116,10 @@ class Player {
 
     set speed(value) {
         this.cameraControls.speed = value;
+    }
+
+    set canMove(value) {
+        this.cameraControls.canMove = value;
     }
 
     get speed() {
