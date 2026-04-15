@@ -106,32 +106,57 @@ function make_city() {
 
     // Base ground
     const base_ground = new THREE.Mesh(
-        new THREE.BoxGeometry(600, 100, 900),
+        new THREE.BoxGeometry(420, 100, 800),
         new THREE.MeshToonMaterial({color: 0xAAAAAA, fog: false}),
     );
-    base_ground.position.x = 100;
-    base_ground.position.z = -300;
+    base_ground.position.x = 60;
+    base_ground.position.z = -350;
     base_ground.position.y = -50.01;
     city.add(base_ground);
 
-    // Base ground
+    // Base ground on the other side of the bridge
     const base_ground_other_side = new THREE.Mesh(
         new THREE.BoxGeometry(600, 100, 900),
         new THREE.MeshToonMaterial({color: 0xAAAAAA})
     );
     base_ground_other_side.position.x = -1300;
     base_ground_other_side.position.z = -300;
-    base_ground_other_side.position.y = -50.01;
+    base_ground_other_side.position.y = -50.1;
     city.add(base_ground_other_side);
 
-    const base_grass = new THREE.Mesh(
-        new THREE.BoxGeometry(1000, 100, 1500),
-        new THREE.MeshToonMaterial({color: 0x8f994e, fog: false})
-    );
-    base_grass.position.x = 400;
-    base_grass.position.z = -300;
-    base_grass.position.y = -50.2;
-    city.add(base_grass);
+    // Base grass
+    {
+        const base_grass = new THREE.Mesh(
+            new THREE.BoxGeometry(1000, 100, 1500),
+            new THREE.MeshToonMaterial({color: 0x8f994e, fog: false})
+        );
+        base_grass.position.x = 400;
+        base_grass.position.z = -300;
+        base_grass.position.y = -50.2;
+        city.add(base_grass);
+    }
+
+    {
+        const base_grass = new THREE.Mesh(
+            new THREE.BoxGeometry(85, 100, 170),
+            new THREE.MeshToonMaterial({color: 0x8f994e, fog: false})
+        );
+        base_grass.position.x = -106;
+        base_grass.position.z = -190;
+        base_grass.position.y = -49.9;
+        city.add(base_grass);
+    }
+
+    {
+        const base_grass = new THREE.Mesh(
+            new THREE.BoxGeometry(85, 100, 300),
+            new THREE.MeshToonMaterial({color: 0x8f994e, fog: false})
+        );
+        base_grass.position.x = -106;
+        base_grass.position.z = -500;
+        base_grass.position.y = -49.9;
+        city.add(base_grass);
+    }
 
     let road_start;
 
