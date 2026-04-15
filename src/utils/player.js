@@ -41,7 +41,7 @@ class Player {
 
     handleInteraction() {
         if (inputManager.keyJustPressed(this.interactionKey) && this.currentHoveredObject && this.currentHoveredObject.interactable) {
-            this.currentHoveredObject.onInteract();
+            this.currentHoveredObject.onInteract(this);
         }
     
         this.updateRaycaster();
@@ -115,6 +115,10 @@ class Player {
 
     set speed(value) {
         this.cameraControls.speed = value;
+    }
+
+    set canMove(value) {
+        this.cameraControls.canMove = value;
     }
 
     get speed() {

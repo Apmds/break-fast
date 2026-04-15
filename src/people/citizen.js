@@ -13,17 +13,27 @@ class Citizen extends WorldObject {
 
         this.model = 'citizen';
         this.model.userData.outline = false;
+        
+        this.player = null;
+        this.inConversation = false;
+        this.cameraUpdateInterval = null;
 
         this.dialogue = 
             new Conversation("hello", "guy").next(
             new Conversation("hi", "me").next(
             new Conversation("this is the end", "me", () => {
                 this.interactable = false;
+                this.endConversation();
             }
         )))
     }
 
-    onInteract() {
+    onInteract(object) {
+        // Assuming the object is a Player
+        
+        // Lock camera and focus on citizen
+        this.startConversation(object);
+
         // Start dialogue
         console.log(`${this.dialogue.talker}: ${this.dialogue.text}`)
         
@@ -32,6 +42,18 @@ class Citizen extends WorldObject {
         this.play_sound(times);
         
         this.dialogue = this.dialogue.nextval;
+    }
+    
+    startConversation(player) {
+        this.player = player;
+        this.inConversation = true;
+        this.player.canMove = false;
+    }
+    
+    endConversation() {
+        this.inConversation = false;
+        this.player.canMove = true;
+        this.player = null
     }
 
     play_sound(times) {

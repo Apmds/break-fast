@@ -11,6 +11,7 @@ class CameraControls {
         this.sensitivity = 0.002;
         this.speed = 30;
         this.isLocked = false;
+        this.canMove = true;
 
         this.forward = new THREE.Vector3();
         this.right = new THREE.Vector3();
@@ -35,7 +36,7 @@ class CameraControls {
     }
 
     onMouseMove(event) {
-        if (!this.isLocked) return;
+        if (!this.isLocked || !this.canMove) return;
 
         this.yaw -= event.movementX * this.sensitivity;
         this.pitch -= event.movementY * this.sensitivity;
@@ -48,7 +49,7 @@ class CameraControls {
         this.euler.set(this.pitch, this.yaw, 0);
         this.camera.quaternion.setFromEuler(this.euler);
 
-        if (!this.isLocked) return;
+        if (!this.isLocked || !this.canMove) return;
 
         this.forward.set(0, 0, -1).applyQuaternion(this.camera.quaternion).normalize();
         this.right.set(1, 0, 0).applyQuaternion(this.camera.quaternion).normalize();
