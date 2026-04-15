@@ -29,6 +29,10 @@ class Citizen extends WorldObject {
     }
 
     onInteract(object) {
+        if (this.dialogue === null) {
+            return;
+        }
+
         // Assuming the object is a Player
         
         // Lock camera and focus on citizen
@@ -39,9 +43,10 @@ class Citizen extends WorldObject {
         console.log(`${this.dialogue.talker}: ${this.dialogue.text}`)
         
         // Play grunts - times equals half the dialogue text length
-        const times = Math.floor(this.dialogue.text.length / 2);
-        this.play_sound(times);
-        
+        if (!this.dialogue.ended) {
+            const times = Math.floor(this.dialogue.text.length / 2);
+            this.play_sound(times);
+        }
         this.dialogue = this.dialogue.nextval;
     }
     
