@@ -10,6 +10,11 @@
 	<link href="https://fonts.googleapis.com/css2?family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 
     <style>
+		@keyframes pulse {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.5; }
+		}
+
 		body {
 			background-color: #ffffff;
 			margin: 0px;
@@ -29,25 +34,45 @@
 		}
 
 		.dialog-box {
-			width: 40%;
-			height: 20%;
+			width: 50%;
+			height: 25%;
 			
-			padding: 25px;
 			box-sizing: border-box;
-
-			border-radius: 25px;
-			background-color: #ffffff;
-
 			position: absolute;
-			left:30%;
-			top: 65%;
+			left: 25%;
+			top: 62%;
 
-			font-size: 25px;
-
+			background-color: #FDFCDC;
+			border: 3px solid #FED9B7;
+			border-radius: 12px;
 			box-shadow: 
-				inset 0 0 25px 0px rgba(85, 85, 85, 0.5),
-				0 0 15px 0px rgba(85, 85, 85, 0.3),
-				0 0 30px 2px rgba(85, 85, 85, 0.1);
+				0 0 5px rgba(212, 175, 55, 0.4),
+				inset 0 0 5px rgba(0, 0, 0, 0.5),
+				0 8px 16px rgba(0, 0, 0, 0.4);
+
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.dialog-speaker {
+			background-color: rgba(212, 175, 55, 0.15);
+			border-bottom: 2px solid #FED9B7;
+			padding: 8px 15px;
+			color: #555555;
+			font-size: 25px;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+
+		.dialog-content {
+			flex: 1;
+			padding: 15px 20px;
+			color: #555555;
+			font-size: 18px;
+			line-height: 1.4;
+			overflow-y: auto;
+			display: flex;
 		}
 
 		.invisible {
@@ -58,7 +83,10 @@
 <body>
 	<div class="crossair"></div>
 
-	<div id="dialog-box" class="dialog-box invisible"></div>
+	<div id="dialog-box" class="dialog-box invisible">
+		<div class="dialog-speaker" id="dialog-speaker"></div>
+		<div class="dialog-content" id="dialog-content"></div>
+	</div>
 
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
 	<script type="importmap">
