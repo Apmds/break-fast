@@ -18,6 +18,7 @@ class City extends Scene {
 
         this.scene.add(make_city());
         this.scene.add(make_skybox());
+        this.scene.fog = new THREE.Fog(0xAAAAAA, 300, 600);
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
@@ -106,16 +107,26 @@ function make_city() {
     // Base ground
     const base_ground = new THREE.Mesh(
         new THREE.BoxGeometry(600, 100, 900),
-        new THREE.MeshToonMaterial({color: 0xAAAAAA})
+        new THREE.MeshToonMaterial({color: 0xAAAAAA, fog: false}),
     );
     base_ground.position.x = 100;
     base_ground.position.z = -300;
     base_ground.position.y = -50.01;
     city.add(base_ground);
 
+    // Base ground
+    const base_ground_other_side = new THREE.Mesh(
+        new THREE.BoxGeometry(600, 100, 900),
+        new THREE.MeshToonMaterial({color: 0xAAAAAA})
+    );
+    base_ground_other_side.position.x = -1300;
+    base_ground_other_side.position.z = -300;
+    base_ground_other_side.position.y = -50.01;
+    city.add(base_ground_other_side);
+
     const base_grass = new THREE.Mesh(
         new THREE.BoxGeometry(1000, 100, 1500),
-        new THREE.MeshToonMaterial({color: 0x8f994e})
+        new THREE.MeshToonMaterial({color: 0x8f994e, fog: false})
     );
     base_grass.position.x = 400;
     base_grass.position.z = -300;

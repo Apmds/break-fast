@@ -5,7 +5,7 @@ export function make_tree(x, y, z, scale) {
 
     const logHeight = 20;
     const logGeo = new THREE.CylinderGeometry(0.5, 0.8, logHeight, 8);
-    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a });
+    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a , fog: false });
     const log = new THREE.Mesh(logGeo, logMat);
     log.position.set(0, logHeight / 2, 0);
     tree.add(log);
@@ -35,6 +35,7 @@ export function make_tree(x, y, z, scale) {
         const innerMat = new THREE.MeshToonMaterial({
             color: darkGreen,
             side: THREE.DoubleSide,
+            fog: false
         });
         const innerLeaves = new THREE.Mesh(innerGeo, innerMat);
         innerLeaves.position.set(0, currLeaves.y, 0);
@@ -51,6 +52,7 @@ export function make_tree(x, y, z, scale) {
         const outerMat = new THREE.MeshToonMaterial({
             color: brightGreen,
             side: THREE.DoubleSide,
+            fog: false
         });
         const outerLeaves = new THREE.Mesh(outerGeo, outerMat);
         outerLeaves.position.set(0, currLeaves.y, 0);
@@ -66,7 +68,7 @@ export function make_tree(x, y, z, scale) {
 export function make_tree_crowns(x, y, z, scale) {
     const tree = new THREE.Object3D();
 
-    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a });
+    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a , fog: false });
 
     const logSegments = [
         // Main log
@@ -266,6 +268,7 @@ export function make_tree_crowns(x, y, z, scale) {
         const crownMat = new THREE.MeshToonMaterial({
             color: layer.color,
             side: THREE.DoubleSide,
+            fog: false
         });
         const crown = new THREE.Mesh(
             new THREE.SphereGeometry(layer.radius, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2),
