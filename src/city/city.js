@@ -226,10 +226,137 @@ function make_city() {
     // TODO: estrada sem saída
 
 
-    city.add(make_tree(-40, 0, 200, 2));
-    city.add(make_tree(-10, 0, 220, 1.5));
-    city.add(make_tree(-30, 0, 230, 1.7));
-    city.add(make_tree_crowns(90, 0, 170, 1));
+    // Trees - Main large grass area (x: 400, z: -300)
+    city.add(make_tree(250, 0, -100, 0.8));
+    city.add(make_tree_crowns(265, 0, -85, 0.9));
+    
+    city.add(make_tree(350, 0, -50, 0.9));
+    city.add(make_tree_crowns(335, 0, -70, 1.0));
+    
+    city.add(make_tree(450, 0, 0, 1.0));
+    city.add(make_tree_crowns(475, 0, 20, 1.1));
+    
+    city.add(make_tree(550, 0, -150, 1.1));
+    city.add(make_tree_crowns(530, 0, -130, 0.9));
+    
+    city.add(make_tree(300, 0, -250, 0.8));
+    city.add(make_tree_crowns(320, 0, -270, 1.0));
+    
+    city.add(make_tree(500, 0, -300, 0.9));
+    city.add(make_tree_crowns(515, 0, -280, 1.1));
+    
+    city.add(make_tree(650, 0, -200, 1.0));
+    city.add(make_tree_crowns(630, 0, -220, 0.9));
+    
+    city.add(make_tree(200, 0, -400, 1.1));
+    city.add(make_tree_crowns(225, 0, -385, 1.0));
+    
+    city.add(make_tree(400, 0, -450, 0.8));
+    city.add(make_tree_crowns(385, 0, -430, 1.1));
+    
+    city.add(make_tree(600, 0, -500, 0.9));
+    city.add(make_tree_crowns(620, 0, -485, 0.9));
+    
+    city.add(make_tree(750, 0, -350, 1.0));
+    city.add(make_tree_crowns(735, 0, -370, 1.0));
+    
+    city.add(make_tree(150, 0, -550, 1.1));
+    city.add(make_tree_crowns(175, 0, -535, 0.9));
+    
+    city.add(make_tree(350, 0, -600, 0.8));
+    city.add(make_tree_crowns(370, 0, -580, 1.1));
+    
+    city.add(make_tree(550, 0, -700, 0.9));
+    city.add(make_tree_crowns(565, 0, -720, 1.0));
+    
+    city.add(make_tree(200, 0, 100, 1.0));
+    city.add(make_tree_crowns(180, 0, 80, 0.9));
+    
+    city.add(make_tree(650, 0, 50, 1.1));
+    city.add(make_tree_crowns(675, 0, 30, 1.0));
+    
+    city.add(make_tree(800, 0, -100, 0.8));
+    city.add(make_tree_crowns(820, 0, -120, 1.1));
+
+    city.add(make_tree(100, 0, 0, 0.9));
+    city.add(make_tree_crowns(120, 0, 15, 1.0));
+
+    city.add(make_tree(280, 0, 50, 1.0));
+    city.add(make_tree_crowns(260, 0, 70, 0.9));
+
+    city.add(make_tree(420, 0, 100, 1.1));
+    city.add(make_tree_crowns(440, 0, 120, 1.0));
+
+    city.add(make_tree(700, 0, 0, 0.8));
+    city.add(make_tree_crowns(720, 0, -15, 1.1));
+
+    city.add(make_tree(850, 0, 50, 0.9));
+    city.add(make_tree_crowns(830, 0, 35, 1.0));
+
+    city.add(make_tree(180, 0, -200, 1.0));
+    city.add(make_tree_crowns(200, 0, -185, 0.9));
+
+    city.add(make_tree(380, 0, -150, 1.1));
+    city.add(make_tree_crowns(360, 0, -165, 1.0));
+
+    city.add(make_tree(680, 0, -100, 0.8));
+    city.add(make_tree_crowns(700, 0, -80, 1.1));
+
+    city.add(make_tree(750, 0, -500, 0.9));
+    city.add(make_tree_crowns(770, 0, -515, 1.0));
+
+    city.add(make_tree(250, 0, -350, 1.0));
+    city.add(make_tree_crowns(235, 0, -365, 0.9));
+
+    city.add(make_tree(550, 0, -400, 1.1));
+    city.add(make_tree_crowns(535, 0, -385, 1.0));
+
+    city.add(make_tree(100, 0, -500, 0.8));
+    city.add(make_tree_crowns(120, 0, -520, 1.1));
+
+    city.add(make_tree(450, 0, -550, 0.9));
+    city.add(make_tree_crowns(470, 0, -535, 1.0));
+
+    city.add(make_tree(800, 0, -400, 1.0));
+    city.add(make_tree_crowns(785, 0, -420, 0.9));
+
+    city.add(make_tree(300, 0, -700, 1.1));
+    city.add(make_tree_crowns(320, 0, -685, 1.0));
+
+    city.add(make_tree(700, 0, -650, 0.8));
+    city.add(make_tree_crowns(715, 0, -670, 1.1));
+
+    city.add(make_tree(150, 0, -150, 0.9));
+    city.add(make_tree_crowns(135, 0, -135, 1.0));
+
+    city.add(make_tree(500, 0, -50, 1.0));
+    city.add(make_tree_crowns(520, 0, -65, 0.9));
+
+    // Trees - Left small grass area (x: -106, z: -190)
+    city.add(make_tree(-106, 0, -150, 0.9));
+    city.add(make_tree_crowns(-106, 0, -150, 1.0));
+    
+    city.add(make_tree(-75, 0, -200, 0.8));
+    city.add(make_tree_crowns(-75, 0, -200, 0.9));
+    
+    city.add(make_tree(-140, 0, -220, 1.0));
+    city.add(make_tree_crowns(-140, 0, -220, 1.1));
+
+    // Trees - Left lower grass area (x: -106, z: -500)
+    city.add(make_tree(-80, 0, -400, 0.9));
+    city.add(make_tree_crowns(-80, 0, -400, 1.0));
+    
+    city.add(make_tree(-130, 0, -450, 1.1));
+    city.add(make_tree_crowns(-130, 0, -450, 0.9));
+    
+    city.add(make_tree(-60, 0, -550, 0.8));
+    city.add(make_tree_crowns(-60, 0, -550, 1.1));
+    
+    city.add(make_tree(-140, 0, -600, 1.0));
+    city.add(make_tree_crowns(-140, 0, -600, 1.0));
+    
+    city.add(make_tree(-90, 0, -700, 0.9));
+    city.add(make_tree_crowns(-90, 0, -700, 0.9));
 
     // Houses
     {
