@@ -1,6 +1,6 @@
 class Conversation {
-    constructor(text, talker, onEnd = null) {
-        this.talker = talker;
+    constructor(text, speaker, onEnd = null) {
+        this.speaker = speaker;
         this.text = text;
 
         this.onEnd = onEnd;
@@ -14,13 +14,14 @@ class Conversation {
     }
 
     get nextval() {
-        if (this._next === null && this.onEnd !== null && !this.ended) {
-            this.ended = true;
-            return this;
-        }
-        
-        if (this.ended) {
-            this.onEnd();
+        if (this._next === null && this.onEnd !== null) {
+            if (!this.ended) {
+                this.ended = true;
+                return this;
+            }
+
+            this.ended = false;
+            return this.onEnd();
         }
 
         return this._next;

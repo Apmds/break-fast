@@ -58,6 +58,7 @@ class Player {
         const intersections = this.raycaster.intersectObjects(this.scene.children, true);
         let hitObject = null;
 
+        this.currentHoveredObject = null;
         for (const hit of intersections) {
             const worldObject = this.findObjectRoot(hit.object);
             if (worldObject) {

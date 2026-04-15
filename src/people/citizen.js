@@ -15,17 +15,23 @@ class Citizen extends WorldObject {
         
         this.player = null;
         this.inConversation = false;
+        this.isTypingDialogue = false;
+        this.dialogueTypewriterTimeouts = [];
+        this.dialogueWordSpeed = 5;
 
         this.dialogue_box = document.getElementById("dialog-box");
+        this.dialogue_speaker = document.getElementById("dialog-speaker");
+        this.dialogue_content = document.getElementById("dialog-content");
 
         this.dialogue = 
-            new Conversation("hello", "guy").next(
+        new Conversation("hello", "guy").next(
             new Conversation("hi", "me").next(
             new Conversation("this is the end", "me", () => {
-                this.interactable = false;
                 this.endConversation();
-            }
-        )))
+                return this.dialogue_start;
+            })
+        ));
+        this.dialogue_start = this.dialogue;
     }
 
     onInteract(object) {
@@ -38,19 +44,31 @@ class Citizen extends WorldObject {
         // Lock camera and focus on citizen
         this.startConversation(object);
 
+        if (this.isTypingDialogue) {
+            this.revealFullDialogueText();
+            return;
+        }
+
+        const currentDialogue = this.dialogue;
+
         // Start dialogue
-        this.dialogue_box.innerText = `${this.dialogue.talker}: ${this.dialogue.text}`
-        console.log(`${this.dialogue.talker}: ${this.dialogue.text}`)
+        this.dialogue_speaker.innerText = currentDialogue.speaker.toUpperCase();
+        this.typeDialogueText(currentDialogue.text, this.dialogueWordSpeed);
         
         // Play grunts - times equals half the dialogue text length
-        if (!this.dialogue.ended) {
-            const times = Math.floor(this.dialogue.text.length / 2);
+        if (!currentDialogue.ended) {
+            const times = Math.floor(currentDialogue.text.length / 2);
             this.play_sound(times);
         }
-        this.dialogue = this.dialogue.nextval;
+
+        this.dialogue = currentDialogue.nextval;
     }
     
     startConversation(player) {
+        if (this.inConversation) {
+            return;
+        }
+
         this.player = player;
         this.inConversation = true;
         this.player.canMove = false;
@@ -60,12 +78,55 @@ class Citizen extends WorldObject {
     }
     
     endConversation() {
+        this.clearTypewriterTimeouts();
+        this.isTypingDialogue = false;
+
         this.inConversation = false;
         this.player.canMove = true;
-        this.player = null
+        this.player = null;
 
         // Hide dialog box
-        this.dialogue_box.classList.add("invisible")
+        this.dialogue_box.classList.add("invisible");
+    }
+
+    typeDialogueText(text, wordsPerSecond) {
+        this.clearTypewriterTimeouts();
+        this.dialogue_content.innerText = '';
+
+        const words = text.trim().length === 0 ? [] : text.trim().split(/\s+/);
+        if (words.length === 0) {
+            this.isTypingDialogue = false;
+            return;
+        }
+
+        this.isTypingDialogue = true;
+        const safeSpeed = Math.max(1, wordsPerSecond);
+        const delayBetweenWords = Math.floor(1000 / safeSpeed);
+
+        for (let i = 0; i < words.length; i++) {
+            const timeoutId = setTimeout(() => {
+                this.dialogue_content.innerText += (i === 0 ? '' : ' ') + words[i];
+
+                if (i === words.length - 1) {
+                    this.isTypingDialogue = false;
+                }
+            }, i * delayBetweenWords);
+
+            this.dialogueTypewriterTimeouts.push(timeoutId);
+        }
+    }
+
+    revealFullDialogueText() {
+        this.clearTypewriterTimeouts();
+        this.dialogue_content.innerText = this.dialogue.text;
+        this.isTypingDialogue = false;
+    }
+
+    clearTypewriterTimeouts() {
+        for (const timeoutId of this.dialogueTypewriterTimeouts) {
+            clearTimeout(timeoutId);
+        }
+        this.dialogueTypewriterTimeouts = [];
     }
 
     play_sound(times) {
