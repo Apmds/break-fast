@@ -5,6 +5,7 @@ class Conversation {
 
         this.onEnd = onEnd;
         this._next = null;
+        this.ended = false;
     }
 
     next(dialog) {
@@ -13,9 +14,15 @@ class Conversation {
     }
 
     get nextval() {
-        if (this._next === null && this.onEnd !== null) {
+        if (this._next === null && this.onEnd !== null && !this.ended) {
+            this.ended = true;
+            return this;
+        }
+        
+        if (this.ended) {
             this.onEnd();
         }
+
         return this._next;
     }
 }
