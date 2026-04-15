@@ -68,7 +68,7 @@ class City extends Scene {
         this.physicsWorld.defaultContactMaterial.friction = 0.1;
 
         // Ground body - using a large flat box instead of plane
-        const groundShape = new CANNON.Box(new CANNON.Vec3(500, 1, 500)); // width, height, depth
+        const groundShape = new CANNON.Box(new CANNON.Vec3(1500, 1, 1500)); // width, height, depth
         this.groundBody = new CANNON.Body({
             mass: 0,
             shape: groundShape,
@@ -206,12 +206,71 @@ function make_city() {
     city.add(make_tree(-30, 0, 230, 1.7));
     city.add(make_tree_crowns(90, 0, 170, 1));
 
-    // Add multiple houses
-    city.add(make_house(50, 0, 150));
-    city.add(make_house(100, 0, 100));
-    city.add(make_house(150, 0, 200));
+    // Houses
+    {
+        const house = make_house(-30, 0, -400);
+        house.rotation.y = Math.PI;
+        city.add(house);
+    }
 
-    // Add citizens
+    {
+        const house = make_house(-30, 0, -480);
+        house.rotation.y = Math.PI;
+        city.add(house);
+    }
+
+    {
+        const house = make_house(-30, 0, -560);
+        house.rotation.y = Math.PI;
+        city.add(house);
+    }
+
+
+    {
+        const house = make_house(95, 0, -660);
+        house.rotation.y = Math.PI/2;
+        city.add(house);
+    }
+
+    
+    {
+        const house = make_house(230, 0, -400);
+        house.rotation.y = 0;
+        city.add(house);
+    }
+
+    {
+        const house = make_house(230, 0, -480);
+        house.rotation.y = 0;
+        city.add(house);
+    }
+
+    {
+        const house = make_house(230, 0, -560);
+        house.rotation.y = 0;
+        city.add(house);
+    }
+
+
+    {
+        const house = make_house(230, 0, -220);
+        house.rotation.y = 0;
+        city.add(house);
+    }
+
+    {
+        const house = make_house(230, 0, -120);
+        house.rotation.y = 0;
+        city.add(house);
+    }
+
+    {
+        const house = make_house(-30, 0, -200);
+        house.rotation.y = Math.PI;
+        city.add(house);
+    }
+
+    // Citizens
     const citizen1 = new Citizen(
         new THREE.Vector3(0, 0, 45),
         new THREE.Vector3(0, 0, 0),
