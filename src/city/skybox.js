@@ -8,26 +8,32 @@ function make_skybox() {
          new THREE.MeshBasicMaterial({
               map : objectManager.getObject('skybox_px'),
               side : THREE.BackSide,
+              fog: false,
          }),
          new THREE.MeshBasicMaterial({
               map : objectManager.getObject('skybox_nx'),
               side : THREE.BackSide,
+              fog: false,
          }),
          new THREE.MeshBasicMaterial({
               map : objectManager.getObject('skybox_py'),
               side : THREE.BackSide,
+              fog: false,
          }),
          new THREE.MeshBasicMaterial({
               map : objectManager.getObject('skybox_ny'),
               side : THREE.BackSide,
+              fog: false,
          }),
          new THREE.MeshBasicMaterial({
               map : objectManager.getObject('skybox_pz'),
               side : THREE.BackSide,
+              fog: false,
          }),
          new THREE.MeshBasicMaterial({
               map : objectManager.getObject('skybox_nz'),
               side : THREE.BackSide,
+              fog: false,
          }),
     ];
     const skybox = new THREE.Mesh(geometry,materials);
