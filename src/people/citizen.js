@@ -17,7 +17,7 @@ class Citizen extends WorldObject {
         this.inConversation = false;
         this.isTypingDialogue = false;
         this.dialogueTypewriterTimeouts = [];
-        this.dialogueWordSpeed = 5;
+        this.dialogueLetterSpeed = 30;
 
         this.dialogue_box = document.getElementById("dialog-box");
         this.dialogue_speaker = document.getElementById("dialog-speaker");
@@ -53,7 +53,7 @@ class Citizen extends WorldObject {
 
         // Start dialogue
         this.dialogue_speaker.innerText = currentDialogue.speaker.toUpperCase();
-        this.typeDialogueText(currentDialogue.text, this.dialogueWordSpeed);
+        this.typeDialogueText(currentDialogue.text, this.dialogueLetterSpeed);
         
         // Play grunts - times equals half the dialogue text length
         if (!currentDialogue.ended) {
@@ -89,28 +89,29 @@ class Citizen extends WorldObject {
         this.dialogue_box.classList.add("invisible");
     }
 
-    typeDialogueText(text, wordsPerSecond) {
+    typeDialogueText(text, lettersPerSecond) {
         this.clearTypewriterTimeouts();
         this.dialogue_content.innerText = '';
 
-        const words = text.trim().length === 0 ? [] : text.trim().split(/\s+/);
-        if (words.length === 0) {
+        if (text.length === 0) {
             this.isTypingDialogue = false;
             return;
         }
 
         this.isTypingDialogue = true;
-        const safeSpeed = Math.max(1, wordsPerSecond);
-        const delayBetweenWords = Math.floor(1000 / safeSpeed);
+        const safeSpeed = Math.max(1, lettersPerSecond);
+        const delayBetweenLetters = Math.floor(1000 / safeSpeed);
 
-        for (let i = 0; i < words.length; i++) {
+        for (let i = 0; i < text.length + 1; i++) {
+            const textToShow = text.slice(0, i);
             const timeoutId = setTimeout(() => {
-                this.dialogue_content.innerText += (i === 0 ? '' : ' ') + words[i];
+                
+                this.dialogue_content.innerText = textToShow;
 
-                if (i === words.length - 1) {
+                if (i === text.length - 1) {
                     this.isTypingDialogue = false;
                 }
-            }, i * delayBetweenWords);
+            }, i * delayBetweenLetters);
 
             this.dialogueTypewriterTimeouts.push(timeoutId);
         }
