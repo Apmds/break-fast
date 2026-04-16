@@ -11,6 +11,7 @@ import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 import Citizen from '../people/citizen.js';
 import make_house from './house.js';
 import Scene from '../utils/scene.js';
+import PlaceHolderItem from '../items/placeholder.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -19,6 +20,28 @@ class City extends Scene {
         this.scene.add(make_city());
         this.scene.add(make_skybox());
         this.scene.fog = new THREE.Fog(0xAAAAAA, 300, 600);
+
+        // Placeholder objects
+        const item1 = new PlaceHolderItem(
+            new THREE.Vector3(8, 0, -305),
+            new THREE.Vector3(0, Math.PI/2, Math.PI/3),
+            new THREE.Vector3(1, 1, 1)
+        );
+        this.scene.add(item1.model);
+
+        const item2 = new PlaceHolderItem(
+            new THREE.Vector3(3, 2, -312),
+            new THREE.Vector3(Math.PI/2, 0, Math.PI/3),
+            new THREE.Vector3(1, 1, 1)
+        );
+        this.scene.add(item2.model);
+
+        const item3 = new PlaceHolderItem(
+            new THREE.Vector3(10, 2, -309),
+            new THREE.Vector3(0, Math.PI/3, Math.PI/2),
+            new THREE.Vector3(1, 1, 1)
+        );
+        this.scene.add(item3.model);
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
@@ -77,7 +100,7 @@ class City extends Scene {
         this.physicsWorld.addBody(this.groundBody);
 
         // GUI
-        this.gui.hide()
+        this.gui.hide();
         //this.gui.makeFolder('Camera Position');
         //this.gui.add('Camera Position', 'X', camera.position, 'x').listen();
         //this.gui.add('Camera Position', 'Y', camera.position, 'y').listen();

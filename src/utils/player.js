@@ -27,6 +27,9 @@ class Player {
         this.raycastDistance = 10;
         this.currentHoveredObject = null;
         this.interactionKey = 'KeyE';
+
+
+        this.inventory = [];
     }
 
     update(delta) {
