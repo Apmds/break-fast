@@ -100,7 +100,7 @@ class City extends Scene {
         this.physicsWorld.addBody(this.groundBody);
 
         // GUI
-        this.gui.hide();
+        //this.gui.hide();
         this.gui.makeFolder('Camera Position');
         this.gui.add('Camera Position', 'X', camera.position, 'x').listen();
         this.gui.add('Camera Position', 'Y', camera.position, 'y').listen();
@@ -399,26 +399,26 @@ function make_city() {
 
     // Citizens
     const citizen1 = new Citizen(
-        new THREE.Vector3(0, 0, 45),
-        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(-2, 0.4, -170),
+        new THREE.Vector3(0, Math.PI/2, 0),
         true
     );
     city.add(citizen1.model);
 
     const citizen2 = new Citizen(
-        new THREE.Vector3(30, 0, 80),
-        new THREE.Vector3(0, Math.PI / 2, 0)
+        new THREE.Vector3(23, 0.4, -233),
+        new THREE.Vector3(0, Math.PI*0.3, 0)
     );
     city.add(citizen2.model);
 
     const citizen3 = new Citizen(
-        new THREE.Vector3(94, 0, 95),
-        new THREE.Vector3(0, 0, 0)
+        new THREE.Vector3(17, 0.4, -228),
+        new THREE.Vector3(0, Math.PI*1.3, 0)
     );
     city.add(citizen3.model);
 
     const citizen4 = new Citizen(
-        new THREE.Vector3(10, 0, 60),
+        new THREE.Vector3(-85, 0.4, -309),
         new THREE.Vector3(0, Math.PI, 0)
     );
     city.add(citizen4.model);
