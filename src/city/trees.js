@@ -1,5 +1,38 @@
 import * as THREE from 'three';
 
+export function make_trees_instanced(positions, scales, tree_function) {
+    const trees = new THREE.Object3D();
+
+    const len = positions.length <= scales.length ? positions.length : scales.length;
+    
+    const base_tree = tree_function(0, 0, 0, 1);
+    base_tree.updateMatrixWorld(true);
+
+    base_tree.traverse((node) => {
+        if (node.isMesh) {
+            const mesh = new THREE.InstancedMesh(node.geometry, node.material, len);
+
+            const basePartMatrix = node.matrixWorld.clone();
+
+            const dummy = new THREE.Object3D();
+            const instanceMatrix = new THREE.Matrix4();
+            for (let i = 0; i < len; i++) {
+                dummy.position.set(positions[i].x, positions[i].y, positions[i].z);
+                dummy.scale.set(scales[i], scales[i], scales[i]);
+                dummy.updateMatrix();
+
+                instanceMatrix.multiplyMatrices(dummy.matrix, basePartMatrix);
+                mesh.setMatrixAt(i, instanceMatrix);
+            }
+            mesh.instanceMatrix.needsUpdate = true;
+
+            trees.add(mesh);
+        }
+    });
+
+    return trees;
+}
+
 export function make_tree(x, y, z, scale) {
     const tree = new THREE.Object3D();
 

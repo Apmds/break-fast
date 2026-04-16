@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 
-import { make_tree, make_tree_crowns } from './trees.js';
+import { make_tree, make_tree_crowns, make_trees_instanced } from './trees.js';
 import { make_road, make_road_corner, make_roundabout, road_width } from './road.js';
 import { make_path_parts, make_road_paths, path_width } from './sidewalk.js';
 import { make_bridge } from './bridge.js';
@@ -100,18 +100,18 @@ class City extends Scene {
         this.physicsWorld.addBody(this.groundBody);
 
         // GUI
-        this.gui.hide();
-        //this.gui.makeFolder('Camera Position');
-        //this.gui.add('Camera Position', 'X', camera.position, 'x').listen();
-        //this.gui.add('Camera Position', 'Y', camera.position, 'y').listen();
-        //this.gui.add('Camera Position', 'Z', camera.position, 'z').listen();
+        //this.gui.hide();
+        this.gui.makeFolder('Camera Position');
+        this.gui.add('Camera Position', 'X', camera.position, 'x').listen();
+        this.gui.add('Camera Position', 'Y', camera.position, 'y').listen();
+        this.gui.add('Camera Position', 'Z', camera.position, 'z').listen();
 
-        //this.gui.makeFolder('Lighting');
+        this.gui.makeFolder('Lighting');
         
-        //this.gui.add('Lighting', 'key intensity', keyLight, 'intensity', 0, 5, 0.01);
-        //this.gui.add('Lighting', 'fill intensity', fillLight, 'intensity', 0, 2, 0.01);
-        //this.gui.add('Lighting', 'rim intensity', rimLight, 'intensity', 0, 2, 0.01);
-        //this.gui.add('Lighting', 'hemi intensity', hemisphereLight, 'intensity', 0, 2, 0.01);
+        this.gui.add('Lighting', 'key intensity', keyLight, 'intensity', 0, 5, 0.01);
+        this.gui.add('Lighting', 'fill intensity', fillLight, 'intensity', 0, 2, 0.01);
+        this.gui.add('Lighting', 'rim intensity', rimLight, 'intensity', 0, 2, 0.01);
+        this.gui.add('Lighting', 'hemi intensity', hemisphereLight, 'intensity', 0, 2, 0.01);
     }
 
     update(delta) {
@@ -185,81 +185,83 @@ function make_city() {
     // Hand-placed tree scatter: very dense in the main grass area and lighter in side patches.
     {
         const classicTreesMain = [
-            [483, -153, 0.9], [618, -411, 1.0], [373, -226, 1.1],
-            [585, -276, 0.8],
-            [498, -710, 0.8], [285, -675, 0.9], [538, -508, 1.0], [523, -676, 1.1],
-            [430, -730, 0.8], [520, -443, 1.0], [590, -305, 1.1],
-            [388, -600, 0.8], [613, -430, 0.9], [568, -260, 1.1],
-            [360, -495, 0.8], [448, -536, 0.9],
-            [423, -123, 0.8], [520, -395, 0.9], [475, -311, 1.1],
-            [398, -300, 0.8], [443, -620, 0.9], [438, -206, 1.0], [510, -540, 1.1],
-            [393, -210, 1.0],
-            [408, -555, 0.8], [573, -581, 0.9], [388, -200, 1.1],
-            [508, -295, 0.8], [615, -523, 1.1],
-            [388, -438, 1.0], [463, -223, 1.1],
-            [645, -751, 0.9], [498, -435, 1.1],
-            [508, -291, 0.8], [273, -548, 0.9], [645, -416, 1.0],
-            [415, -613, 0.9], [418, -205, 1.0],
-            [333, -243, 0.9], [415, -541, 1.0], [310, -573, 1.1],
-            [413, -551, 0.8], [328, -563, 1.1],
-            [498, -301, 0.8], [433, -170, 1.1],
-            [603, -263, 0.8], [403, -303, 0.9], [558, -128, 1.1],
-            [298, -595, 0.9],
-            [390, -520, 0.8], [398, -571, 1.0], [560, -498, 1.1],
+            new THREE.Vector3(483, 0, -153), 0.9, new THREE.Vector3(618, 0, -411), 1.0, new THREE.Vector3(373, 0, -226), 1.1,
+            new THREE.Vector3(585, 0, -276), 0.8,
+            new THREE.Vector3(498, 0, -710), 0.8, new THREE.Vector3(285, 0, -675), 0.9, new THREE.Vector3(538, 0, -508), 1.0, new THREE.Vector3(523, 0, -676), 1.1,
+            new THREE.Vector3(430, 0, -730), 0.8, new THREE.Vector3(520, 0, -443), 1.0, new THREE.Vector3(590, 0, -305), 1.1,
+            new THREE.Vector3(388, 0, -600), 0.8, new THREE.Vector3(613, 0, -430), 0.9, new THREE.Vector3(568, 0, -260), 1.1,
+            new THREE.Vector3(360, 0, -495), 0.8, new THREE.Vector3(448, 0, -536), 0.9,
+            new THREE.Vector3(423, 0, -123), 0.8, new THREE.Vector3(520, 0, -395), 0.9, new THREE.Vector3(475, 0, -311), 1.1,
+            new THREE.Vector3(398, 0, -300), 0.8, new THREE.Vector3(443, 0, -620), 0.9, new THREE.Vector3(438, 0, -206), 1.0, new THREE.Vector3(510, 0, -540), 1.1,
+            new THREE.Vector3(393, 0, -210), 1.0,
+            new THREE.Vector3(408, 0, -555), 0.8, new THREE.Vector3(573, 0, -581), 0.9, new THREE.Vector3(388, 0, -200), 1.1,
+            new THREE.Vector3(508, 0, -295), 0.8, new THREE.Vector3(615, 0, -523), 1.1,
+            new THREE.Vector3(388, 0, -438), 1.0, new THREE.Vector3(463, 0, -223), 1.1,
+            new THREE.Vector3(645, 0, -751), 0.9, new THREE.Vector3(498, 0, -435), 1.1,
+            new THREE.Vector3(508, 0, -291), 0.8, new THREE.Vector3(273, 0, -548), 0.9, new THREE.Vector3(645, 0, -416), 1.0,
+            new THREE.Vector3(415, 0, -613), 0.9, new THREE.Vector3(418, 0, -205), 1.0,
+            new THREE.Vector3(333, 0, -243), 0.9, new THREE.Vector3(415, 0, -541), 1.0, new THREE.Vector3(310, 0, -573), 1.1,
+            new THREE.Vector3(413, 0, -551), 0.8, new THREE.Vector3(328, 0, -563), 1.1,
+            new THREE.Vector3(498, 0, -301), 0.8, new THREE.Vector3(433, 0, -170), 1.1,
+            new THREE.Vector3(603, 0, -263), 0.8, new THREE.Vector3(403, 0, -303), 0.9, new THREE.Vector3(558, 0, -128), 1.1,
+            new THREE.Vector3(298, 0, -595), 0.9,
+            new THREE.Vector3(390, 0, -520), 0.8, new THREE.Vector3(398, 0, -571), 1.0, new THREE.Vector3(560, 0, -498), 1.1,
         ];
 
         const crownTreesMain = [
-            [328, -611, 0.9], [338, -451, 1.1], [558, -483, 0.9],
-            [470, -291, 1.0], [543, -453, 1.1], [448, -730, 0.9], [498, -463, 1.0],
-            [553, -760, 1.1], [548, -668, 1.0], [483, -381, 1.1],
-            [318, -748, 0.9], [303, -710, 1.0], [600, -235, 0.9],
-            [508, -455, 0.9], [315, -226, 1.0],
-            [478, -356, 1.1], [498, -126, 1.1],
-            [348, -146, 0.9], [640, -198, 1.1], [530, -303, 0.9],
-            [300, -320, 1.0], [523, -245, 1.1], [550, -601, 0.9],
-            [338, -416, 1.1],
-            [638, -471, 1.1], [360, -123, 0.9],
-            [430, -540, 1.1], [643, -706, 0.9],
-            [333, -376, 0.9], [273, -338, 0.9],
-            [630, -261, 1.0], [338, -216, 1.1], [580, -753, 0.9], [345, -661, 1.0],
-            [390, -466, 1.1], [448, -713, 0.9], [473, -610, 1.0],
-            [513, -606, 0.9], [435, -283, 1.1], [518, -278, 0.9],
-            [308, -445, 1.1], [353, -476, 0.9],
-            [325, -470, 0.9],
-            [305, -475, 0.9], [400, -596, 0.9],
-            [498, -121, 1.0],
-            [343, -716, 0.9],
+            new THREE.Vector3(328, 0, -611), 0.9, new THREE.Vector3(338, 0, -451), 1.1, new THREE.Vector3(558, 0, -483), 0.9,
+            new THREE.Vector3(470, 0, -291), 1.0, new THREE.Vector3(543, 0, -453), 1.1, new THREE.Vector3(448, 0, -730), 0.9, new THREE.Vector3(498, 0, -463), 1.0,
+            new THREE.Vector3(553, 0, -760), 1.1, new THREE.Vector3(548, 0, -668), 1.0, new THREE.Vector3(483, 0, -381), 1.1,
+            new THREE.Vector3(318, 0, -748), 0.9, new THREE.Vector3(303, 0, -710), 1.0, new THREE.Vector3(600, 0, -235), 0.9,
+            new THREE.Vector3(508, 0, -455), 0.9, new THREE.Vector3(315, 0, -226), 1.0,
+            new THREE.Vector3(478, 0, -356), 1.1, new THREE.Vector3(498, 0, -126), 1.1,
+            new THREE.Vector3(348, 0, -146), 0.9, new THREE.Vector3(640, 0, -198), 1.1, new THREE.Vector3(530, 0, -303), 0.9,
+            new THREE.Vector3(300, 0, -320), 1.0, new THREE.Vector3(523, 0, -245), 1.1, new THREE.Vector3(550, 0, -601), 0.9,
+            new THREE.Vector3(338, 0, -416), 1.1,
+            new THREE.Vector3(638, 0, -471), 1.1, new THREE.Vector3(360, 0, -123), 0.9,
+            new THREE.Vector3(430, 0, -540), 1.1, new THREE.Vector3(643, 0, -706), 0.9,
+            new THREE.Vector3(333, 0, -376), 0.9, new THREE.Vector3(273, 0, -338), 0.9,
+            new THREE.Vector3(630, 0, -261), 1.0, new THREE.Vector3(338, 0, -216), 1.1, new THREE.Vector3(580, 0, -753), 0.9, new THREE.Vector3(345, 0, -661), 1.0,
+            new THREE.Vector3(390, 0, -466), 1.1, new THREE.Vector3(448, 0, -713), 0.9, new THREE.Vector3(473, 0, -610), 1.0,
+            new THREE.Vector3(513, 0, -606), 0.9, new THREE.Vector3(435, 0, -283), 1.1, new THREE.Vector3(518, 0, -278), 0.9,
+            new THREE.Vector3(308, 0, -445), 1.1, new THREE.Vector3(353, 0, -476), 0.9,
+            new THREE.Vector3(325, 0, -470), 0.9,
+            new THREE.Vector3(305, 0, -475), 0.9, new THREE.Vector3(400, 0, -596), 0.9,
+            new THREE.Vector3(498, 0, -121), 1.0,
+            new THREE.Vector3(343, 0, -716), 0.9,
         ];
 
         const classicTreesSide = [
-            [-138, -248, 0.8], [-104, -224, 0.9], [-78, -188, 1.0], [-126, -152, 1.1], [-92, -132, 0.8],
-            [-140, -618, 0.9], [-108, -582, 1.0], [-76, -540, 1.1], [-132, -470, 0.8], [-98, -402, 0.9],
+            new THREE.Vector3(-138, 0, -248), 0.8, new THREE.Vector3(-104, 0, -224), 0.9, new THREE.Vector3(-78, 0, -188), 1.0, new THREE.Vector3(-126, 0, -152), 1.1, new THREE.Vector3(-92, 0, -132), 0.8,
+            new THREE.Vector3(-140, 0, -618), 0.9, new THREE.Vector3(-108, 0, -582), 1.0, new THREE.Vector3(-76, 0, -540), 1.1, new THREE.Vector3(-132, 0, -470), 0.8, new THREE.Vector3(-98, 0, -402), 0.9,
         ];
 
         const crownTreesSide = [
-            [-122, -262, 0.9], [-88, -238, 1.0], [-70, -206, 1.1], [-136, -178, 0.9], [-106, -146, 1.0],
-            [-124, -632, 1.1], [-90, -596, 0.9], [-72, -560, 1.0], [-120, -500, 1.1], [-86, -430, 0.9],
+            new THREE.Vector3(-122, 0, -262), 0.9, new THREE.Vector3(-88, 0, -238), 1.0, new THREE.Vector3(-70, 0, -206), 1.1, new THREE.Vector3(-136, 0, -178), 0.9, new THREE.Vector3(-106, 0, -146), 1.0,
+            new THREE.Vector3(-124, 0, -632), 1.1, new THREE.Vector3(-90, 0, -596), 0.9, new THREE.Vector3(-72, 0, -560), 1.0, new THREE.Vector3(-120, 0, -500), 1.1, new THREE.Vector3(-86, 0, -430), 0.9,
         ];
 
-        for (let i = 0; i < classicTreesMain.length; i++) {
-            const [x, z, scale] = classicTreesMain[i];
-            city.add(make_tree(x, 0, z, scale));
-        }
+        const splitTreeData = (mixedData) => {
+            const positions = [];
+            const scales = [];
 
-        for (let i = 0; i < crownTreesMain.length; i++) {
-            const [x, z, scale] = crownTreesMain[i];
-            city.add(make_tree_crowns(x, 0, z, scale));
-        }
+            for (let i = 0; i < mixedData.length; i += 2) {
+                positions.push(mixedData[i]);
+                scales.push(mixedData[i + 1]);
+            }
 
-        for (let i = 0; i < classicTreesSide.length; i++) {
-            const [x, z, scale] = classicTreesSide[i];
-            city.add(make_tree(x, 0, z, scale));
-        }
+            return { positions, scales };
+        };
 
-        for (let i = 0; i < crownTreesSide.length; i++) {
-            const [x, z, scale] = crownTreesSide[i];
-            city.add(make_tree_crowns(x, 0, z, scale));
-        }
+        const { positions: classicMainPositions, scales: classicMainScales } = splitTreeData(classicTreesMain);
+        const { positions: crownMainPositions, scales: crownMainScales } = splitTreeData(crownTreesMain);
+        const { positions: classicSidePositions, scales: classicSideScales } = splitTreeData(classicTreesSide);
+        const { positions: crownSidePositions, scales: crownSideScales } = splitTreeData(crownTreesSide);
+
+        city.add(make_trees_instanced(classicMainPositions, classicMainScales, make_tree));
+        city.add(make_trees_instanced(crownMainPositions, crownMainScales, make_tree_crowns));
+        city.add(make_trees_instanced(classicSidePositions, classicSideScales, make_tree));
+        city.add(make_trees_instanced(crownSidePositions, crownSideScales, make_tree_crowns));
     }
 
     let road_start;
