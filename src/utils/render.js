@@ -1,8 +1,6 @@
 import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { BufferGeometryUtils } from 'three/addons/Addons.js';
+import objectManager from './object_manager.js';
 
 class Renderer {
     constructor() {
@@ -15,52 +13,79 @@ class Renderer {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
-        this.composer = null;
-        this.outlinePass = null;
+        const outline_vert_shader = objectManager.getObject("outline_vert_shader", false);
+        const outline_frag_shader = objectManager.getObject("outline_frag_shader", false);
+
+        this.outlineScale = 1.0;
+        this.outlineHelpers = new Map();
+        this.outlineMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                outlineColor: { value: new THREE.Color(0xffffff) },
+                thickness: { value: 0.1 }
+            },
+            vertexShader: outline_vert_shader,
+            fragmentShader: outline_frag_shader,
+            side: THREE.BackSide,
+        })
     }
 
-    setupPostProcessing(scene, camera) {
-        this.composer = new EffectComposer(this.renderer);
+    ensureOutlineHelper(sourceMesh) {
+        let helper = this.outlineHelpers.get(sourceMesh.uuid);
+        if (helper) {
+            return helper;
+        }
 
-        const renderPass = new RenderPass(scene, camera);
-        this.composer.addPass(renderPass);
+        let smoothGeometry = sourceMesh.geometry.clone();
+        
+        // Delete everything except the spatial positions so mergeVertices doesn't get confused by UV seams or colors.
+        const attributesToRemove = Object.keys(smoothGeometry.attributes).filter(attr => attr !== 'position');
+        attributesToRemove.forEach(attr => smoothGeometry.deleteAttribute(attr));
 
-        this.outlinePass = new OutlinePass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            scene,
-            camera
-        );
-        this.outlinePass.visibleEdgeColor.set(0xffffff);
-        this.outlinePass.hiddenEdgeColor.set(0xffffff);
-        this.outlinePass.edgeStrength = 3.0;
-        this.outlinePass.edgeGlow = 0.0;
-        this.outlinePass.edgeThickness = 1.0;
-        this.composer.addPass(this.outlinePass);
+        smoothGeometry = BufferGeometryUtils.mergeVertices(smoothGeometry);        
+        smoothGeometry.computeVertexNormals();
 
-        this.composer.addPass(new OutputPass());
+        helper = new THREE.Mesh(smoothGeometry, this.outlineMaterial);
+
+        helper.name = `${sourceMesh.name || 'mesh'}_outline`;
+        helper.userData.isOutline = true;
+        helper.castShadow = false;
+        helper.receiveShadow = false;
+        helper.raycast = () => null;
+        helper.renderOrder = 999;
+        helper.scale.setScalar(this.outlineScale);
+
+        sourceMesh.add(helper);
+        this.outlineHelpers.set(sourceMesh.uuid, helper);
+        return helper;
     }
 
-    getOutlinedObjects(scene) {
-        const outlinedObjects = [];
+    syncOutlineHelpers(scene) {
+        const activeMeshIds = new Set();
 
         scene.traverse((node) => {
-            if (node.userData?.outline !== true) {
-                return;
-            }
-
-            if (node.isMesh) {
-                outlinedObjects.push(node);
+            if (node.userData?.outline !== true || node.userData?.isOutline === true) {
                 return;
             }
 
             node.traverse((child) => {
-                if (child.isMesh) {
-                    outlinedObjects.push(child);
+                if (!child.isMesh || child.userData?.isOutline === true) {
+                    return;
                 }
+
+                activeMeshIds.add(child.uuid);
+                const helper = this.ensureOutlineHelper(child);
+                helper.visible = true;
             });
         });
 
-        return outlinedObjects;
+        this.outlineHelpers.forEach((helper, sourceId) => {
+            if (!helper.parent) {
+                this.outlineHelpers.delete(sourceId);
+                return;
+            }
+
+            helper.visible = activeMeshIds.has(sourceId);
+        });
     }
 
     addToDom() {
@@ -72,16 +97,8 @@ class Renderer {
     }
 
     update() {
-        this.renderer.setSize(window.innerWidth, window.innerHeight)
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
-        if (this.composer) {
-            this.composer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        if (this.outlinePass) {
-            this.outlinePass.setSize(window.innerWidth, window.innerHeight);
-        }
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
 
     get domElement() {
@@ -89,12 +106,8 @@ class Renderer {
     }
 
     render(scene, camera) {
-        if (!this.composer || !this.outlinePass) {
-            this.setupPostProcessing(scene, camera);
-        }
-
-        this.outlinePass.selectedObjects = this.getOutlinedObjects(scene);
-        this.composer.render();
+        this.syncOutlineHelpers(scene);
+        this.renderer.render(scene, camera);
     }
 }
 

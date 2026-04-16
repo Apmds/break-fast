@@ -81,6 +81,26 @@ class ObjectManager {
         return this.cache[id];
     }
 
+    async loadShader(path, id) {
+        // If not in cache, load it
+        const needs_loading = !this.cache[id];
+
+        if (needs_loading) {
+            try {
+                const response = await fetch(path);
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+
+                this.cache[id] = await response.text();
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+
+        return this.cache[id];
+    }
+
     getObject(id, clone=true) {
         if (this.cache[id]) {
             let returnval = this.cache[id];
