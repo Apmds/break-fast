@@ -59,14 +59,14 @@ class City extends Scene {
         keyLight.position.copy(this.sunpos);
         keyLight.lookAt(this.scene.position)
         keyLight.castShadow = true;
-        keyLight.shadow.mapSize.set(2048, 2048);
+        keyLight.shadow.mapSize.set(4096, 4096);
     
         keyLight.shadow.camera.near = 10;
-        keyLight.shadow.camera.far = 1000;
-        keyLight.shadow.camera.left = -200;
-        keyLight.shadow.camera.right = 200;
-        keyLight.shadow.camera.top = 200;
-        keyLight.shadow.camera.bottom = -200;
+        keyLight.shadow.camera.far = 1200;
+        keyLight.shadow.camera.left = -500;
+        keyLight.shadow.camera.right = 500;
+        keyLight.shadow.camera.top = 500;
+        keyLight.shadow.camera.bottom = -500;
     
         // Adjust biases
         keyLight.shadow.bias = -0.001;
