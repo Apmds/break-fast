@@ -100,7 +100,7 @@ class City extends Scene {
         this.physicsWorld.addBody(this.groundBody);
 
         // GUI
-        //this.gui.hide();
+        this.gui.hide();
         this.gui.makeFolder('Camera Position');
         this.gui.add('Camera Position', 'X', camera.position, 'x').listen();
         this.gui.add('Camera Position', 'Y', camera.position, 'y').listen();
