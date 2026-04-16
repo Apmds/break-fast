@@ -8,6 +8,21 @@ class Conversation {
         this.ended = false;
     }
 
+    load(json, onEnd = null) {
+        this.speaker = json[0][0];
+        this.text = json[0][1];
+        
+        if (json.length == 1) {
+            this.onEnd = onEnd;
+            return this;
+        }
+
+        const nextjson = json.slice(1);
+        this.next(new Conversation().load(nextjson, onEnd));
+
+        return this;
+    }
+
     next(dialog) {
         this._next = dialog;
         return this;

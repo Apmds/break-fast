@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import WorldObject from '../utils/world_object.js';
 import Conversation from '../utils/conversation.js';
 import objectManager from '../utils/object_manager.js';
+import dialogueMap from '../utils/dialogue_map.js';
 
 class Citizen extends WorldObject {
     constructor(position, rotation = new THREE.Vector3(), interactable = false) {
@@ -23,14 +24,10 @@ class Citizen extends WorldObject {
         this.dialogue_speaker = document.getElementById("dialog-speaker");
         this.dialogue_content = document.getElementById("dialog-content");
 
-        this.dialogue = 
-        new Conversation("hello", "guy").next(
-            new Conversation("hi", "me").next(
-            new Conversation("this is the end", "me", () => {
-                this.endConversation();
-                return this.dialogue_start;
-            })
-        ));
+        this.dialogue = new Conversation().load(dialogueMap["placeholder"], () => {
+            this.endConversation();
+            return this.dialogue_start;
+        });
         this.dialogue_start = this.dialogue;
     }
 
