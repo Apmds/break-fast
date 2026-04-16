@@ -13,6 +13,9 @@ async function preload_objects() {
 
             case "mp3":
                 return await objectManager.loadMP3(obj.path, obj.id);
+            
+            case "shader":
+                return await objectManager.loadShader(obj.path, obj.id);
         }
     });
 

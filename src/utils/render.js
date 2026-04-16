@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { BufferGeometryUtils } from 'three/addons/Addons.js';
+import objectManager from './object_manager.js';
 
 class Renderer {
     constructor() {
@@ -11,38 +13,20 @@ class Renderer {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
+        const outline_vert_shader = objectManager.getObject("outline_vert_shader", false);
+        const outline_frag_shader = objectManager.getObject("outline_frag_shader", false);
+
         this.outlineScale = 1.0;
         this.outlineHelpers = new Map();
         this.outlineMaterial = new THREE.ShaderMaterial({
             uniforms: {
-            outlineColor: { value: new THREE.Color(0xffffff) }, // Your outline color
-            thickness: { value: 0.1 } // The consistent thickness you want
-        },
-        vertexShader: `
-            uniform float thickness;
-            void main() {
-                // Push the vertex outward along its normal
-                vec3 pos = position + normal * thickness;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-            }
-        `,
-        fragmentShader: `
-            uniform vec3 outlineColor;
-            void main() {
-                gl_FragColor = vec4(outlineColor, 1.0);
-            }
-        `,
-        side: THREE.BackSide, // This is crucial to make it an "inverted hull"
+                outlineColor: { value: new THREE.Color(0xffffff) },
+                thickness: { value: 0.1 }
+            },
+            vertexShader: outline_vert_shader,
+            fragmentShader: outline_frag_shader,
+            side: THREE.BackSide,
         })
-        // this.outlineMaterial = new THREE.MeshBasicMaterial({
-        //     color: 0xffffff,
-        //     side: THREE.BackSide,
-        //     toneMapped: false,
-        //     fog: false,
-        //     depthWrite: false,
-        //     transparent: true,
-        //     opacity: 1.0,
-        // });
     }
 
     ensureOutlineHelper(sourceMesh) {
@@ -51,10 +35,19 @@ class Renderer {
             return helper;
         }
 
-        helper = new THREE.Mesh(sourceMesh.geometry, this.outlineMaterial);
+        let smoothGeometry = sourceMesh.geometry.clone();
+        
+        // Delete everything except the spatial positions so mergeVertices doesn't get confused by UV seams or colors.
+        const attributesToRemove = Object.keys(smoothGeometry.attributes).filter(attr => attr !== 'position');
+        attributesToRemove.forEach(attr => smoothGeometry.deleteAttribute(attr));
+
+        smoothGeometry = BufferGeometryUtils.mergeVertices(smoothGeometry);        
+        smoothGeometry.computeVertexNormals();
+
+        helper = new THREE.Mesh(smoothGeometry, this.outlineMaterial);
+
         helper.name = `${sourceMesh.name || 'mesh'}_outline`;
-        helper.userData.isOutlineHelper = true;
-        helper.userData.sourceUUID = sourceMesh.uuid;
+        helper.userData.isOutline = true;
         helper.castShadow = false;
         helper.receiveShadow = false;
         helper.raycast = () => null;
@@ -70,12 +63,12 @@ class Renderer {
         const activeMeshIds = new Set();
 
         scene.traverse((node) => {
-            if (node.userData?.outline !== true || node.userData?.isOutlineHelper === true) {
+            if (node.userData?.outline !== true || node.userData?.isOutline === true) {
                 return;
             }
 
             node.traverse((child) => {
-                if (!child.isMesh || child.userData?.isOutlineHelper === true) {
+                if (!child.isMesh || child.userData?.isOutline === true) {
                     return;
                 }
 
