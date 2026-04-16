@@ -81,6 +81,19 @@ const objects = [
         "path": "../assets/sounds/grunt4.mp3",
         "type": "mp3",
     },
+
+
+    // Shaders
+    {
+        "id": "outline_vert_shader",
+        "path": "../assets/shaders/outline/outline.vert",
+        "type": "shader",
+    },
+    {
+        "id": "outline_frag_shader",
+        "path": "../assets/shaders/outline/outline.frag",
+        "type": "shader",
+    }
 ];
 
 export default objects;
