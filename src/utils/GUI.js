@@ -9,7 +9,10 @@ class GUI {
         document.body.appendChild(this.stats.dom);
 
         this.gui = new LilGUI();
+        
         this.gui_folders = {};
+
+        this.hidden = false;
     }
 
     makeFolder(name) {
@@ -26,6 +29,18 @@ class GUI {
 
     end() {
         this.stats.end();
+    }
+
+    hide() {
+        this.hidden = true;
+        this.gui.hide();
+        this.stats.dom.style.display = 'none';
+    }
+
+    show() {
+        this.hidden = false;
+        this.gui.show();
+        this.stats.dom.style.display = 'block';
     }
 }
 

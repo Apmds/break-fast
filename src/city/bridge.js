@@ -9,6 +9,11 @@ export function make_bridge(x, y, z, direction) {
     const bridge_length = (bridge_parts * part_length) + ((bridge_parts - 1) * between_parts_length) + between_parts_length;
     
     const [road] = make_road(0, 0, 0, ROAD_DIR.UP, bridge_parts, 0, true);
+    road.traverse((child) => {
+        if (child.material) {
+            child.material.fog = true;
+        }
+    });
     bridge.add(road);
 
     const road_volume = new THREE.Mesh(
