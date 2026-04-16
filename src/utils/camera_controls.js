@@ -9,7 +9,7 @@ class CameraControls {
         this.pitch = 0;
         this.yaw = 0;
         this.sensitivity = 0.002;
-        this.speed = 130;
+        this.speed = 30;
         this.isLocked = false;
         this.canMove = true;
 
