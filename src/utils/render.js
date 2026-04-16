@@ -1,8 +1,4 @@
 import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 class Renderer {
     constructor() {
@@ -15,52 +11,88 @@ class Renderer {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
-        this.composer = null;
-        this.outlinePass = null;
+        this.outlineScale = 1.0;
+        this.outlineHelpers = new Map();
+        this.outlineMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+            outlineColor: { value: new THREE.Color(0xffffff) }, // Your outline color
+            thickness: { value: 0.1 } // The consistent thickness you want
+        },
+        vertexShader: `
+            uniform float thickness;
+            void main() {
+                // Push the vertex outward along its normal
+                vec3 pos = position + normal * thickness;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform vec3 outlineColor;
+            void main() {
+                gl_FragColor = vec4(outlineColor, 1.0);
+            }
+        `,
+        side: THREE.BackSide, // This is crucial to make it an "inverted hull"
+        })
+        // this.outlineMaterial = new THREE.MeshBasicMaterial({
+        //     color: 0xffffff,
+        //     side: THREE.BackSide,
+        //     toneMapped: false,
+        //     fog: false,
+        //     depthWrite: false,
+        //     transparent: true,
+        //     opacity: 1.0,
+        // });
     }
 
-    setupPostProcessing(scene, camera) {
-        this.composer = new EffectComposer(this.renderer);
+    ensureOutlineHelper(sourceMesh) {
+        let helper = this.outlineHelpers.get(sourceMesh.uuid);
+        if (helper) {
+            return helper;
+        }
 
-        const renderPass = new RenderPass(scene, camera);
-        this.composer.addPass(renderPass);
+        helper = new THREE.Mesh(sourceMesh.geometry, this.outlineMaterial);
+        helper.name = `${sourceMesh.name || 'mesh'}_outline`;
+        helper.userData.isOutlineHelper = true;
+        helper.userData.sourceUUID = sourceMesh.uuid;
+        helper.castShadow = false;
+        helper.receiveShadow = false;
+        helper.raycast = () => null;
+        helper.renderOrder = 999;
+        helper.scale.setScalar(this.outlineScale);
 
-        this.outlinePass = new OutlinePass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            scene,
-            camera
-        );
-        this.outlinePass.visibleEdgeColor.set(0xffffff);
-        this.outlinePass.hiddenEdgeColor.set(0xffffff);
-        this.outlinePass.edgeStrength = 3.0;
-        this.outlinePass.edgeGlow = 0.0;
-        this.outlinePass.edgeThickness = 1.0;
-        this.composer.addPass(this.outlinePass);
-
-        this.composer.addPass(new OutputPass());
+        sourceMesh.add(helper);
+        this.outlineHelpers.set(sourceMesh.uuid, helper);
+        return helper;
     }
 
-    getOutlinedObjects(scene) {
-        const outlinedObjects = [];
+    syncOutlineHelpers(scene) {
+        const activeMeshIds = new Set();
 
         scene.traverse((node) => {
-            if (node.userData?.outline !== true) {
-                return;
-            }
-
-            if (node.isMesh) {
-                outlinedObjects.push(node);
+            if (node.userData?.outline !== true || node.userData?.isOutlineHelper === true) {
                 return;
             }
 
             node.traverse((child) => {
-                if (child.isMesh) {
-                    outlinedObjects.push(child);
+                if (!child.isMesh || child.userData?.isOutlineHelper === true) {
+                    return;
                 }
+
+                activeMeshIds.add(child.uuid);
+                const helper = this.ensureOutlineHelper(child);
+                helper.visible = true;
             });
         });
 
-        return outlinedObjects;
+        this.outlineHelpers.forEach((helper, sourceId) => {
+            if (!helper.parent) {
+                this.outlineHelpers.delete(sourceId);
+                return;
+            }
+
+            helper.visible = activeMeshIds.has(sourceId);
+        });
     }
 
     addToDom() {
@@ -72,16 +104,8 @@ class Renderer {
     }
 
     update() {
-        this.renderer.setSize(window.innerWidth, window.innerHeight)
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
-        if (this.composer) {
-            this.composer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        if (this.outlinePass) {
-            this.outlinePass.setSize(window.innerWidth, window.innerHeight);
-        }
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
 
     get domElement() {
@@ -89,12 +113,8 @@ class Renderer {
     }
 
     render(scene, camera) {
-        if (!this.composer || !this.outlinePass) {
-            this.setupPostProcessing(scene, camera);
-        }
-
-        this.outlinePass.selectedObjects = this.getOutlinedObjects(scene);
-        this.composer.render();
+        this.syncOutlineHelpers(scene);
+        this.renderer.render(scene, camera);
     }
 }
 
