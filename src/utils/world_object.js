@@ -13,7 +13,7 @@ class WorldObject {
     update_model_matrix() {
         if (typeof this._model !== 'undefined') {
             this._model.position.copy(this._position);
-            this._model.rotation.copy(this._rotation);
+            this._model.rotation.set(this._rotation.x, this._rotation.y, this._rotation.z);
             this._model.scale.copy(this._scale);
         }
     }
