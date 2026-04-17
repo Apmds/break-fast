@@ -52,7 +52,6 @@ class Renderer {
         helper.receiveShadow = false;
         helper.raycast = () => null;
         helper.renderOrder = 999;
-        helper.scale.setScalar(this.outlineScale);
 
         sourceMesh.add(helper);
         this.outlineHelpers.set(sourceMesh.uuid, helper);

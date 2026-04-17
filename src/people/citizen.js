@@ -23,19 +23,25 @@ class Citizen extends WorldObject {
         this.dialogue_speaker = document.getElementById("dialog-speaker");
         this.dialogue_content = document.getElementById("dialog-content");
 
-        this.dialogue = 
-        new Conversation("hello", "guy").next(
-            new Conversation("hi", "me").next(
-            new Conversation("this is the end", "me", () => {
-                this.endConversation();
-                return this.dialogue_start;
-            })
-        ));
-        this.dialogue_start = this.dialogue;
+        this.dialogue = new Conversation().load("placeholder");
     }
 
     onInteract(object) {
+        console.log("BF:", this.dialogue);
         if (this.dialogue === null) {
+            return;
+        }
+
+        if (this.isTypingDialogue) {
+            this.revealFullDialogueText();
+            return;
+        }
+
+        const currentDialogue = this.dialogue;
+
+        if (this.dialogue.ended) {
+            this.endConversation();
+            this.dialogue = currentDialogue.nextval;
             return;
         }
 
@@ -44,12 +50,6 @@ class Citizen extends WorldObject {
         // Lock camera and focus on citizen
         this.startConversation(object);
 
-        if (this.isTypingDialogue) {
-            this.revealFullDialogueText();
-            return;
-        }
-
-        const currentDialogue = this.dialogue;
 
         // Start dialogue
         this.dialogue_speaker.innerText = currentDialogue.speaker.toUpperCase();
@@ -62,6 +62,8 @@ class Citizen extends WorldObject {
         }
 
         this.dialogue = currentDialogue.nextval;
+        console.log("AF:", this.dialogue);
+
     }
     
     startConversation(player) {
