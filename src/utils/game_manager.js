@@ -6,7 +6,7 @@ import City from "../city/city.js";
 class GameManager {
     constructor() {
         this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
-        this.camera.position.set(0, 10, 50);
+        this.camera.position.set(-2, 4, -160);
         this.camera.lookAt(0, 10, 0);
 
         this.scene = new City(this.camera, this.player);
