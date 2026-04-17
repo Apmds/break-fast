@@ -1,43 +1,51 @@
+import dialogueMap from "./dialogue_map.js";
+
 class Conversation {
     constructor(text, speaker, onEnd = null, next = null) {
         this.speaker = speaker;
         this.text = text;
-
-        this.onEnd = onEnd;
+        
+        this.onEnd = onEnd === null ? () => null : onEnd;
         this._nextPiece = null;
         this._next = next;
         this._ignoreNext = false;
         this.ended = false;
     }
 
-    load(json, onEnd = null, ignoreNext = false) {
-        const conversation = json.conversation;
-        const firstEntry = conversation[0];
+    load(convKey, onEnd = null, ignoreNext = false, index = 0, root = null) {
+        const json = dialogueMap[convKey];
+        console.log(json, index)
 
-        this.speaker = firstEntry.speaker;
-        this.text = firstEntry.text;
+        const conversation = json.conversation;
+        const entry = conversation[index];
+
+        this.speaker = entry.speaker;
+        this.text = entry.text;
         this._ignoreNext = ignoreNext;
         
-        if (conversation.length === 1) {
-            this.onEnd = onEnd;
+        if (index >= conversation.length - 1) {
+            this.onEnd = onEnd === null ? () => null : onEnd;
 
             if (!ignoreNext && json.next !== undefined) {
-                this._next = json.next;
+                console.log(convKey, json.next);
+                
+                if (json.next === convKey) { // Repeating conversation
+                    this._next = root === null ? this : root;
+                } else {
+                    this._next = new Conversation().load(json.next);
+                }
             }
 
             return this;
         }
 
-        const nextjson = conversation.slice(1);
-        const nextPayload = { conversation: nextjson, next: json.next };
-
-        this._nextPiece = new Conversation().load(nextPayload, onEnd, ignoreNext);
+        this._nextPiece = new Conversation().load(convKey, onEnd, ignoreNext, index + 1, root === null ? this : root);
 
         return this;
     }
 
     get nextval() {
-        if (this._nextPiece === null && this.onEnd !== null) {
+        if (this._nextPiece === null) {
             if (!this.ended) {
                 this.ended = true;
                 return this;
