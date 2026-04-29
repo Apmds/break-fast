@@ -9,6 +9,7 @@ import make_skybox from './skybox.js';
 import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 
 import Citizen from '../people/citizen.js';
+import Car from './car.js';
 import make_house from './house.js';
 import Scene from '../utils/scene.js';
 import PlaceHolderItem from '../items/placeholder.js';
@@ -396,6 +397,16 @@ function make_city() {
         house.rotation.y = Math.PI;
         city.add(house);
     }
+
+    // Cars
+    const cars = [
+        new Car(new THREE.Vector3(50, 0.15, -260), new THREE.Vector3(0, Math.PI / 2, 0), new THREE.Vector3(0.9, 0.9, 0.9)),
+        new Car(new THREE.Vector3(110, 0.15, -340), new THREE.Vector3(0, Math.PI, 0), new THREE.Vector3(0.9, 0.9, 0.9)),
+        new Car(new THREE.Vector3(210, 0.15, -520), new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.9, 0.9, 0.9)),
+        new Car(new THREE.Vector3(-60, 0.15, -450), new THREE.Vector3(0, -Math.PI / 2, 0), new THREE.Vector3(0.9, 0.9, 0.9)),
+    ];
+
+    cars.forEach((car) => city.add(car.model));
 
     // Citizens
     const citizen1 = new Citizen(

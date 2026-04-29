@@ -18,6 +18,13 @@ const objects = [
     },
 
     {
+        "id": "car",
+        "path": "../assets/models/Cars/car.glb",
+        "type": "gltf",
+        "material_map": null,
+    },
+
+    {
         "id": "citizen",
         "path": "../assets/models/People/citizen.glb",
         "type": "gltf",
