@@ -16,6 +16,7 @@ class CameraControls {
         this.forward = new THREE.Vector3();
         this.right = new THREE.Vector3();
         this.euler = new THREE.Euler(0, 0, 0, 'YXZ');
+        this.yawEuler = new THREE.Euler(0, 0, 0, 'YXZ');
 
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onPointerLockChange = this.onPointerLockChange.bind(this);
@@ -51,8 +52,10 @@ class CameraControls {
 
         if (!this.isLocked || !this.canMove) return;
 
-        this.forward.set(0, 0, -1).applyQuaternion(this.camera.quaternion).normalize();
-        this.right.set(1, 0, 0).applyQuaternion(this.camera.quaternion).normalize();
+        // Use yaw-only movement to avoid pitch affecting speed.
+        this.yawEuler.set(0, this.yaw, 0);
+        this.forward.set(0, 0, -1).applyEuler(this.yawEuler).normalize();
+        this.right.set(1, 0, 0).applyEuler(this.yawEuler).normalize();
 
         let moveForward = 0;
         let moveRight = 0;

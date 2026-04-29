@@ -123,6 +123,10 @@ class Player {
 
     set canMove(value) {
         this.cameraControls.canMove = value;
+
+        if (!value) {
+            this.stopMovement();
+        }
     }
 
     get speed() {
@@ -140,6 +144,17 @@ class Player {
     dispose() {
         this.cameraControls.dispose();
         this.physicsWorld.removeBody(this.physicsBody);
+    }
+
+    stopMovement() {
+        if (this.moveVelocity) {
+            this.moveVelocity.set(0, 0, 0);
+        }
+
+        if (this.physicsBody) {
+            this.physicsBody.velocity.set(0, 0, 0);
+            this.physicsBody.angularVelocity.set(0, 0, 0);
+        }
     }
 }
 
