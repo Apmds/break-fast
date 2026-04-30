@@ -18,6 +18,13 @@ const objects = [
     },
 
     {
+        "id": "dcmonalds",
+        "path": "../assets/models/Buildings/dcmonalds.glb",
+        "type": "gltf",
+        "material_map": null,
+    },
+
+    {
         "id": "car",
         "path": "../assets/models/Cars/car.glb",
         "type": "gltf",

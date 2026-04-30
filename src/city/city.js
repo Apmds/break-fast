@@ -10,6 +10,8 @@ import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 
 import Citizen from '../people/citizen.js';
 import Car from './car.js';
+import DcMonalds from './dcmonalds.js';
+
 import make_house from './house.js';
 import Scene from '../utils/scene.js';
 import PlaceHolderItem from '../items/placeholder.js';
@@ -402,6 +404,10 @@ function make_city() {
     ];
 
     cars.forEach((car) => city.add(car.model));
+
+    const restaurant = new DcMonalds(new THREE.Vector3(15, -0.5, -180), new THREE.Vector3(0, Math.PI / 2, 0));
+
+    city.add(restaurant.model);
 
     // Citizens
     const citizen1 = new Citizen(
