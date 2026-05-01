@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 class ObjectManager {
     constructor() {
@@ -53,7 +54,7 @@ class ObjectManager {
         }
 
         // Return a clone
-        const clone = this.objectCache[id].clone();
+        const clone = SkeletonUtils.clone(this.objectCache[id]);
 
         if (!needs_loading && material_map) {
             this.objectCache[id].traverse((node) => {
@@ -103,11 +104,16 @@ class ObjectManager {
         return this.objectCache[id];
     }
 
-    getObject(id, clone=true) {
+    getObject(id, clone = true) {
         if (this.objectCache[id]) {
             let returnval = this.objectCache[id];
+            
             if (clone) {
-                returnval = returnval.clone();
+                if (returnval.isObject3D) {
+                    return SkeletonUtils.clone(returnval);
+                } else if (typeof returnval.clone === 'function') {
+                    return returnval.clone();
+                }
             }
             return returnval;
         }
