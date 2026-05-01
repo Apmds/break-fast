@@ -26,32 +26,46 @@ class Renderer {
             vertexShader: outline_vert_shader,
             fragmentShader: outline_frag_shader,
             side: THREE.BackSide,
-        })
+            skinning: true,
+            defines: {
+                USE_SKINNING: ""
+            }
+        });
     }
-
+    
     ensureOutlineHelper(sourceMesh) {
         let helper = this.outlineHelpers.get(sourceMesh.uuid);
-        if (helper) {
-            return helper;
-        }
-
+        if (helper) return helper;
+        
         let smoothGeometry = sourceMesh.geometry.clone();
         
-        // Delete everything except the spatial positions so mergeVertices doesn't get confused by UV seams or colors.
-        const attributesToRemove = Object.keys(smoothGeometry.attributes).filter(attr => attr !== 'position');
+        // Delete everything except the spatial positions animation stuff
+        const attributesToRemove = Object.keys(smoothGeometry.attributes).filter(
+            attr => !['position', 'skinIndex', 'skinWeight'].includes(attr)
+        );
         attributesToRemove.forEach(attr => smoothGeometry.deleteAttribute(attr));
 
         smoothGeometry = BufferGeometryUtils.mergeVertices(smoothGeometry);        
         smoothGeometry.computeVertexNormals();
 
-        helper = new THREE.Mesh(smoothGeometry, this.outlineMaterial);
+        // 2. Determine if we need a Mesh or a SkinnedMesh
+        if (sourceMesh.isSkinnedMesh) {
+            helper = new THREE.SkinnedMesh(smoothGeometry, this.outlineMaterial);
+            
+            // 3. Link the skeleton of the source to the helper
+            helper.bind(sourceMesh.skeleton, sourceMesh.bindMatrix);
+        } else {
+            helper = new THREE.Mesh(smoothGeometry, this.outlineMaterial);
+        }
 
         helper.name = `${sourceMesh.name || 'mesh'}_outline`;
         helper.userData.isOutline = true;
         helper.castShadow = false;
         helper.receiveShadow = false;
         helper.raycast = () => null;
-        helper.renderOrder = 999;
+        
+        // Important for transparent or complex scenes
+        helper.renderOrder = sourceMesh.renderOrder - 1; 
 
         sourceMesh.add(helper);
         this.outlineHelpers.set(sourceMesh.uuid, helper);
