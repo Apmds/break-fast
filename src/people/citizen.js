@@ -13,6 +13,18 @@ class Citizen extends WorldObject {
         this.model = 'citizen';
         this.model.userData.outline = false;
         
+        // Play idle animation on loop if available
+        if (this._animations && this._animations.length > 0 && this._animationMixer) {
+            const idleClip = this._animations.find((c) => /idle/i.test(c.name)) || this._animations[0];
+            if (idleClip) {
+                const action = this._animationMixer.clipAction(idleClip);
+                action.reset();
+                action.setLoop(THREE.LoopRepeat);
+                action.play();
+                this._currentAction = action;
+            }
+        }
+        
         this.player = null;
         this.inConversation = false;
         this.isTypingDialogue = false;

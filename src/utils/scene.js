@@ -15,6 +15,8 @@ class Scene {
         this.physicsWorld = new CANNON.World();
 
         this.gui = new GUI();
+
+        this._objects = {};
     }
 
     setPlayer(player) {
@@ -37,11 +39,24 @@ class Scene {
         return this.scene.getObjectByName(name);
     }
 
-    add(obj) {
-        this.scene.add(obj);
+    add(obj, name) {
+        this.scene.add(obj.model);
+
+        this._objects[name] = obj;
+    }
+
+    addModel(model) {
+        this.scene.add(model);
     }
 
     remove(name) {
+        const model = this._objects[name].model;
+        this.scene.remove(model);
+        
+        delete this._objects[name];
+    }
+
+    removeModel(name) {
         const obj = this.scene.getObjectByName(name);
         this.scene.remove(obj);
     }
@@ -62,6 +77,9 @@ class Scene {
     update(delta) {
         // Step physics world
         this.physicsWorld.step(1/60, delta, 3);
+        Object.values(this._objects).forEach((obj) => {
+            obj.update(delta);
+        });
     }
 
     begin() {
