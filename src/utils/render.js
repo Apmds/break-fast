@@ -26,10 +26,7 @@ class Renderer {
             vertexShader: outline_vert_shader,
             fragmentShader: outline_frag_shader,
             side: THREE.BackSide,
-            skinning: true,
-            defines: {
-                USE_SKINNING: ""
-            }
+            skinning: true
         });
     }
     
