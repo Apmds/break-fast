@@ -166,6 +166,12 @@ class WorldObject {
         this._currentAction.stop();
         this._currentAction = null;
     }
+
+    update(delta) {
+        if (this._animationMixer) {
+            this._animationMixer.update(delta);
+        }
+    }
 }
 
 export default WorldObject;
