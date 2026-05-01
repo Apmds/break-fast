@@ -8,6 +8,9 @@ class WorldObject {
         this._scale = scale;
         this._interactable = interactable;
         this._model = undefined;
+        this._animationMixer = undefined;
+        this._animations = null;
+        this._currentAction = null;
     }
 
     update_model_matrix() {
@@ -94,6 +97,9 @@ class WorldObject {
 
     set model(modelname) {
         this._model = objectManager.getObject(modelname);
+        this._animations = objectManager.getAnimations(modelname);
+        this._animationMixer = this._animations ? new THREE.AnimationMixer(this._model) : undefined;
+        this._currentAction = null;
         this.update_model_matrix();
 
         this._model.userData.worldObject = this;
@@ -130,6 +136,35 @@ class WorldObject {
 
     onInteract(object) {
         // Override when a subclass is interactable (to start a dialogue, for example)
+    }
+
+    playAnimation(anim_name, crossfade = false) {
+        if (!this._animationMixer || !this._animations) {
+            return;
+        }
+
+        const clip = this._animations.find((anim) => anim.name === anim_name);
+        if (!clip) {
+            return;
+        }
+
+        const nextAction = this._animationMixer.clipAction(clip);
+        nextAction.reset().play();
+
+        if (crossfade && this._currentAction && this._currentAction !== nextAction) {
+            this._currentAction.crossFadeTo(nextAction, 0.2, false);
+        }
+
+        this._currentAction = nextAction;
+    }
+
+    stopAnimation() {
+        if (!this._animationMixer || !this._currentAction) {
+            return;
+        }
+
+        this._currentAction.stop();
+        this._currentAction = null;
     }
 }
 

@@ -6,32 +6,33 @@ class ObjectManager {
         this.gltfloader = new GLTFLoader();
         this.textureLoader = new THREE.TextureLoader();
         this.audioLoader = new THREE.AudioLoader();
-        this.cache = {};
+        this.objectCache = {};
+        this.animationCache = {};
     }
 
     async loadTexture(path, id) {
         // If not in cache, load it
-        const needs_loading = !this.cache[id];
+        const needs_loading = !this.objectCache[id];
 
         if (needs_loading) {
             const texture = await this.textureLoader.loadAsync(path);
-            this.cache[id] = texture;
+            this.objectCache[id] = texture;
         }
 
         // Return a clone
-        const clone = this.cache[id].clone();
+        const clone = this.objectCache[id].clone();
 
         return clone;
     }
 
     async loadGLTF(path, id, material_map = null) {
         // If not in cache, load it
-        const needs_loading = !this.cache[id];
+        const needs_loading = !this.objectCache[id];
 
         if (needs_loading) {
-            const scene = await new Promise((resolve, reject) => {
+            const { scene, animations } = await new Promise((resolve, reject) => {
                 this.gltfloader.load(path, (gltf) => {
-                    resolve(gltf.scene);
+                    resolve({ scene: gltf.scene, animations: gltf.animations });
                 }, undefined, (error) => {
                     console.error(`Failed to load GTLF model object ${id} at ${path}:`, error);
                     reject(error);
@@ -46,15 +47,16 @@ class ObjectManager {
                     }
                 });
             }
-            
-            this.cache[id] = scene;
+
+            this.objectCache[id] = scene;
+            this.animationCache[id] = Array.isArray(animations) ? animations : [];
         }
 
         // Return a clone
-        const clone = this.cache[id].clone();
+        const clone = this.objectCache[id].clone();
 
         if (!needs_loading && material_map) {
-            this.cache[id].traverse((node) => {
+            this.objectCache[id].traverse((node) => {
                 if (node.isMesh && material_map[node.name]) {
                     node.material = material_map[node.name];
                 }
@@ -66,24 +68,24 @@ class ObjectManager {
 
     async loadMP3(path, id) {
         // If not in cache, load it
-        const needs_loading = !this.cache[id];
+        const needs_loading = !this.objectCache[id];
 
         if (needs_loading) {
             try {
                 const audioBuffer = await this.audioLoader.loadAsync(path);
-                this.cache[id] = audioBuffer;
+                this.objectCache[id] = audioBuffer;
             } catch (error) {
                 console.error(`Failed to load MP3 audio ${id} at ${path}:`, error);
                 throw error;
             }
         }
 
-        return this.cache[id];
+        return this.objectCache[id];
     }
 
     async loadShader(path, id) {
         // If not in cache, load it
-        const needs_loading = !this.cache[id];
+        const needs_loading = !this.objectCache[id];
 
         if (needs_loading) {
             try {
@@ -92,18 +94,18 @@ class ObjectManager {
                     throw new Error(`Response status: ${response.status}`);
                 }
 
-                this.cache[id] = await response.text();
+                this.objectCache[id] = await response.text();
             } catch (error) {
                 console.error(error.message);
             }
         }
 
-        return this.cache[id];
+        return this.objectCache[id];
     }
 
     getObject(id, clone=true) {
-        if (this.cache[id]) {
-            let returnval = this.cache[id];
+        if (this.objectCache[id]) {
+            let returnval = this.objectCache[id];
             if (clone) {
                 returnval = returnval.clone();
             }
@@ -112,18 +114,33 @@ class ObjectManager {
         return null;
     }
 
+    getAnimations(id, clone=true) {
+        if (this.animationCache[id]) {
+            let returnval = this.animationCache[id];
+            if (clone) {
+                returnval = returnval.map((clip) => clip.clone());
+            }
+            return returnval;
+        }
+        return null;
+    }
+
     isLoaded(id) {
-        return id in this.cache;
+        return id in this.objectCache;
     }
 
     deleteObject(id) {
-        if (this.cache[id]) {
-            delete this.cache[id];
+        if (this.objectCache[id]) {
+            delete this.objectCache[id];
+        }
+        if (this.animationCache[id]) {
+            delete this.animationCache[id];
         }
     }
 
     clearCache() {
-        this.cache = {};
+        this.objectCache = {};
+        this.animationCache = {};
     }
 }
 
