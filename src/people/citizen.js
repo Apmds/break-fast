@@ -29,39 +29,48 @@ class Citizen extends WorldObject {
         this.inConversation = false;
         this.isTypingDialogue = false;
         this.dialogueTypewriterTimeouts = [];
+        this.soundTimeoutIds = [];
         this.dialogueLetterSpeed = 30;
 
         this.dialogue_box = document.getElementById("dialog-box");
         this.dialogue_speaker = document.getElementById("dialog-speaker");
         this.dialogue_content = document.getElementById("dialog-content");
 
-        this.dialogue = new Conversation().load("placeholder");
+        this.dialogue = new Conversation().load("bridge_start");
+        this.last_dialogue = this.dialogue;
     }
 
     onInteract(object) {
-        console.log("BF:", this.dialogue);
+        //console.log("BF:", this.dialogue);
         if (this.dialogue === null) {
             return;
         }
 
         if (this.isTypingDialogue) {
-            this.revealFullDialogueText();
-            return;
+            if (this.last_dialogue.isAutoSkip()) {
+                this.clearTypewriterTimeouts();
+                this.isTypingDialogue = false;
+                // Continue to start next dialogue
+            } else {
+                this.revealFullDialogueText();
+                return;
+            }
         }
-
-        const currentDialogue = this.dialogue;
 
         if (this.dialogue.ended) {
             this.endConversation();
-            this.dialogue = currentDialogue.nextval;
+            this.dialogue = this.dialogue.nextval;
             return;
         }
 
         // Assuming the object is a Player
+        const currentDialogue = this.dialogue;
         
         // Lock camera and focus on citizen
         this.startConversation(object);
 
+        // Advance state immediately
+        this.goToNextDialogue();
 
         // Start dialogue
         this.dialogue_speaker.innerText = currentDialogue.speaker.toUpperCase();
@@ -73,11 +82,8 @@ class Citizen extends WorldObject {
             this.play_sound(times);
         }
 
-        this.dialogue = currentDialogue.nextval;
-        console.log("AF:", this.dialogue);
-
     }
-    
+
     startConversation(player) {
         if (this.inConversation) {
             return;
@@ -89,6 +95,11 @@ class Citizen extends WorldObject {
 
         // Show dialog box
         this.dialogue_box.classList.remove("invisible")
+    }
+
+    goToNextDialogue() {
+        this.last_dialogue = this.dialogue;
+        this.dialogue = this.dialogue.nextval;
     }
     
     endConversation() {
@@ -115,25 +126,39 @@ class Citizen extends WorldObject {
         this.isTypingDialogue = true;
         const safeSpeed = Math.max(1, lettersPerSecond);
         const delayBetweenLetters = Math.floor(1000 / safeSpeed);
+        const shouldAutoSkip = this.last_dialogue.isAutoSkip();
 
-        for (let i = 0; i < text.length + 1; i++) {
+        for (let i = 0; i <= text.length; i++) {
             const textToShow = text.slice(0, i);
+            const isLastPart = i === text.length;
+
             const timeoutId = setTimeout(() => {
                 
                 this.dialogue_content.innerText = textToShow;
 
-                if (i === text.length - 1) {
+                if (isLastPart) {
                     this.isTypingDialogue = false;
                 }
             }, i * delayBetweenLetters);
 
             this.dialogueTypewriterTimeouts.push(timeoutId);
+
+            if (isLastPart && shouldAutoSkip) {
+                const timeoutId = setTimeout(() => {
+                    this.clearTypewriterTimeouts();
+                    this.isTypingDialogue = false;
+                    this.onInteract(this.player);
+                }, (i + 1) * delayBetweenLetters);
+
+                this.dialogueTypewriterTimeouts.push(timeoutId);
+            }
+
         }
     }
 
     revealFullDialogueText() {
         this.clearTypewriterTimeouts();
-        this.dialogue_content.innerText = this.dialogue.text;
+        this.dialogue_content.innerText = this.last_dialogue.text;
         this.isTypingDialogue = false;
     }
 
@@ -142,14 +167,19 @@ class Citizen extends WorldObject {
             clearTimeout(timeoutId);
         }
         this.dialogueTypewriterTimeouts = [];
+        
+        for (const timeoutId of this.soundTimeoutIds) {
+            clearTimeout(timeoutId);
+        }
+        this.soundTimeoutIds = [];
     }
 
     play_sound(times) {
         const grunts = ['grunt1', 'grunt2', 'grunt3', 'grunt4'];
-        const delayBetweenSounds = 125; // milliseconds
+        const delayBetweenSounds = 70; // milliseconds
         
         for (let i = 0; i < times; i++) {
-            setTimeout(() => {
+            const timeoutId = setTimeout(() => {
                 const randomGrunt = grunts[Math.floor(Math.random() * grunts.length)];
                 const audioBuffer = objectManager.getObject(randomGrunt, false);
                 
@@ -173,6 +203,7 @@ class Citizen extends WorldObject {
                 
                 audio.play();
             }, i * delayBetweenSounds);
+            this.soundTimeoutIds.push(timeoutId);
         }
     }
 }

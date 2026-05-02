@@ -10,14 +10,19 @@ class Conversation {
         this._next = next;
         this._ignoreNext = false;
         this.ended = false;
+        this.autoskip = false;
     }
 
     load(convKey, onEnd = null, ignoreNext = false, index = 0, root = null) {
         const json = dialogueMap[convKey];
-        console.log(json, index)
+        //console.log(json, index)
 
         const conversation = json.conversation;
         const entry = conversation[index];
+
+        if (entry.autoskip !== null) {
+            this.autoskip = entry.autoskip;
+        }
 
         this.speaker = entry.speaker;
         this.text = entry.text;
@@ -27,7 +32,7 @@ class Conversation {
             this.onEnd = onEnd === null ? () => null : onEnd;
 
             if (!ignoreNext && json.next !== undefined) {
-                console.log(convKey, json.next);
+                //console.log(convKey, json.next);
                 
                 if (json.next === convKey) { // Repeating conversation
                     this._next = root === null ? this : root;
@@ -62,6 +67,10 @@ class Conversation {
         }
 
         return this._nextPiece;
+    }
+
+    isAutoSkip() {
+        return this.autoskip;
     }
 }
 
