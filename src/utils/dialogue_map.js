@@ -56,9 +56,12 @@ const dialogueMap = {
             ]},
             {"speaker": "Me", "text": [
                 {"text": "Can't you call his phone?", delay: 0.4},
-                {"text": " Surely he has one-", delay: 0.3},
+                {"text": " Surely he has one-", delay: 0.1},
             ], autoskip: true},
-            {"speaker": "Construction Worker", "text": "He doesn't have a phone. He insists on communicating by carrier pigeon."},
+            {"speaker": "Construction Worker", "text": [
+                {"text": "He doesn't have a phone.", delay: 0.2},
+                " He insists on communicating by carrier pigeon.",
+            ]},
             {"speaker": "Me", "text": "You have to be kidding."},
             {"speaker": "Construction Worker", "text": [
                 {"text": "No,", delay: 0.2},

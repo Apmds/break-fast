@@ -149,16 +149,6 @@ class Citizen extends WorldObject {
 
                 this.dialogueTypewriterTimeouts.push(timeoutId);
 
-                if (isLastCharOfAll && shouldAutoSkip) {
-                    const autoSkipTimeoutId = setTimeout(() => {
-                        this.clearTypewriterTimeouts();
-                        this.isTypingDialogue = false;
-                        this.onInteract(this.player);
-                    }, cumulativeDelay + typingDelay);
-
-                    this.dialogueTypewriterTimeouts.push(autoSkipTimeoutId);
-                }
-
                 cumulativeDelay += typingDelay;
             }
 
@@ -167,6 +157,16 @@ class Citizen extends WorldObject {
                 cumulativeDelay += Math.floor(part.delay * 1000);
             }
         });
+
+        if (shouldAutoSkip) {
+            const autoSkipTimeoutId = setTimeout(() => {
+                this.clearTypewriterTimeouts();
+                this.isTypingDialogue = false;
+                this.onInteract(this.player);
+            }, cumulativeDelay);
+
+            this.dialogueTypewriterTimeouts.push(autoSkipTimeoutId);
+        }
     }
 
     revealFullDialogueText() {
