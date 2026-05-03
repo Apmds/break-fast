@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
 
 import { make_road, part_length, between_parts_length, road_width } from './road.js';
 import { ROAD_DIR } from '../utils/road.js';
@@ -15,6 +16,22 @@ export function make_bridge(x, y, z, direction) {
         }
     });
     bridge.add(road);
+
+    // Create physics body
+    const bridgeBody = new CANNON.Body({ mass: 0 });
+
+    // Road surface collision
+    const roadShape = new CANNON.Box(new CANNON.Vec3(road_width / 2, 0.5, bridge_length / 2));
+    bridgeBody.addShape(roadShape, new CANNON.Vec3(0, -0.5, -bridge_length / 2));
+
+    // Side guardrails collision
+    const railHeight = 2;
+    const railThickness = 0.5;
+    const sideRailShape = new CANNON.Box(new CANNON.Vec3(railThickness / 2, railHeight / 2, bridge_length / 2));
+    // Left rail
+    bridgeBody.addShape(sideRailShape, new CANNON.Vec3(-road_width / 2, railHeight / 2, -bridge_length / 2));
+    // Right rail
+    bridgeBody.addShape(sideRailShape, new CANNON.Vec3(road_width / 2, railHeight / 2, -bridge_length / 2));
 
     const road_volume = new THREE.Mesh(
         new THREE.BoxGeometry(road_width, 3, bridge_length),
@@ -76,6 +93,38 @@ export function make_bridge(x, y, z, direction) {
         cablePillarFront.add(cablePillarFrontBridgeSupport);
 
         object.add(cablePillarFront);
+
+        // Physics for pillars
+        const pillarShape = new CANNON.Box(new CANNON.Vec3(2, cablePillarHeight / 2, 2));
+        
+        // Front Left Pillar collision
+        const leftPillarPos = new THREE.Vector3(-(road_width/2)*0.7, cablePillarHeight/2 - 20, 0)
+            .applyAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(30));
+        const leftPillarQuat = new THREE.Quaternion()
+            .setFromEuler(new THREE.Euler(THREE.MathUtils.degToRad(30), 0, THREE.MathUtils.degToRad(-4), 'YXZ'));
+        
+        // Adjust for Y rotation if needed (cables_back)
+        const finalLeftPos = leftPillarPos.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY);
+        const finalLeftQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY).multiply(leftPillarQuat);
+
+        bridgeBody.addShape(pillarShape, 
+            new CANNON.Vec3(finalLeftPos.x, finalLeftPos.y, finalLeftPos.z + pillarBaseZ),
+            new CANNON.Quaternion(finalLeftQuat.x, finalLeftQuat.y, finalLeftQuat.z, finalLeftQuat.w)
+        );
+
+        // Front Right Pillar collision
+        const rightPillarPos = new THREE.Vector3((road_width/2)*0.7, cablePillarHeight/2 - 20, 0)
+            .applyAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(30));
+        const rightPillarQuat = new THREE.Quaternion()
+            .setFromEuler(new THREE.Euler(THREE.MathUtils.degToRad(30), 0, THREE.MathUtils.degToRad(4), 'YXZ'));
+
+        const finalRightPos = rightPillarPos.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY);
+        const finalRightQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY).multiply(rightPillarQuat);
+
+        bridgeBody.addShape(pillarShape, 
+            new CANNON.Vec3(finalRightPos.x, finalRightPos.y, finalRightPos.z + pillarBaseZ),
+            new CANNON.Quaternion(finalRightQuat.x, finalRightQuat.y, finalRightQuat.z, finalRightQuat.w)
+        );
 
         // Stretched cables on the ground
         const cableGeo = new THREE.CylinderGeometry(0.45, 0.45, 1, 12);
@@ -182,5 +231,10 @@ export function make_bridge(x, y, z, direction) {
     
     bridge.position.set(x, y, z);
     bridge.rotateY(direction);
-    return bridge;
+
+    // Sync body transform
+    bridgeBody.position.set(x, y, z);
+    bridgeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), direction);
+
+    return [bridge, bridgeBody];
 }

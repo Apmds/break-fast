@@ -22,6 +22,7 @@ class City extends Scene {
 
         // Build city
         const cityGroup = new THREE.Object3D();
+        const roadBodies = [];
 
         // Base ground
         const base_ground = new THREE.Mesh(
@@ -159,58 +160,73 @@ class City extends Scene {
 
         let road_start;
 
-        let [road, endpoint] = make_road_corner(0, 0, ROAD_CORNER_DIR.LEFT_UP, 50);
+        let [road, endpoint, rBody] = make_road_corner(0, 0, ROAD_CORNER_DIR.LEFT_UP, 50);
         cityGroup.add(road);
+        roadBodies.push(rBody);
 
         road_start = endpoint.clone();
-        [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.UP, 50, 0);
+        [road, endpoint, rBody] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.UP, 50, 0);
         cityGroup.add(road);
+        roadBodies.push(rBody);
         cityGroup.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.UP, 50));
 
-        const [roundabout, endpoint_front, endpoint_left, endpoint_right] = make_roundabout(endpoint.x, endpoint.z - 50, 50);
+        const [roundabout, endpoint_front, endpoint_left, endpoint_right, raBody] = make_roundabout(endpoint.x, endpoint.z - 50, 50);
         cityGroup.add(roundabout);
+        roadBodies.push(raBody);
 
         // Bridge stuff
+        let bridgeBody;
         {
-            const [road_to_bridge, endpoint] = make_road(endpoint_left.x, 0, endpoint_right.z, ROAD_DIR.LEFT, 10, 0);
+            const [road_to_bridge, endpoint, rbBody1] = make_road(endpoint_left.x, 0, endpoint_right.z, ROAD_DIR.LEFT, 10, 0);
             cityGroup.add(road_to_bridge)
+            roadBodies.push(rbBody1);
 
-            const [bridge_ramp, endpoint_ramp] = make_road(endpoint.x, endpoint.y, endpoint.z, ROAD_DIR.LEFT, 16, THREE.MathUtils.degToRad(10), true);
+            const [bridge_ramp, endpoint_ramp, rbBody2] = make_road(endpoint.x, endpoint.y, endpoint.z, ROAD_DIR.LEFT, 16, THREE.MathUtils.degToRad(10), true);
             cityGroup.add(bridge_ramp);
+            roadBodies.push(rbBody2);
 
-            cityGroup.add(make_bridge(endpoint_ramp.x, endpoint_ramp.y, endpoint_ramp.z, ROAD_DIR.LEFT))
+            const [bridge, bBody] = make_bridge(endpoint_ramp.x, endpoint_ramp.y, endpoint_ramp.z, ROAD_DIR.LEFT);
+            cityGroup.add(bridge);
+            bridgeBody = bBody;
         }
 
         road_start = new THREE.Vector3(endpoint_front.x, 0, endpoint_front.z);
-        [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.UP, 50, 0);
+        [road, endpoint, rBody] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.UP, 50, 0);
         cityGroup.add(road);
+        roadBodies.push(rBody);
         cityGroup.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.UP, 50));
 
-        [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.DOWN_RIGHT);
+        [road, endpoint, rBody] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.DOWN_RIGHT);
         cityGroup.add(road);
+        roadBodies.push(rBody);
 
         road_start = endpoint.clone();
-        [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.RIGHT, 30, 0);
+        [road, endpoint, rBody] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.RIGHT, 30, 0);
         cityGroup.add(road);
+        roadBodies.push(rBody);
         cityGroup.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.RIGHT, 30));
 
-        [road, endpoint] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.LEFT_DOWN);
+        [road, endpoint, rBody] = make_road_corner(endpoint.x, endpoint.z, ROAD_CORNER_DIR.LEFT_DOWN);
         cityGroup.add(road);
+        roadBodies.push(rBody);
 
         road_start = endpoint.clone();
-        [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 58, 0);
+        [road, endpoint, rBody] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 58, 0);
         cityGroup.add(road);
+        roadBodies.push(rBody);
         cityGroup.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.DOWN, 58));
 
         
         road_start = new THREE.Vector3(endpoint.x - road_width / 2, 0, endpoint.z + (road_width / 2));
-        [road] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.LEFT, 22, 0);
+        [road, , rBody] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.LEFT, 22, 0);
         cityGroup.add(road);
+        roadBodies.push(rBody);
         cityGroup.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.LEFT, 22));
         
         road_start = new THREE.Vector3(endpoint.x, 0, endpoint.z);
-        [road, endpoint] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 4, 0);
+        [road, endpoint, rBody] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 4, 0);
         cityGroup.add(road);
+        roadBodies.push(rBody);
         let [single_path] = make_path_parts(0, 0, 4, 'right');
         single_path.position.set(-road_start.x - road_width/2 - path_width/2, 0, -road_start.z);
         single_path.rotateY(ROAD_DIR.DOWN);
@@ -218,13 +234,10 @@ class City extends Scene {
         cityGroup.add(single_path);
 
         road_start = new THREE.Vector3(endpoint.x, 0, endpoint.z);
-        [road] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 50, 0);
+        [road, , rBody] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 50, 0);
         cityGroup.add(road);
+        roadBodies.push(rBody);
         cityGroup.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.DOWN, 50));
-
-        // TODO: estrada sem saída
-
-        
 
         // Houses
         {
@@ -303,12 +316,12 @@ class City extends Scene {
 
         // Cars
         const cars = [
-            new Car(new THREE.Vector3(120, 0.6, 10), new THREE.Vector3(0, Math.PI / 2, 0))
+            new Car(new THREE.Vector3(15, 0.6, -180), new THREE.Vector3(0, Math.PI / 2, 0))
         ];
 
         cars.forEach((car, index) => this.add(car, `car_${index}`));
 
-        const restaurant = new DcMonalds(new THREE.Vector3(15, -0.5, -180), new THREE.Vector3(0, Math.PI / 2, 0));
+        const restaurant = new DcMonalds(new THREE.Vector3(-10, -0.5, -12), new THREE.Vector3(0, 0, 0));
 
         this.add(restaurant, "restaurant");
 
@@ -417,6 +430,14 @@ class City extends Scene {
         });
         this.groundBody.position.y = 0; // Top surface at 0
         this.physicsWorld.addBody(this.groundBody);
+
+        if (bridgeBody) {
+            this.physicsWorld.addBody(bridgeBody);
+        }
+
+        roadBodies.forEach(body => {
+            if (body) this.physicsWorld.addBody(body);
+        });
 
         // GUI
         //this.gui.hide();

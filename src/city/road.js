@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
 
 export const road_width = 20;
 export const part_length = 3;
@@ -29,47 +30,71 @@ export function make_road(x, y, z, direction, num_parts, tilt_angle = 0, has_bar
     }
     road.add(roadMesh);
 
-    if (has_barriers) {
-        const railHeightBottom = 0.8;
-        const railHeightTop = 1.2;
-        const railThickness = 0.14;
-        const postHeight = 1.3;
-        const postThickness = 0.2;
-        const sideOffset = road_width / 2 - postThickness / 2;
-        const postSpacing = 5;
-
-        const railGeo = new THREE.BoxGeometry(railThickness, railThickness, road_length);
-        const postGeo = new THREE.BoxGeometry(postThickness, postHeight, postThickness);
-        const barrierMat = new THREE.MeshToonMaterial({ color: 0xd7d7d7, side: THREE.DoubleSide , fog: false});
-
-        const leftRailTop = new THREE.Mesh(railGeo, barrierMat);
-        leftRailTop.position.set(-sideOffset, railHeightTop, -road_length / 2);
-        road.add(leftRailTop);
-
-        const leftRailBottom = new THREE.Mesh(railGeo, barrierMat);
-        leftRailBottom.position.set(-sideOffset, railHeightBottom, -road_length / 2);
-        road.add(leftRailBottom);
-
-        const rightRailTop = new THREE.Mesh(railGeo, barrierMat);
-        rightRailTop.position.set(sideOffset, railHeightTop, -road_length / 2);
-        road.add(rightRailTop);
-
-        const rightRailBottom = new THREE.Mesh(railGeo, barrierMat);
-        rightRailBottom.position.set(sideOffset, railHeightBottom, -road_length / 2);
-        road.add(rightRailBottom);
-
-        const postCount = Math.floor(road_length / postSpacing) + 1;
-        for (let i = 0; i < postCount; i++) {
-            const z = -i * postSpacing;
-
-            const leftPost = new THREE.Mesh(postGeo, barrierMat);
-            leftPost.position.set(-sideOffset, postHeight / 2, z);
-            road.add(leftPost);
-
-            const rightPost = new THREE.Mesh(postGeo, barrierMat);
-            rightPost.position.set(sideOffset, postHeight / 2, z);
-            road.add(rightPost);
+    // Physics body - only if not flat on ground OR has barriers
+    let roadBody = null;
+    if (y !== 0 || tilt_angle !== 0 || has_barriers) {
+        roadBody = new CANNON.Body({ mass: 0 });
+        
+        // Floor collision only if elevated or tilted (otherwise rely on ground plane)
+        if (y !== 0 || tilt_angle !== 0) {
+            const roadShape = new CANNON.Box(new CANNON.Vec3(road_width / 2, 0.5, road_length / 2));
+            roadBody.addShape(roadShape, new CANNON.Vec3(0, -0.5, -road_length / 2));
         }
+
+        if (has_barriers) {
+            const railHeightBottom = 0.8;
+            const railHeightTop = 1.2;
+            const railThickness = 0.14;
+            const postHeight = 1.3;
+            const postThickness = 0.2;
+            const sideOffset = road_width / 2 - postThickness / 2;
+            const postSpacing = 5;
+
+            // Simplified rail collision
+            const railCollisionHeight = 1.5;
+            const railShape = new CANNON.Box(new CANNON.Vec3(0.5 / 2, railCollisionHeight / 2, road_length / 2));
+            roadBody.addShape(railShape, new CANNON.Vec3(-road_width / 2, railCollisionHeight / 2, -road_length / 2));
+            roadBody.addShape(railShape, new CANNON.Vec3(road_width / 2, railCollisionHeight / 2, -road_length / 2));
+
+            const railGeo = new THREE.BoxGeometry(railThickness, railThickness, road_length);
+            const postGeo = new THREE.BoxGeometry(postThickness, postHeight, postThickness);
+            const barrierMat = new THREE.MeshToonMaterial({ color: 0xd7d7d7, side: THREE.DoubleSide , fog: false});
+
+            const leftRailTop = new THREE.Mesh(railGeo, barrierMat);
+            leftRailTop.position.set(-sideOffset, railHeightTop, -road_length / 2);
+            road.add(leftRailTop);
+
+            const leftRailBottom = new THREE.Mesh(railGeo, barrierMat);
+            leftRailBottom.position.set(-sideOffset, railHeightBottom, -road_length / 2);
+            road.add(leftRailBottom);
+
+            const rightRailTop = new THREE.Mesh(railGeo, barrierMat);
+            rightRailTop.position.set(sideOffset, railHeightTop, -road_length / 2);
+            road.add(rightRailTop);
+
+            const rightRailBottom = new THREE.Mesh(railGeo, barrierMat);
+            rightRailBottom.position.set(sideOffset, railHeightBottom, -road_length / 2);
+            road.add(rightRailBottom);
+
+            const postCount = Math.floor(road_length / postSpacing) + 1;
+            for (let i = 0; i < postCount; i++) {
+                const z = -i * postSpacing;
+
+                const leftPost = new THREE.Mesh(postGeo, barrierMat);
+                leftPost.position.set(-sideOffset, postHeight / 2, z);
+                road.add(leftPost);
+
+                const rightPost = new THREE.Mesh(postGeo, barrierMat);
+                rightPost.position.set(sideOffset, postHeight / 2, z);
+                road.add(rightPost);
+            }
+        }
+
+        // Sync body transform
+        roadBody.position.set(x, y, z);
+        const quatY = new CANNON.Quaternion().setFromAxisAngle(new CANNON.Vec3(0, 1, 0), direction);
+        const quatX = new CANNON.Quaternion().setFromAxisAngle(new CANNON.Vec3(1, 0, 0), tilt_angle);
+        roadBody.quaternion.copy(quatY.mult(quatX));
     }
     
     road.position.set(-x, y, -z);
@@ -84,7 +109,7 @@ export function make_road(x, y, z, direction, num_parts, tilt_angle = 0, has_bar
         z - horizontal_length*Math.cos(direction)
     );
 
-    return [road, endPoint];
+    return [road, endPoint, roadBody];
 }
 
 export function make_road_corner(x, z, direction) {
@@ -131,6 +156,9 @@ export function make_road_corner(x, z, direction) {
     road.rotateY(direction.angle);
     road.position.set(x, 0, z);
 
+    // Flat corners at y=0 don't need collision (rely on ground plane)
+    const roadBody = null;
+
     const endOffset = new THREE.Vector3(
         -road_width/2 + 2*road_width*direction.offset.x,
         0,
@@ -139,7 +167,7 @@ export function make_road_corner(x, z, direction) {
         .applyAxisAngle(new THREE.Vector3(0, 1, 0), direction.angle);
     const endPoint = new THREE.Vector3(x + endOffset.x, 0, z + endOffset.z);
 
-    return [road, endPoint];
+    return [road, endPoint, roadBody];
 }
 
 export function make_roundabout(x, z, radius) {
@@ -151,7 +179,7 @@ export function make_roundabout(x, z, radius) {
     roadMesh.rotateX(-Math.PI/2);
     roundabout.add(roadMesh);
 
-    // Blend pads remove tiny visual seams where straight roads meet the ring.
+    // Blend pads
     const joinGeo = new THREE.PlaneGeometry(road_width, road_width);
     const joinMat = new THREE.MeshToonMaterial({ color: 0x444444, side: THREE.DoubleSide , fog: false});
     const joinOffsets = [
@@ -199,9 +227,12 @@ export function make_roundabout(x, z, radius) {
 
     roundabout.position.set(x, 0, z);
 
+    // Flat roundabouts at y=0 don't need collision (rely on ground plane)
+    const roadBody = null;
+
     const frontEndpoint = new THREE.Vector3(x, 0, z - radius);
     const leftEndpoint = new THREE.Vector3(x - radius, 0, z);
     const rightEndpoint = new THREE.Vector3(x + radius, 0, z);
 
-    return [roundabout, frontEndpoint, leftEndpoint, rightEndpoint];
+    return [roundabout, frontEndpoint, leftEndpoint, rightEndpoint, roadBody];
 }

@@ -17,7 +17,6 @@ class Player {
             shape: physicsShape,
             linearDamping: 0.9,
             angularDamping: 0.9,
-            fixedRotation: true,
         });
         this.physicsBody.position.set(camera.position.x, camera.position.y, camera.position.z);
         this.physicsWorld.addBody(this.physicsBody);
