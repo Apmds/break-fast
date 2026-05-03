@@ -1,4 +1,5 @@
 import dialogueMap from "./dialogue_map.js";
+import ConversationText from "./conversationText.js";
 
 class Conversation {
     constructor(text, speaker, onEnd = null, next = null) {
@@ -10,7 +11,8 @@ class Conversation {
         this._next = next;
         this._ignoreNext = false;
         this.ended = false;
-        this.autoskip = false;
+        this._autoskip = false;
+        this._sound = true;
     }
 
     load(convKey, onEnd = null, ignoreNext = false, index = 0, root = null) {
@@ -20,12 +22,15 @@ class Conversation {
         const conversation = json.conversation;
         const entry = conversation[index];
 
-        if (entry.autoskip !== null) {
-            this.autoskip = entry.autoskip;
+        if (entry.autoskip !== undefined) {
+            this._autoskip = entry.autoskip;
+        }
+        if (entry.sound !== undefined) {
+            this._sound = entry.sound;
         }
 
         this.speaker = entry.speaker;
-        this.text = entry.text;
+        this.text = this.loadText(entry.text);
         this._ignoreNext = ignoreNext;
         
         if (index >= conversation.length - 1) {
@@ -49,6 +54,16 @@ class Conversation {
         return this;
     }
 
+    loadText(text) {
+        const conversationText = new ConversationText();
+        if (Array.isArray(text)) {
+            text.forEach(part => conversationText.addPart(part));
+        } else {
+            conversationText.addPart(text);
+        }
+        return conversationText;
+    }
+
     get nextval() {
         if (this._nextPiece === null) {
             if (!this.ended) {
@@ -70,7 +85,11 @@ class Conversation {
     }
 
     isAutoSkip() {
-        return this.autoskip;
+        return this._autoskip;
+    }
+
+    hasSound() {
+        return this._sound;
     }
 }
 

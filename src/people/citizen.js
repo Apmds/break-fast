@@ -77,8 +77,8 @@ class Citizen extends WorldObject {
         this.typeDialogueText(currentDialogue.text, this.dialogueLetterSpeed);
         
         // Play grunts - times equals half the dialogue text length
-        if (!currentDialogue.ended) {
-            const times = Math.floor(currentDialogue.text.length / 2);
+        if (!currentDialogue.ended && currentDialogue.hasSound()) {
+            const times = Math.floor(currentDialogue.text.fullText.length / 2);
             this.play_sound(times);
         }
 
@@ -114,51 +114,64 @@ class Citizen extends WorldObject {
         this.dialogue_box.classList.add("invisible");
     }
 
-    typeDialogueText(text, lettersPerSecond) {
+    typeDialogueText(conversationText, defaultLettersPerSecond) {
         this.clearTypewriterTimeouts();
         this.dialogue_content.innerText = '';
 
-        if (text.length === 0) {
+        const fullText = conversationText.fullText;
+        if (fullText.length === 0) {
             this.isTypingDialogue = false;
             return;
         }
 
         this.isTypingDialogue = true;
-        const safeSpeed = Math.max(1, lettersPerSecond);
-        const delayBetweenLetters = Math.floor(1000 / safeSpeed);
+        const typingDelay = Math.floor(1000 / Math.max(1, defaultLettersPerSecond));
         const shouldAutoSkip = this.last_dialogue.isAutoSkip();
 
-        for (let i = 0; i <= text.length; i++) {
-            const textToShow = text.slice(0, i);
-            const isLastPart = i === text.length;
+        let currentCharacterCount = 0;
+        let cumulativeDelay = 0;
 
-            const timeoutId = setTimeout(() => {
-                
-                this.dialogue_content.innerText = textToShow;
+        conversationText.parts.forEach((part, partIndex) => {
+            const partText = part.text;
+            
+            for (let i = 0; i < partText.length; i++) {
+                currentCharacterCount++;
+                const textToShow = fullText.slice(0, currentCharacterCount);
+                const isLastCharOfAll = currentCharacterCount === fullText.length;
 
-                if (isLastPart) {
-                    this.isTypingDialogue = false;
-                }
-            }, i * delayBetweenLetters);
-
-            this.dialogueTypewriterTimeouts.push(timeoutId);
-
-            if (isLastPart && shouldAutoSkip) {
                 const timeoutId = setTimeout(() => {
-                    this.clearTypewriterTimeouts();
-                    this.isTypingDialogue = false;
-                    this.onInteract(this.player);
-                }, (i + 1) * delayBetweenLetters);
+                    this.dialogue_content.innerText = textToShow;
+
+                    if (isLastCharOfAll) {
+                        this.isTypingDialogue = false;
+                    }
+                }, cumulativeDelay);
 
                 this.dialogueTypewriterTimeouts.push(timeoutId);
+
+                if (isLastCharOfAll && shouldAutoSkip) {
+                    const autoSkipTimeoutId = setTimeout(() => {
+                        this.clearTypewriterTimeouts();
+                        this.isTypingDialogue = false;
+                        this.onInteract(this.player);
+                    }, cumulativeDelay + typingDelay);
+
+                    this.dialogueTypewriterTimeouts.push(autoSkipTimeoutId);
+                }
+
+                cumulativeDelay += typingDelay;
             }
 
-        }
+            // After a part is done typing, add the extra delay if specified
+            if (part.delay !== null) {
+                cumulativeDelay += Math.floor(part.delay * 1000);
+            }
+        });
     }
 
     revealFullDialogueText() {
         this.clearTypewriterTimeouts();
-        this.dialogue_content.innerText = this.last_dialogue.text;
+        this.dialogue_content.innerText = this.last_dialogue.text.fullText;
         this.isTypingDialogue = false;
     }
 
