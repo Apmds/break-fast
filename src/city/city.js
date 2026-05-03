@@ -303,7 +303,7 @@ class City extends Scene {
 
         // Cars
         const cars = [
-            new Car(new THREE.Vector3(15, 0.6, -180), new THREE.Vector3(0, Math.PI / 2, 0))
+            new Car(new THREE.Vector3(120, 0.6, 10), new THREE.Vector3(0, Math.PI / 2, 0))
         ];
 
         cars.forEach((car, index) => this.add(car, `car_${index}`));
@@ -406,7 +406,6 @@ class City extends Scene {
         this.addModel(rimLight);
 
         // Physics world
-        this.physicsWorld = new CANNON.World();
         this.physicsWorld.gravity.set(0, -9.82*5, 0);
         this.physicsWorld.defaultContactMaterial.friction = 0.1;
 
@@ -416,7 +415,7 @@ class City extends Scene {
             mass: 0,
             shape: groundShape,
         });
-        this.groundBody.position.y = 0; // Slightly below player spawn
+        this.groundBody.position.y = 0; // Top surface at 0
         this.physicsWorld.addBody(this.groundBody);
 
         // GUI

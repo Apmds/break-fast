@@ -17,8 +17,9 @@ class Player {
             shape: physicsShape,
             linearDamping: 0.9,
             angularDamping: 0.9,
+            fixedRotation: true,
         });
-        this.physicsBody.position.copy(camera.position);
+        this.physicsBody.position.set(camera.position.x, camera.position.y, camera.position.z);
         this.physicsWorld.addBody(this.physicsBody);
 
         this.moveVelocity = new CANNON.Vec3(0, 0, 0);
@@ -36,9 +37,11 @@ class Player {
         this.cameraControls.update(delta, this.physicsBody, this.moveVelocity);
         
         // Update camera position to match physics body
-        this.camera.position.copy(this.physicsBody.position);
-        // Keep camera slightly above the body center
-        this.camera.position.y += 1.2;
+        this.camera.position.set(
+            this.physicsBody.position.x,
+            this.physicsBody.position.y + 1.2,
+            this.physicsBody.position.z
+        );
         this.handleInteraction();
     }
 

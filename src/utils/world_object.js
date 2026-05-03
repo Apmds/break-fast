@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
 import objectManager from "../utils/object_manager.js";
 
 class WorldObject {
@@ -11,6 +12,7 @@ class WorldObject {
         this._animationMixer = undefined;
         this._animations = null;
         this._currentAction = null;
+        this._body = null;
     }
 
     update_model_matrix() {
@@ -22,8 +24,11 @@ class WorldObject {
     }
 
     set position(val) {
-        this._position = val;
+        this._position.copy(val);
         this.update_model_matrix();
+        if (this._body) {
+            this._body.position.set(val.x, val.y, val.z);
+        }
     }
 
     get position() {
@@ -31,8 +36,11 @@ class WorldObject {
     }
 
     set rotation(val) {
-        this._rotation = val;
+        this._rotation.copy(val);
         this.update_model_matrix();
+        if (this._body) {
+            this._body.quaternion.setFromEuler(val.x, val.y, val.z);
+        }
     }
 
     get rotation() {
@@ -121,6 +129,19 @@ class WorldObject {
         return this._model;
     }
 
+    set body(val) {
+        this._body = val;
+        if (this._body) {
+            this._body.allowSleep = false;
+            this._body.position.set(this._position.x, this._position.y, this._position.z);
+            this._body.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z);
+        }
+    }
+
+    get body() {
+        return this._body;
+    }
+
     set outline(enabled) {
         if (typeof this._model !== "undefined") {
             this._model.userData.outline = enabled;
@@ -132,6 +153,48 @@ class WorldObject {
             return this._interactable;
         }
         return this._model.userData.interactable;
+    }
+
+    createBasicBody() {
+        if (!this._model) return;
+
+        // Save current rotation
+        const originalRotation = this._model.rotation.clone();
+        // Reset rotation to get "natural" AABB
+        this._model.rotation.set(0, 0, 0);
+        this._model.updateMatrixWorld(true);
+
+        // Compute bounding box
+        const box = new THREE.Box3().setFromObject(this._model);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+
+        // Restore rotation
+        this._model.rotation.copy(originalRotation);
+        this._model.updateMatrixWorld(true);
+
+        // Create shape (CANNON.Box uses half-extents)
+        const shape = new CANNON.Box(new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2));
+        
+        this.body = new CANNON.Body({
+            mass: 0, // Static by default
+        });
+        
+        // Offset shape to match model center (relative to object position)
+        // Since we reset rotation to compute the box, the center is also relative to 0 rotation.
+        // We need the offset in local space.
+        const offset = new CANNON.Vec3(
+            center.x - this._position.x,
+            center.y - this._position.y,
+            center.z - this._position.z
+        );
+
+        // If the model was already scaled, 'size' includes that scale because setFromObject uses world transforms.
+        // So shape is already correctly sized.
+        
+        this.body.addShape(shape, offset);
     }
 
     onInteract(object) {
@@ -170,6 +233,13 @@ class WorldObject {
     update(delta) {
         if (this._animationMixer) {
             this._animationMixer.update(delta);
+        }
+
+        if (this._body && this._body.type !== CANNON.Body.STATIC) {
+            this._position.copy(this._body.position);
+            const euler = new THREE.Euler().setFromQuaternion(this._body.quaternion);
+            this._rotation.set(euler.x, euler.y, euler.z);
+            this.update_model_matrix();
         }
     }
 }

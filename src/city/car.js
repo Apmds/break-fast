@@ -8,6 +8,7 @@ class Car extends WorldObject {
         super(position, rotation, new THREE.Vector3(CAR_SCALE, CAR_SCALE, CAR_SCALE), interactable);
 
         this.model = 'car';
+        this.createBasicBody();
     }
 }
 

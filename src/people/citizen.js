@@ -12,6 +12,7 @@ class Citizen extends WorldObject {
 
         this.model = 'citizen';
         this.model.userData.outline = false;
+        this.createBasicBody();
         
         // Play idle animation on loop if available
         if (this._animations && this._animations.length > 0 && this._animationMixer) {
