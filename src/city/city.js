@@ -428,7 +428,7 @@ class City extends Scene {
             mass: 0,
             shape: groundShape,
         });
-        this.groundBody.position.y = 0; // Top surface at 0
+        this.groundBody.position.y = 0; // Slightly below player spawn
         this.physicsWorld.addBody(this.groundBody);
 
         if (bridgeBody) {

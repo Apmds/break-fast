@@ -54,20 +54,18 @@ export function make_bridge(x, y, z, direction) {
     const frontPillarBaseZ = -bridge_length * 0.201;
     const backPillarBaseZ = -bridge_length * (1 - 0.201);
 
-    // Relative template values (measured from front pillar base) so this can be instanced on both sides.
+    // Relative template values (measured from front pillar base)
     const relTopZ = -136 - frontPillarBaseZ;
     const relGroundAnchorZ1 = 63 - frontPillarBaseZ;
     const relGroundAnchorZ2 = 63 - frontPillarBaseZ;
     const relStayAnchorStartZ = -bridge_length * 0.245 - frontPillarBaseZ;
     const relStayAnchorEndZ = -bridge_length * 0.5 - frontPillarBaseZ;
 
-    // Ugly, but works
     function make_cables(pillarBaseZ, rotationY = 0) {
         const object = new THREE.Object3D();
         object.position.set(0, 0, pillarBaseZ);
         object.rotateY(rotationY);
 
-        // Pillars for the cable
         const cablePillarHeight = 180;
         const cablePillarGeo = new THREE.CylinderGeometry(1, 2.5, cablePillarHeight, 14);
         const cablePillarMat = new THREE.MeshToonMaterial({ color: 0xbdbdbd });
@@ -94,41 +92,24 @@ export function make_bridge(x, y, z, direction) {
 
         object.add(cablePillarFront);
 
-        // Physics for pillars
-        const pillarShape = new CANNON.Box(new CANNON.Vec3(2, cablePillarHeight / 2, 2));
-        
-        // Front Left Pillar collision
-        const leftPillarPos = new THREE.Vector3(-(road_width/2)*0.7, cablePillarHeight/2 - 20, 0)
-            .applyAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(30));
-        const leftPillarQuat = new THREE.Quaternion()
-            .setFromEuler(new THREE.Euler(THREE.MathUtils.degToRad(30), 0, THREE.MathUtils.degToRad(-4), 'YXZ'));
-        
-        // Adjust for Y rotation if needed (cables_back)
-        const finalLeftPos = leftPillarPos.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY);
-        const finalLeftQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY).multiply(leftPillarQuat);
+        // PILLAR COLLISIONS
+        const pillarShape = new CANNON.Box(new CANNON.Vec3(2.5, cablePillarHeight / 2, 2.5));
+        const pillarY = cablePillarHeight / 2 - 20;
 
-        bridgeBody.addShape(pillarShape, 
-            new CANNON.Vec3(finalLeftPos.x, finalLeftPos.y, finalLeftPos.z + pillarBaseZ),
-            new CANNON.Quaternion(finalLeftQuat.x, finalLeftQuat.y, finalLeftQuat.z, finalLeftQuat.w)
-        );
+        const quatY = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY);
+        const quatFront = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(30));
 
-        // Front Right Pillar collision
-        const rightPillarPos = new THREE.Vector3((road_width/2)*0.7, cablePillarHeight/2 - 20, 0)
-            .applyAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(30));
-        const rightPillarQuat = new THREE.Quaternion()
-            .setFromEuler(new THREE.Euler(THREE.MathUtils.degToRad(30), 0, THREE.MathUtils.degToRad(4), 'YXZ'));
+        // Left Pillar
+        const qL = quatY.clone().multiply(quatFront).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), THREE.MathUtils.degToRad(-4)));
+        const pL = new THREE.Vector3(-(road_width/2)*0.7, pillarY, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY);
+        bridgeBody.addShape(pillarShape, new CANNON.Vec3(pL.x, pL.y, pL.z + pillarBaseZ), new CANNON.Quaternion(qL.x, qL.y, qL.z, qL.w));
 
-        const finalRightPos = rightPillarPos.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY);
-        const finalRightQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY).multiply(rightPillarQuat);
+        // Right Pillar
+        const qR = quatY.clone().multiply(quatFront).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), THREE.MathUtils.degToRad(4)));
+        const pR = new THREE.Vector3((road_width/2)*0.7, pillarY, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY);
+        bridgeBody.addShape(pillarShape, new CANNON.Vec3(pR.x, pR.y, pR.z + pillarBaseZ), new CANNON.Quaternion(qR.x, qR.y, qR.z, qR.w));
 
-        bridgeBody.addShape(pillarShape, 
-            new CANNON.Vec3(finalRightPos.x, finalRightPos.y, finalRightPos.z + pillarBaseZ),
-            new CANNON.Quaternion(finalRightQuat.x, finalRightQuat.y, finalRightQuat.z, finalRightQuat.w)
-        );
-
-        // Stretched cables on the ground
-        const cableGeo = new THREE.CylinderGeometry(0.45, 0.45, 1, 12);
-        const cableMat = new THREE.MeshToonMaterial({ color: 0x9f9f9f });
+        // ANCHOR COLLISIONS (Simplified big box)
         const cablePairs = [
             {
                 top: new THREE.Vector3(-1, 147.5, relTopZ),
@@ -140,13 +121,39 @@ export function make_bridge(x, y, z, direction) {
             },
         ];
 
+        const anchorShape = new CANNON.Box(new CANNON.Vec3(12/2, 10/2, 8/2));
+        cablePairs.forEach(pair => {
+            const basePos = new THREE.Vector3(pair.base.x, pair.base.y + 5, pair.base.z).applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY);
+            bridgeBody.addShape(anchorShape, new CANNON.Vec3(basePos.x, basePos.y, basePos.z + pillarBaseZ));
+        });
+
+        // GROUND CABLE COLLISIONS
+        cablePairs.forEach(pair => {
+            const cableDir = new THREE.Vector3().subVectors(pair.base, pair.top);
+            const cableLen = cableDir.length();
+            const cablePos = new THREE.Vector3().addVectors(pair.top, pair.base).multiplyScalar(0.5);
+            const cableQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), cableDir.clone().normalize());
+
+            // Apply pillar rotation
+            cablePos.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY);
+            const finalQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY).multiply(cableQuat);
+
+            const cableShape = new CANNON.Cylinder(0.45, 0.45, cableLen, 8);
+            bridgeBody.addShape(cableShape, 
+                new CANNON.Vec3(cablePos.x, cablePos.y, cablePos.z + pillarBaseZ),
+                new CANNON.Quaternion(finalQuat.x, finalQuat.y, finalQuat.z, finalQuat.w)
+            );
+        });
+
+        // Visual setup
+        const cableGeo = new THREE.CylinderGeometry(0.45, 0.45, 1, 12);
+        const cableMat = new THREE.MeshToonMaterial({ color: 0x9f9f9f });
         const anchorBaseMat = new THREE.MeshToonMaterial({ color: 0x787878 });
         const anchorClampMat = new THREE.MeshToonMaterial({ color: 0xb7b7b7 });
         const anchorBoltMat = new THREE.MeshToonMaterial({ color: 0xe2e2e2 });
 
         for (let i = 0; i < cablePairs.length; i++) {
             const { top, base } = cablePairs[i];
-
             const cableDir = new THREE.Vector3().subVectors(base, top);
             const cableLen = cableDir.length();
             const cable = new THREE.Mesh(cableGeo, cableMat);
@@ -155,7 +162,6 @@ export function make_bridge(x, y, z, direction) {
             cable.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), cableDir.normalize());
             object.add(cable);
 
-            // Anchor assembly: base block + clamp + exposed bolt cap.
             const anchorBase = new THREE.Mesh(new THREE.BoxGeometry(12, 4, 8), anchorBaseMat);
             anchorBase.position.set(base.x, base.y + 2, base.z);
             object.add(anchorBase);
@@ -176,30 +182,24 @@ export function make_bridge(x, y, z, direction) {
 
         const stayCableGeo = new THREE.CylinderGeometry(0.22, 0.22, 1, 10);
         const stayCableMat = new THREE.MeshToonMaterial({ color: 0xb0b0b0 });
-
         const leftStart = new THREE.Vector3(-1, 147.5, relTopZ);
         const rightStart = new THREE.Vector3(1, 147.5, relTopZ);
-
         const anchorY = 1.1;
         const anchorZStart = relStayAnchorStartZ;
         const anchorZEnd = relStayAnchorEndZ;
-
-        const totalCableSlots = 5; // 1 pillar slot + 4 visible cable slots
+        const totalCableSlots = 5;
         const anchorStep = (anchorZEnd - anchorZStart) / (totalCableSlots - 1);
 
         for (let i = 1; i < totalCableSlots; i++) {
             const anchorZ = anchorZStart + anchorStep * i;
-
             const leftEnd = new THREE.Vector3(-road_width * 0.52, anchorY, anchorZ);
             const rightEnd = new THREE.Vector3(road_width * 0.52, anchorY, anchorZ);
-
             const leftDir = new THREE.Vector3().subVectors(leftEnd, leftStart);
             const leftCable = new THREE.Mesh(stayCableGeo, stayCableMat);
             leftCable.position.copy(leftStart).add(leftEnd).multiplyScalar(0.5);
             leftCable.scale.y = leftDir.length();
             leftCable.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), leftDir.normalize());
             object.add(leftCable);
-
             const rightDir = new THREE.Vector3().subVectors(rightEnd, rightStart);
             const rightCable = new THREE.Mesh(stayCableGeo, stayCableMat);
             rightCable.position.copy(rightStart).add(rightEnd).multiplyScalar(0.5);
@@ -207,7 +207,6 @@ export function make_bridge(x, y, z, direction) {
             rightCable.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), rightDir.normalize());
             object.add(rightCable);
         }
-
         return object;
     }
 
@@ -216,25 +215,19 @@ export function make_bridge(x, y, z, direction) {
     bridge.add(cables_front);
     bridge.add(cables_back);
 
-    // Support pillars
     const supportPillarHeight = 90;
     const supportPillarGeo = new THREE.CylinderGeometry(7, 9, supportPillarHeight, 14);
     const supportPillarMat = new THREE.MeshToonMaterial({ color: 0xbdbdbd });
-
     const supportPillarFront = new THREE.Mesh(supportPillarGeo, supportPillarMat);
     supportPillarFront.position.set(0, -supportPillarHeight / 2 -0.01, -bridge_length * 0.25);
     bridge.add(supportPillarFront);
-
     const supportPillarBack = new THREE.Mesh(supportPillarGeo, supportPillarMat);
     supportPillarBack.position.set(0, -supportPillarHeight / 2 -0.01, -bridge_length * 0.75);
     bridge.add(supportPillarBack);
     
     bridge.position.set(x, y, z);
     bridge.rotateY(direction);
-
-    // Sync body transform
     bridgeBody.position.set(x, y, z);
     bridgeBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), direction);
-
     return [bridge, bridgeBody];
 }
