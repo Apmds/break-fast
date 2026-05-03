@@ -75,12 +75,6 @@ class Citizen extends WorldObject {
         // Start dialogue
         this.dialogue_speaker.innerText = currentDialogue.speaker.toUpperCase();
         this.typeDialogueText(currentDialogue.text, this.dialogueLetterSpeed);
-        
-        // Play grunts - times equals half the dialogue text length
-        if (!currentDialogue.ended && currentDialogue.hasSound()) {
-            const times = Math.floor(currentDialogue.text.fullText.length / 2);
-            this.play_sound(times);
-        }
 
     }
 
@@ -127,6 +121,7 @@ class Citizen extends WorldObject {
         this.isTypingDialogue = true;
         const typingDelay = Math.floor(1000 / Math.max(1, defaultLettersPerSecond));
         const shouldAutoSkip = this.last_dialogue.isAutoSkip();
+        const shouldPlaySound = this.last_dialogue.hasSound();
 
         let currentCharacterCount = 0;
         let cumulativeDelay = 0;
@@ -138,12 +133,17 @@ class Citizen extends WorldObject {
                 currentCharacterCount++;
                 const textToShow = fullText.slice(0, currentCharacterCount);
                 const isLastCharOfAll = currentCharacterCount === fullText.length;
+                const isSoundTick = currentCharacterCount % 2 === 0; // Play sound every 2 chars
 
                 const timeoutId = setTimeout(() => {
                     this.dialogue_content.innerText = textToShow;
 
                     if (isLastCharOfAll) {
                         this.isTypingDialogue = false;
+                    }
+
+                    if (shouldPlaySound && isSoundTick) {
+                        this.play_grunt();
                     }
                 }, cumulativeDelay);
 
@@ -187,37 +187,30 @@ class Citizen extends WorldObject {
         this.soundTimeoutIds = [];
     }
 
-    play_sound(times) {
+    play_grunt() {
         const grunts = ['grunt1', 'grunt2', 'grunt3', 'grunt4'];
-        const delayBetweenSounds = 70; // milliseconds
+        const randomGrunt = grunts[Math.floor(Math.random() * grunts.length)];
+        const audioBuffer = objectManager.getObject(randomGrunt, false);
         
-        for (let i = 0; i < times; i++) {
-            const timeoutId = setTimeout(() => {
-                const randomGrunt = grunts[Math.floor(Math.random() * grunts.length)];
-                const audioBuffer = objectManager.getObject(randomGrunt, false);
-                
-                const listener = new THREE.AudioListener();
-                const audio = new THREE.Audio(listener);
-                audio.setBuffer(audioBuffer);
-                
-                // Get the audio context and source
-                const context = listener.context;
-                const source = audio.getOutput();
-                
-                // Create a high-pass filter to remove low frequencies
-                const highPass = context.createBiquadFilter();
-                highPass.type = 'highpass';
-                highPass.frequency.value = 800;
-                highPass.Q.value = 1;
-                
-                source.disconnect();
-                source.connect(highPass);
-                highPass.connect(context.destination);
-                
-                audio.play();
-            }, i * delayBetweenSounds);
-            this.soundTimeoutIds.push(timeoutId);
-        }
+        const listener = new THREE.AudioListener();
+        const audio = new THREE.Audio(listener);
+        audio.setBuffer(audioBuffer);
+        
+        // Get the audio context and source
+        const context = listener.context;
+        const source = audio.getOutput();
+        
+        // Create a high-pass filter to remove low frequencies
+        const highPass = context.createBiquadFilter();
+        highPass.type = 'highpass';
+        highPass.frequency.value = 800;
+        highPass.Q.value = 1;
+        
+        source.disconnect();
+        source.connect(highPass);
+        highPass.connect(context.destination);
+        
+        audio.play();
     }
 }
 
