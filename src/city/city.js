@@ -15,6 +15,7 @@ import DcMonalds from './dcmonalds.js';
 import Scene from '../utils/scene.js';
 import PlaceHolderItem from '../items/placeholder.js';
 import House from './house.js';
+import Path from '../utils/path.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -269,11 +270,38 @@ class City extends Scene {
         });
 
         // Cars
-        const cars = [
-            new Car(new THREE.Vector3(-63, 0.6, -313), new THREE.Vector3(0, Math.PI, 0))
+        const static_cars = [
+            new Car(new THREE.Vector3(-63, 0.6, -313), new THREE.Vector3(0, Math.PI, 0)),
         ];
 
-        cars.forEach((car, index) => this.add(car, `car_${index}`));
+        static_cars.forEach((car, index) => this.add(car, `car_${index}`));
+
+        {
+            const moving_car = new Car(new THREE.Vector3(15, 0.6, -367), new THREE.Vector3(0, Math.PI/2, 0));
+            const path = new Path();
+            path.addPoint(new THREE.Vector3(15, 0.6, -367), new THREE.Vector3(0, Math.PI/2, 0), 10)
+                .addPoint(new THREE.Vector3(15, 0.6, -607), new THREE.Vector3(0, Math.PI/2, 0))
+                .addPoint(new THREE.Vector3(15, 0.6, -612), new THREE.Vector3(0, Math.PI/4, 0), 10)
+                .addPoint(new THREE.Vector3(20, 0.6, -612), new THREE.Vector3(0, 0, 0), 10)
+                .addPoint(new THREE.Vector3(169, 0.6, -612), new THREE.Vector3(0, 0, 0))
+                .addPoint(new THREE.Vector3(174, 0.6, -612), new THREE.Vector3(0, -Math.PI/4, 0), 10)
+                .addPoint(new THREE.Vector3(174, 0.6, -607), new THREE.Vector3(0, -Math.PI/2, 0), 10)
+                .addPoint(new THREE.Vector3(174, 0.6, -318), new THREE.Vector3(0, -Math.PI/2, 0))
+                .addPoint(new THREE.Vector3(174, 0.6, -313), new THREE.Vector3(0, -Math.PI/2 -Math.PI/4, 0), 10)
+                .addPoint(new THREE.Vector3(168, 0.6, -313), new THREE.Vector3(0, -Math.PI, 0), 10)
+                .addPoint(new THREE.Vector3(57, 0.6, -313), new THREE.Vector3(0, -Math.PI, 0))
+                .addPoint(new THREE.Vector3(48, 0.6, -331), new THREE.Vector3(0, -3*Math.PI/2 + Math.PI/6, 0), 10)
+                .addPoint(new THREE.Vector3(34, 0.6, -346), new THREE.Vector3(0, -3*Math.PI/2 + 2*Math.PI/6, 0), 10)
+                .addPoint(new THREE.Vector3(14, 0.6, -355), new THREE.Vector3(0, -3*Math.PI/2 + Math.PI/2, 0), 10)
+                .addPoint(new THREE.Vector3(14, 0.6, -355), new THREE.Vector3(0, -3*Math.PI/2, 0), 10)
+                .addPoint(new THREE.Vector3(14, 0.6, -355), new THREE.Vector3(0, Math.PI/2, 0), 1000);
+
+            moving_car.setPath(path);
+            moving_car.followPath();
+            moving_car.runAnimation();
+
+            this.add(moving_car, "moving_car_1");
+        }
 
         const restaurant = new DcMonalds(new THREE.Vector3(-10, -0.5, -12), new THREE.Vector3(0, 0, 0));
 

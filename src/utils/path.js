@@ -4,6 +4,10 @@ class Path {
         this._idx = 0;
     }
 
+    reset() {
+        this._idx = 0;
+    }
+
     ended() {
         return this._idx >= this._points.length;
     }

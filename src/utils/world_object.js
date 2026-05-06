@@ -13,6 +13,35 @@ class WorldObject {
         this._animations = null;
         this._currentAction = null;
         this._body = null;
+
+        this._lerpVal = 0;
+        this._lastPath = null;
+        this._currPath = null;
+        this._followingPath = false;
+        this._followingPathLoop = false;
+        this._path = null;
+    }
+
+    setPath(path) {
+        this._path = path;
+    }
+
+    followPath(loop = true) {
+        if (this._path === null) {
+            return;
+        }
+
+        this._path.reset();
+        this._lerpVal = 0;
+        this._lastPath = this._path.getNext();
+        this._currPath = this._path.getNext();
+
+        this._followingPath = true;
+        this._followingPathLoop = loop;
+    }
+
+    stopFollowingPath() {
+        this._followingPath = false;
     }
 
     update_model_matrix() {
@@ -244,6 +273,19 @@ class WorldObject {
             const euler = new THREE.Euler().setFromQuaternion(this._body.quaternion);
             this._rotation.set(euler.x, euler.y, euler.z);
             this.update_model_matrix();
+        }
+
+        if (this._followingPath) {
+            this.position = this.position.lerpVectors(this._lastPath.position, this._currPath.position, this._lerpVal);
+            this.rotation = this.rotation.lerpVectors(this._lastPath.rotation, this._currPath.rotation, this._lerpVal);
+            
+            this._lerpVal += this._currPath.speed * (delta / 10);
+
+            if (this._lerpVal > 1) {
+                this._lastPath = this._currPath;
+                this._currPath = this._path.getNext();
+                this._lerpVal = 0;
+            }
         }
     }
 }
