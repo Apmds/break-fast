@@ -447,6 +447,11 @@ class City extends Scene {
         this.gui.add('Camera Position', 'Y', camera.position, 'y').listen();
         this.gui.add('Camera Position', 'Z', camera.position, 'z').listen();
 
+        this.gui.makeFolder('Camera Rotation');
+        this.gui.add('Camera Rotation', 'X', camera.rotation, 'x').listen();
+        this.gui.add('Camera Rotation', 'Y', camera.rotation, 'y').listen();
+        this.gui.add('Camera Rotation', 'Z', camera.rotation, 'z').listen();
+
         this.gui.makeFolder('Lighting');
         
         this.gui.add('Lighting', 'key intensity', keyLight, 'intensity', 0, 5, 0.01);

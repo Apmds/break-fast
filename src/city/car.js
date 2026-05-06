@@ -25,7 +25,11 @@ class Car extends WorldObject {
             .addPoint(new THREE.Vector3(174, 0.6, -318), new THREE.Vector3(0, -Math.PI/2, 0))
             .addPoint(new THREE.Vector3(174, 0.6, -313), new THREE.Vector3(0, -Math.PI/2 -Math.PI/4, 0), 10)
             .addPoint(new THREE.Vector3(168, 0.6, -313), new THREE.Vector3(0, -Math.PI, 0), 10)
-            .addPoint(new THREE.Vector3(59, 0.6, -313), new THREE.Vector3(0, -Math.PI, 0))
+            .addPoint(new THREE.Vector3(57, 0.6, -313), new THREE.Vector3(0, -Math.PI, 0))
+            .addPoint(new THREE.Vector3(48, 0.6, -331), new THREE.Vector3(0, -3*Math.PI/2 + Math.PI/6, 0), 10)
+            .addPoint(new THREE.Vector3(34, 0.6, -346), new THREE.Vector3(0, -3*Math.PI/2 + 2*Math.PI/6, 0), 10)
+            .addPoint(new THREE.Vector3(14, 0.6, -355), new THREE.Vector3(0, -3*Math.PI/2 + Math.PI/2, 0), 10)
+            .addPoint(new THREE.Vector3(14, 0.6, -355), new THREE.Vector3(0, Math.PI/2, 0), 1000)
             ;
 
         this._lerpVal = 0;
