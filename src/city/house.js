@@ -1,19 +1,13 @@
 import * as THREE from 'three';
 import objectManager from '../utils/object_manager.js';
+import WorldObject from '../utils/world_object.js';
 
-function make_house(x, y, z) {
-    const house = objectManager.getObject("house");
-    house.position.set(x, y, z);
-    
-    // Enable shadows for the house and all its children
-    house.traverse((node) => {
-        if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-        }
-    });
-    
-    return house;
+class House extends WorldObject {
+    constructor(position, rotation = new THREE.Vector3()) {
+        super(position, rotation, new THREE.Vector3(1, 1, 1), false);
+
+        this.model = "house";
+    }
 }
 
-export default make_house;
+export default House;

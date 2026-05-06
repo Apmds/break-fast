@@ -12,9 +12,9 @@ import Citizen from '../people/citizen.js';
 import Car from './car.js';
 import DcMonalds from './dcmonalds.js';
 
-import make_house from './house.js';
 import Scene from '../utils/scene.js';
 import PlaceHolderItem from '../items/placeholder.js';
+import House from './house.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -240,68 +240,22 @@ class City extends Scene {
         cityGroup.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.DOWN, 50));
 
         // Houses
-        {
-            const house = make_house(-30, 0, -400);
-            house.rotation.y = Math.PI;
-            cityGroup.add(house);
-        }
+        const houses = [
+            new House(new THREE.Vector3(-30, 0, -400), new THREE.Vector3(0, Math.PI, 0)),
+            new House(new THREE.Vector3(-30, 0, -480), new THREE.Vector3(0, Math.PI, 0)),
+            new House(new THREE.Vector3(-30, 0, -560), new THREE.Vector3(0, Math.PI, 0)),
+            new House(new THREE.Vector3(95, 0, -660), new THREE.Vector3(0, Math.PI/2, 0)),
+            new House(new THREE.Vector3(230, 0, -400), new THREE.Vector3(0, 0, 0)),
+            new House(new THREE.Vector3(230, 0, -480), new THREE.Vector3(0, 0, 0)),
+            new House(new THREE.Vector3(230, 0, -560), new THREE.Vector3(0, 0, 0)),
+            new House(new THREE.Vector3(230, 0, -220), new THREE.Vector3(0, 0, 0)),
+            new House(new THREE.Vector3(230, 0, -120), new THREE.Vector3(0, 0, 0)),
+            new House(new THREE.Vector3(-30, 0, -200), new THREE.Vector3(0, Math.PI, 0)),
+        ];
 
-        {
-            const house = make_house(-30, 0, -480);
-            house.rotation.y = Math.PI;
-            cityGroup.add(house);
-        }
-
-        {
-            const house = make_house(-30, 0, -560);
-            house.rotation.y = Math.PI;
-            cityGroup.add(house);
-        }
-
-
-        {
-            const house = make_house(95, 0, -660);
-            house.rotation.y = Math.PI/2;
-            cityGroup.add(house);
-        }
-
-        
-        {
-            const house = make_house(230, 0, -400);
-            house.rotation.y = 0;
-            cityGroup.add(house);
-        }
-
-        {
-            const house = make_house(230, 0, -480);
-            house.rotation.y = 0;
-            cityGroup.add(house);
-        }
-
-        {
-            const house = make_house(230, 0, -560);
-            house.rotation.y = 0;
-            cityGroup.add(house);
-        }
-
-
-        {
-            const house = make_house(230, 0, -220);
-            house.rotation.y = 0;
-            cityGroup.add(house);
-        }
-
-        {
-            const house = make_house(230, 0, -120);
-            house.rotation.y = 0;
-            cityGroup.add(house);
-        }
-
-        {
-            const house = make_house(-30, 0, -200);
-            house.rotation.y = Math.PI;
-            cityGroup.add(house);
-        }
+        houses.forEach((house, idx) => {
+            this.add(house, `house${idx}`);
+        });
 
         // Add final city group to scene
         this.addModel(cityGroup);
