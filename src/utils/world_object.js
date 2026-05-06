@@ -201,7 +201,7 @@ class WorldObject {
         // Override when a subclass is interactable (to start a dialogue, for example)
     }
 
-    playAnimation(anim_name, crossfade = false) {
+    playAnimation(anim_name, repeat = false, crossfade = false) {
         if (!this._animationMixer || !this._animations) {
             return;
         }
@@ -212,7 +212,11 @@ class WorldObject {
         }
 
         const nextAction = this._animationMixer.clipAction(clip);
-        nextAction.reset().play();
+        nextAction.reset();
+        if (repeat) {
+            nextAction.setLoop(THREE.LoopRepeat);
+        }
+        nextAction.play();
 
         if (crossfade && this._currentAction && this._currentAction !== nextAction) {
             this._currentAction.crossFadeTo(nextAction, 0.2, false);

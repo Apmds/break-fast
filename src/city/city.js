@@ -316,7 +316,7 @@ class City extends Scene {
 
         // Cars
         const cars = [
-            new Car(new THREE.Vector3(15, 0.6, -180), new THREE.Vector3(0, Math.PI / 2, 0))
+            new Car(new THREE.Vector3(-63, 0.6, -313), new THREE.Vector3(0, Math.PI, 0))
         ];
 
         cars.forEach((car, index) => this.add(car, `car_${index}`));
@@ -347,7 +347,8 @@ class City extends Scene {
 
         const citizen4 = new Citizen(
             new THREE.Vector3(-85, 0.4, -309),
-            new THREE.Vector3(0, Math.PI, 0)
+            new THREE.Vector3(0, Math.PI / 2, 0),
+            true
         );
         this.add(citizen4, "citizen4");
 
