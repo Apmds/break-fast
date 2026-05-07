@@ -18,6 +18,13 @@ const objects = [
     },
 
     {
+        "id": "city_hall",
+        "path": "../assets/models/Buildings/city_hall.glb",
+        "type": "gltf",
+        "material_map": null,
+    },
+
+    {
         "id": "dcmonalds",
         "path": "../assets/models/Buildings/dcmonalds.glb",
         "type": "gltf",

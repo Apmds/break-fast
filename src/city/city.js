@@ -16,6 +16,7 @@ import Scene from '../utils/scene.js';
 import PlaceHolderItem from '../items/placeholder.js';
 import House from './house.js';
 import Path from '../object/path.js';
+import CityHall from './city_hall.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -304,8 +305,10 @@ class City extends Scene {
         }
 
         const restaurant = new DcMonalds(new THREE.Vector3(-10, -0.5, -12), new THREE.Vector3(0, 0, 0));
-
         this.add(restaurant, "restaurant");
+
+        const city_hall = new CityHall(new THREE.Vector3(100, -0.5, -160), new THREE.Vector3(0, Math.PI/2, 0));
+        this.add(city_hall, "city_hall");
 
         // Citizens
         const boss_guy = new Citizen(
