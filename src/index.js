@@ -9,7 +9,7 @@ async function preload_objects() {
                 return await objectManager.loadGLTF(obj.path, obj.id, obj.material_map);
                 
             case "texture":
-                return await objectManager.loadTexture(obj.path, obj.id);
+                return await objectManager.loadTexture(obj.path, obj.id, obj.minFilter, obj.magFilter);
 
             case "mp3":
                 return await objectManager.loadMP3(obj.path, obj.id);

@@ -1,0 +1,313 @@
+import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+import objectManager from "../utils/object_manager.js";
+
+class WorldObject {
+    constructor(position, rotation, scale, interactable = false) {
+        this._position = position;
+        this._rotation = rotation;
+        this._scale = scale;
+        this._interactable = interactable;
+        this._model = undefined;
+        this._animationMixer = undefined;
+        this._animations = null;
+        this._currentAction = null;
+        this._body = null;
+
+        this._lerpVal = 0;
+        this._lastPath = null;
+        this._currPath = null;
+        this._followingPath = false;
+        this._followingPathLoop = false;
+        this._path = null;
+        this._onPathEnd = null;
+    }
+
+    setPath(path) {
+        this._path = path;
+    }
+
+    followPath(loop = true, onEnd = () => {}) {
+        if (this._path === null) {
+            return;
+        }
+
+        this._path.reset();
+        this._lerpVal = 0;
+        this._lastPath = this._path.getNext();
+        this._currPath = this._path.getNext();
+        this._onPathEnd = onEnd;
+
+        this._followingPath = true;
+        this._followingPathLoop = loop;
+    }
+
+    stopFollowingPath() {
+        this._followingPath = false;
+    }
+
+    update_model_matrix() {
+        if (typeof this._model !== 'undefined') {
+            this._model.position.copy(this._position);
+            this._model.rotation.set(this._rotation.x, this._rotation.y, this._rotation.z);
+            this._model.scale.copy(this._scale);
+        }
+    }
+
+    set position(val) {
+        this._position.copy(val);
+        this.update_model_matrix();
+        if (this._body) {
+            this._body.position.set(val.x, val.y, val.z);
+        }
+    }
+
+    get position() {
+        return this._position;
+    }
+
+    set rotation(val) {
+        this._rotation.copy(val);
+        this.update_model_matrix();
+        if (this._body) {
+            this._body.quaternion.setFromEuler(val.x, val.y, val.z);
+        }
+    }
+
+    get rotation() {
+        return this._rotation;
+    }
+
+    set scale(val) {
+        this._scale = val;
+        this.update_model_matrix();
+    }
+
+    get scale() {
+        return this._scale;
+    }
+
+    get x() {
+        return this.position.x;
+    }
+
+    get y() {
+        return this.position.y;
+    }
+
+    get z() {
+        return this.position.z;
+    }
+
+    get rx() {
+        return this.rotation.x;
+    }
+
+    get ry() {
+        return this.rotation.y;
+    }
+
+    get rz() {
+        return this.rotation.z;
+    }
+
+    get sx() {
+        return this.scale.x;
+    }
+
+    get sy() {
+        return this.scale.y;
+    }
+
+    get sz() {
+        return this.scale.z;
+    }
+
+    set interactable(val) {
+        this._interactable = val;
+        if (typeof this._model !== "undefined") {
+            this._model.userData.interactable = val;
+        }
+
+        if (!this._interactable) {
+            this.outline = false;
+        }
+    }
+
+    set model(modelname) {
+        this._model = objectManager.getObject(modelname);
+        this._animations = objectManager.getAnimations(modelname);
+        this._animationMixer = this._animations ? new THREE.AnimationMixer(this._model) : undefined;
+        this._currentAction = null;
+        this.update_model_matrix();
+
+        this._model.userData.worldObject = this;
+        this._model.userData.interactable = this._interactable;
+        if (this._interactable) {
+            this._model.userData.outline = false;
+        }
+
+        // Enable shadows for the citizen and all its children
+        this._model.traverse((node) => {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+            }
+        });
+    }
+
+    get model() {
+        return this._model;
+    }
+
+    set body(val) {
+        this._body = val;
+        if (this._body) {
+            this._body.allowSleep = false;
+            this._body.position.set(this._position.x, this._position.y, this._position.z);
+            this._body.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z);
+        }
+    }
+
+    get body() {
+        return this._body;
+    }
+
+    set outline(enabled) {
+        if (typeof this._model !== "undefined") {
+            this._model.userData.outline = enabled;
+        }
+    }
+
+    get interactable() {
+        if (typeof this._model === "undefined") {
+            return this._interactable;
+        }
+        return this._model.userData.interactable;
+    }
+
+    createBasicBody() {
+        if (!this._model) return;
+
+        // Save current rotation
+        const originalRotation = this._model.rotation.clone();
+        // Reset rotation to get "natural" AABB
+        this._model.rotation.set(0, 0, 0);
+        this._model.updateMatrixWorld(true);
+
+        // Compute bounding box
+        const box = new THREE.Box3().setFromObject(this._model);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+
+        // Restore rotation
+        this._model.rotation.copy(originalRotation);
+        this._model.updateMatrixWorld(true);
+
+        // Create shape (CANNON.Box uses half-extents)
+        const shape = new CANNON.Box(new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2));
+        
+        this.body = new CANNON.Body({
+            mass: 0, // Static by default
+        });
+        
+        // Offset shape to match model center (relative to object position)
+        // Since we reset rotation to compute the box, the center is also relative to 0 rotation.
+        // We need the offset in local space.
+        const offset = new CANNON.Vec3(
+            center.x - this._position.x,
+            center.y - this._position.y,
+            center.z - this._position.z
+        );
+
+        // If the model was already scaled, 'size' includes that scale because setFromObject uses world transforms.
+        // So shape is already correctly sized.
+        
+        this.body.addShape(shape, offset);
+    }
+
+    onInteract(object) {
+        // Override when a subclass is interactable (to start a dialogue, for example)
+    }
+
+    playAnimation(anim_name, repeat = false, crossfade = false, onEnd) {
+        if (!this._animationMixer || !this._animations) {
+            return;
+        }
+
+        const clip = this._animations.find((anim) => anim.name === anim_name);
+        if (!clip) {
+            return;
+        }
+
+        const nextAction = this._animationMixer.clipAction(clip);
+        nextAction.reset();
+        if (repeat) {
+            nextAction.setLoop(THREE.LoopRepeat);
+        } else {
+            nextAction.setLoop(THREE.LoopOnce);
+            nextAction.clampWhenFinished = true;
+        }
+
+        this._animationMixer.addEventListener("finished", () => {
+            if (onEnd) {
+                onEnd();
+            }
+        });
+
+        nextAction.play();
+        if (crossfade && this._currentAction && this._currentAction !== nextAction) {
+            this._currentAction.crossFadeTo(nextAction, 0.2, true);
+        }
+
+        this._currentAction = nextAction;
+    }
+
+    stopAnimation() {
+        if (!this._animationMixer || !this._currentAction) {
+            return;
+        }
+
+        this._currentAction.stop();
+        this._currentAction = null;
+    }
+
+    update(delta) {
+        if (this._animationMixer) {
+            this._animationMixer.update(delta);
+        }
+
+        if (this._body && this._body.type !== CANNON.Body.STATIC) {
+            this._position.copy(this._body.position);
+            const euler = new THREE.Euler().setFromQuaternion(this._body.quaternion);
+            this._rotation.set(euler.x, euler.y, euler.z);
+            this.update_model_matrix();
+        }
+
+        if (this._followingPath) {
+            this.position = this.position.lerpVectors(this._lastPath.position, this._currPath.position, this._lerpVal);
+            this.rotation = this.rotation.lerpVectors(this._lastPath.rotation, this._currPath.rotation, this._lerpVal);
+            
+            this._lerpVal += this._currPath.speed * (delta / 10);
+
+            if (this._lerpVal > 1) {
+                if (this._path.ended() && !this._followingPathLoop) {
+                    if (this._onPathEnd) {
+                        this._onPathEnd();
+                        this._followingPath = false;
+                    }
+                }
+
+
+                this._lastPath = this._currPath;
+                this._currPath = this._path.getNext();
+                this._lerpVal = 0;
+            }
+            
+        }
+    }
+}
+
+export default WorldObject;

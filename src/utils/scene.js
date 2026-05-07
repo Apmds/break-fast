@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import Renderer from './render.js';
+import Renderer from './renderer.js';
 import GUI from './GUI.js';
 
 class Scene {
@@ -42,6 +42,10 @@ class Scene {
     add(obj, name) {
         this.scene.add(obj.model);
 
+        if (obj.body) {
+            this.physicsWorld.addBody(obj.body);
+        }
+
         this._objects[name] = obj;
     }
 
@@ -50,10 +54,14 @@ class Scene {
     }
 
     remove(name) {
-        const model = this._objects[name].model;
-        this.scene.remove(model);
-        
-        delete this._objects[name];
+        const obj = this._objects[name];
+        if (obj) {
+            this.scene.remove(obj.model);
+            if (obj.body) {
+                this.physicsWorld.removeBody(obj.body);
+            }
+            delete this._objects[name];
+        }
     }
 
     removeModel(name) {

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import WorldObject from '../utils/world_object.js';
-import Conversation from '../utils/conversation.js';
+import WorldObject from '../object/world_object.js';
+import Conversation from './conversation.js';
 import objectManager from '../utils/object_manager.js';
 
 class Citizen extends WorldObject {
@@ -12,72 +12,74 @@ class Citizen extends WorldObject {
 
         this.model = 'citizen';
         this.model.userData.outline = false;
-        
-        // Play idle animation on loop if available
-        if (this._animations && this._animations.length > 0 && this._animationMixer) {
-            const idleClip = this._animations.find((c) => /idle/i.test(c.name)) || this._animations[0];
-            if (idleClip) {
-                const action = this._animationMixer.clipAction(idleClip);
-                action.reset();
-                action.setLoop(THREE.LoopRepeat);
-                action.play();
-                this._currentAction = action;
+        this.model.traverse((node) => {
+            if (node.isMesh && node.name == "Citizen") {
+                node.material = new THREE.MeshToonMaterial({color: 0xf4cb73, fog: false, gradientMap: objectManager.getObject("three_tone") });
             }
-        }
+        });
+        
+        this.createBasicBody();
+        
+        this.playAnimation("idle", true);
         
         this.player = null;
         this.inConversation = false;
         this.isTypingDialogue = false;
         this.dialogueTypewriterTimeouts = [];
+        this.soundTimeoutIds = [];
         this.dialogueLetterSpeed = 30;
 
         this.dialogue_box = document.getElementById("dialog-box");
         this.dialogue_speaker = document.getElementById("dialog-speaker");
         this.dialogue_content = document.getElementById("dialog-content");
 
-        this.dialogue = new Conversation().load("placeholder");
+        this.dialogue = null;
+        this.last_dialogue = this.dialogue;
+    }
+
+    loadDialogue(val, onEnd = null) {
+        this.dialogue = new Conversation().load(val, onEnd);
+        this.last_dialogue = this.dialogue;
     }
 
     onInteract(object) {
-        console.log("BF:", this.dialogue);
+        //console.log("BF:", this.dialogue);
         if (this.dialogue === null) {
             return;
         }
 
         if (this.isTypingDialogue) {
-            this.revealFullDialogueText();
-            return;
+            if (this.last_dialogue.isAutoSkip()) {
+                this.clearTypewriterTimeouts();
+                this.isTypingDialogue = false;
+                // Continue to start next dialogue
+            } else {
+                this.revealFullDialogueText();
+                return;
+            }
         }
-
-        const currentDialogue = this.dialogue;
 
         if (this.dialogue.ended) {
             this.endConversation();
-            this.dialogue = currentDialogue.nextval;
+            this.dialogue = this.dialogue.nextval;
             return;
         }
 
         // Assuming the object is a Player
+        const currentDialogue = this.dialogue;
         
         // Lock camera and focus on citizen
         this.startConversation(object);
 
+        // Advance state immediately
+        this.goToNextDialogue();
 
         // Start dialogue
         this.dialogue_speaker.innerText = currentDialogue.speaker.toUpperCase();
         this.typeDialogueText(currentDialogue.text, this.dialogueLetterSpeed);
-        
-        // Play grunts - times equals half the dialogue text length
-        if (!currentDialogue.ended) {
-            const times = Math.floor(currentDialogue.text.length / 2);
-            this.play_sound(times);
-        }
-
-        this.dialogue = currentDialogue.nextval;
-        console.log("AF:", this.dialogue);
 
     }
-    
+
     startConversation(player) {
         if (this.inConversation) {
             return;
@@ -89,6 +91,11 @@ class Citizen extends WorldObject {
 
         // Show dialog box
         this.dialogue_box.classList.remove("invisible")
+    }
+
+    goToNextDialogue() {
+        this.last_dialogue = this.dialogue;
+        this.dialogue = this.dialogue.nextval;
     }
     
     endConversation() {
@@ -103,37 +110,70 @@ class Citizen extends WorldObject {
         this.dialogue_box.classList.add("invisible");
     }
 
-    typeDialogueText(text, lettersPerSecond) {
+    typeDialogueText(conversationText, defaultLettersPerSecond) {
         this.clearTypewriterTimeouts();
         this.dialogue_content.innerText = '';
 
-        if (text.length === 0) {
+        const fullText = conversationText.fullText;
+        if (fullText.length === 0) {
             this.isTypingDialogue = false;
             return;
         }
 
         this.isTypingDialogue = true;
-        const safeSpeed = Math.max(1, lettersPerSecond);
-        const delayBetweenLetters = Math.floor(1000 / safeSpeed);
+        const typingDelay = Math.floor(1000 / Math.max(1, defaultLettersPerSecond));
+        const shouldAutoSkip = this.last_dialogue.isAutoSkip();
+        const shouldPlaySound = this.last_dialogue.hasSound();
 
-        for (let i = 0; i < text.length + 1; i++) {
-            const textToShow = text.slice(0, i);
-            const timeoutId = setTimeout(() => {
-                
-                this.dialogue_content.innerText = textToShow;
+        let currentCharacterCount = 0;
+        let cumulativeDelay = 0;
 
-                if (i === text.length - 1) {
-                    this.isTypingDialogue = false;
-                }
-            }, i * delayBetweenLetters);
+        conversationText.parts.forEach((part, partIndex) => {
+            const partText = part.text;
+            
+            for (let i = 0; i < partText.length; i++) {
+                currentCharacterCount++;
+                const textToShow = fullText.slice(0, currentCharacterCount);
+                const isLastCharOfAll = currentCharacterCount === fullText.length;
+                const isSoundTick = currentCharacterCount % 2 === 0; // Play sound every 2 chars
 
-            this.dialogueTypewriterTimeouts.push(timeoutId);
+                const timeoutId = setTimeout(() => {
+                    this.dialogue_content.innerText = textToShow;
+
+                    if (isLastCharOfAll) {
+                        this.isTypingDialogue = false;
+                    }
+
+                    if (shouldPlaySound && isSoundTick) {
+                        this.play_grunt();
+                    }
+                }, cumulativeDelay);
+
+                this.dialogueTypewriterTimeouts.push(timeoutId);
+
+                cumulativeDelay += typingDelay;
+            }
+
+            // After a part is done typing, add the extra delay if specified
+            if (part.delay !== null) {
+                cumulativeDelay += Math.floor(part.delay * 1000);
+            }
+        });
+
+        if (shouldAutoSkip) {
+            const autoSkipTimeoutId = setTimeout(() => {
+                this.clearTypewriterTimeouts();
+                this.isTypingDialogue = false;
+                this.onInteract(this.player);
+            }, cumulativeDelay);
+
+            this.dialogueTypewriterTimeouts.push(autoSkipTimeoutId);
         }
     }
 
     revealFullDialogueText() {
         this.clearTypewriterTimeouts();
-        this.dialogue_content.innerText = this.dialogue.text;
+        this.dialogue_content.innerText = this.last_dialogue.text.fullText;
         this.isTypingDialogue = false;
     }
 
@@ -142,38 +182,37 @@ class Citizen extends WorldObject {
             clearTimeout(timeoutId);
         }
         this.dialogueTypewriterTimeouts = [];
+        
+        for (const timeoutId of this.soundTimeoutIds) {
+            clearTimeout(timeoutId);
+        }
+        this.soundTimeoutIds = [];
     }
 
-    play_sound(times) {
+    play_grunt() {
         const grunts = ['grunt1', 'grunt2', 'grunt3', 'grunt4'];
-        const delayBetweenSounds = 125; // milliseconds
+        const randomGrunt = grunts[Math.floor(Math.random() * grunts.length)];
+        const audioBuffer = objectManager.getObject(randomGrunt, false);
         
-        for (let i = 0; i < times; i++) {
-            setTimeout(() => {
-                const randomGrunt = grunts[Math.floor(Math.random() * grunts.length)];
-                const audioBuffer = objectManager.getObject(randomGrunt, false);
-                
-                const listener = new THREE.AudioListener();
-                const audio = new THREE.Audio(listener);
-                audio.setBuffer(audioBuffer);
-                
-                // Get the audio context and source
-                const context = listener.context;
-                const source = audio.getOutput();
-                
-                // Create a high-pass filter to remove low frequencies
-                const highPass = context.createBiquadFilter();
-                highPass.type = 'highpass';
-                highPass.frequency.value = 800;
-                highPass.Q.value = 1;
-                
-                source.disconnect();
-                source.connect(highPass);
-                highPass.connect(context.destination);
-                
-                audio.play();
-            }, i * delayBetweenSounds);
-        }
+        const listener = new THREE.AudioListener();
+        const audio = new THREE.Audio(listener);
+        audio.setBuffer(audioBuffer);
+        
+        // Get the audio context and source
+        const context = listener.context;
+        const source = audio.getOutput();
+        
+        // Create a high-pass filter to remove low frequencies
+        const highPass = context.createBiquadFilter();
+        highPass.type = 'highpass';
+        highPass.frequency.value = 800;
+        highPass.Q.value = 1;
+        
+        source.disconnect();
+        source.connect(highPass);
+        highPass.connect(context.destination);
+        
+        audio.play();
     }
 }
 

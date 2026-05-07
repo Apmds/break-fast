@@ -1,6 +1,6 @@
 import { inputManager } from "./input_manager.js";
 import * as THREE from 'three';
-import Player from './player.js';
+import Player from '../player/player.js';
 import City from "../city/city.js";
 
 class GameManager {

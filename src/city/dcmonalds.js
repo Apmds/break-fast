@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import WorldObject from '../utils/world_object.js';
+import WorldObject from '../object/world_object.js';
 
 class DcMonalds extends WorldObject {
     constructor(position, rotation = new THREE.Vector3(), interactable = false) {
@@ -8,6 +8,7 @@ class DcMonalds extends WorldObject {
         super(position, rotation, new THREE.Vector3(RESTAURANT_SCALE, RESTAURANT_SCALE, RESTAURANT_SCALE), interactable);
 
         this.model = 'dcmonalds';
+        this.createBasicBody();
     }
 }
 
