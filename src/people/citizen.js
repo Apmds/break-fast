@@ -33,7 +33,12 @@ class Citizen extends WorldObject {
         this.dialogue_speaker = document.getElementById("dialog-speaker");
         this.dialogue_content = document.getElementById("dialog-content");
 
-        this.dialogue = new Conversation().load("bridge_start");
+        this.dialogue = null;
+        this.last_dialogue = this.dialogue;
+    }
+
+    loadDialogue(val, onEnd = null) {
+        this.dialogue = new Conversation().load(val, onEnd);
         this.last_dialogue = this.dialogue;
     }
 

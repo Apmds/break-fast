@@ -308,12 +308,49 @@ class City extends Scene {
         this.add(restaurant, "restaurant");
 
         // Citizens
-        const citizen1 = new Citizen(
+        const boss_guy = new Citizen(
             new THREE.Vector3(-2, 0.4, -170),
             new THREE.Vector3(0, Math.PI/2, 0),
             true
         );
-        this.add(citizen1, "citizen1");
+        boss_guy.setPath(new Path()
+            .addPoint(new THREE.Vector3(-2, 0.4, -170), new THREE.Vector3(0, Math.PI/2, 0))
+            .addPoint(new THREE.Vector3(-2, 0.4, -170), new THREE.Vector3(0, Math.PI, 0), 100)
+            
+            .addPoint(new THREE.Vector3(-2, 0.4, -257), new THREE.Vector3(0, Math.PI, 0), 3.5)
+            .addPoint(new THREE.Vector3(-2, 0.4, -257), new THREE.Vector3(0, Math.PI + 1.2, 0), 50)
+
+            .addPoint(new THREE.Vector3(-12.7, 0.4, -260.5), new THREE.Vector3(0, Math.PI + 1.2, 0), 13)
+            .addPoint(new THREE.Vector3(-12.7, 0.4, -260.5), new THREE.Vector3(0, Math.PI + 0.88, 0), 50)
+
+            .addPoint(new THREE.Vector3(-25.1, 0.4, -269), new THREE.Vector3(0, Math.PI + 0.88, 0), 10)
+            .addPoint(new THREE.Vector3(-25.1, 0.4, -269), new THREE.Vector3(0, Math.PI + 0.68, 0), 50)
+
+            .addPoint(new THREE.Vector3(-35.2, 0.4, -281), new THREE.Vector3(0, Math.PI + 0.68, 0), 10)
+            .addPoint(new THREE.Vector3(-35.2, 0.4, -281), new THREE.Vector3(0, Math.PI + 0.39, 0), 50)
+
+            .addPoint(new THREE.Vector3(-41.6, 0.4, -296.1), new THREE.Vector3(0, Math.PI + 0.39, 0), 10)
+            .addPoint(new THREE.Vector3(-41.6, 0.4, -296.1), new THREE.Vector3(0, Math.PI + 1.35, 0), 50)
+
+            .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI + 1.35, 0), 6)
+            .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI - 1.09, 0), 25)
+        );
+        boss_guy.loadDialogue("boss_restaurant", () => {
+            boss_guy.playAnimation("fast_run", true);
+            boss_guy.interactable = false;
+            boss_guy.followPath(false, () => {
+                boss_guy.playAnimation("idle", true, true);
+
+                boss_guy.loadDialogue("boss_end", () => {
+                    boss_guy.interactable = false;
+                    console.log("GOAT");
+                });
+
+                boss_guy.interactable = true;
+            });
+
+        });
+        this.add(boss_guy, "boss_guy");
 
         const citizen2 = new Citizen(
             new THREE.Vector3(23, 0.4, -233),
@@ -327,12 +364,13 @@ class City extends Scene {
         );
         this.add(citizen3, "citizen3");
 
-        const citizen4 = new Citizen(
+        const bridge_guy = new Citizen(
             new THREE.Vector3(-85, 0.4, -309),
             new THREE.Vector3(0, Math.PI / 2, 0),
             true
         );
-        this.add(citizen4, "citizen4");
+        bridge_guy.loadDialogue("bridge_start");
+        this.add(bridge_guy, "bridge_guy");
 
         this.addModel(make_skybox());
         this.scene.fog = new THREE.Fog(0xAAAAAA, 300, 600);

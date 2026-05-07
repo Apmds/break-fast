@@ -20,13 +20,14 @@ class WorldObject {
         this._followingPath = false;
         this._followingPathLoop = false;
         this._path = null;
+        this._onPathEnd = null;
     }
 
     setPath(path) {
         this._path = path;
     }
 
-    followPath(loop = true) {
+    followPath(loop = true, onEnd = () => {}) {
         if (this._path === null) {
             return;
         }
@@ -35,6 +36,7 @@ class WorldObject {
         this._lerpVal = 0;
         this._lastPath = this._path.getNext();
         this._currPath = this._path.getNext();
+        this._onPathEnd = onEnd;
 
         this._followingPath = true;
         this._followingPathLoop = loop;
@@ -291,10 +293,19 @@ class WorldObject {
             this._lerpVal += this._currPath.speed * (delta / 10);
 
             if (this._lerpVal > 1) {
+                if (this._path.ended() && !this._followingPathLoop) {
+                    if (this._onPathEnd) {
+                        this._onPathEnd();
+                        this._followingPath = false;
+                    }
+                }
+
+
                 this._lastPath = this._currPath;
                 this._currPath = this._path.getNext();
                 this._lerpVal = 0;
             }
+            
         }
     }
 }

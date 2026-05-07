@@ -73,6 +73,22 @@ const dialogueMap = {
             ]},
         ],
     },
+
+    "boss_restaurant": {
+        "conversation": [
+            { "speaker": "The Boss", "text": [
+                "oh shit"
+            ]}
+        ]
+    },
+
+    "boss_end": {
+        "conversation": [
+            { "speaker": "The Boss", "text": [
+                "you won bro"
+            ]}
+        ]
+    },
 };
 
 export default dialogueMap;
