@@ -72,7 +72,7 @@ const dialogueMap = {
                 " you are becoming noise pollution.",
             ]},
         ],
-    }
+    },
 };
 
 export default dialogueMap;

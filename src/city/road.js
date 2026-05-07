@@ -11,7 +11,7 @@ const road_material = new THREE.MeshToonMaterial({color: 0x444444, side: THREE.D
 const road_part_material = new THREE.MeshToonMaterial({color: 0xDDDDDD, side: THREE.DoubleSide, fog: false});
 const barrier_material = new THREE.MeshToonMaterial({ color: 0xd7d7d7, side: THREE.DoubleSide , fog: false});
 const sidewalk_gray_material = new THREE.MeshToonMaterial({ color: 0xD6D6D6, side: THREE.DoubleSide });
-const roundabout_middle_ring_material =  new THREE.MeshToonMaterial({ color: 0xcccccc, side: THREE.DoubleSide , fog: false});
+const roundabout_middle_ring_material = new THREE.MeshToonMaterial({ color: 0xcccccc, side: THREE.DoubleSide , fog: false});
 const roundabout_middle_material = new THREE.MeshToonMaterial({ color: 0xa4b774, side: THREE.DoubleSide , fog: false});
 
 const sidewalk_width = 5;

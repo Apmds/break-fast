@@ -12,6 +12,12 @@ class Citizen extends WorldObject {
 
         this.model = 'citizen';
         this.model.userData.outline = false;
+        this.model.traverse((node) => {
+            if (node.isMesh && node.name == "Citizen") {
+                node.material = new THREE.MeshToonMaterial({color: 0xf4cb73, fog: false, gradientMap: objectManager.getObject("three_tone") });
+            }
+        });
+        
         this.createBasicBody();
         
         this.playAnimation("idle", true);

@@ -35,9 +35,7 @@ const objects = [
         "id": "citizen",
         "path": "../assets/models/People/citizen.glb",
         "type": "gltf",
-        "material_map": {
-            "Citizen": new THREE.MeshToonMaterial({color: 0xf4cb73, fog: false }),
-        },
+        "material_map": null,
     },
 
     // Skybox textures
@@ -79,12 +77,16 @@ const objects = [
         "id": "three_tone",
         "path": "../assets/textures/threeTone.jpg",
         "type": "texture",
+        "minFilter": "nearest",
+        "magFilter": "nearest",
     },
 
     {
         "id": "five_tone",
         "path": "../assets/textures/fiveTone.jpg",
         "type": "texture",
+        "minFilter": "nearest",
+        "magFilter": "nearest",
     },
 
     // Ground textures

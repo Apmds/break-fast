@@ -11,13 +11,26 @@ class ObjectManager {
         this.animationCache = {};
     }
 
-    async loadTexture(path, id) {
+    async loadTexture(path, id, minFilter = "linear", magFilter = "linear") {
+        const filterMap = {
+            "linear": THREE.LinearFilter,
+            "nearest": THREE.NearestFilter,
+        }
+
         // If not in cache, load it
         const needs_loading = !this.objectCache[id];
 
         if (needs_loading) {
             const texture = await this.textureLoader.loadAsync(path);
             this.objectCache[id] = texture;
+        }
+
+        if (filterMap[minFilter] !== undefined) {
+            this.objectCache[id].minFilter = filterMap[minFilter];
+        }
+
+        if (filterMap[magFilter] !== undefined) {
+            this.objectCache[id].magFilter = filterMap[magFilter];
         }
 
         // Return a clone
