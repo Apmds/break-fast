@@ -6,24 +6,19 @@ export const path_width = 5;
 export const path_height = 0.4;
 export const path_gray_width = 1.2;
 
-let sidewalk_yellow_material = null;
 const sidewalk_gray_material = new THREE.MeshToonMaterial({ color: 0xD6D6D6, side: THREE.DoubleSide });
 
-const getSidewalkYellowMaterial = () => {
-    const map = objectManager.getObject("pavement_color");
+const getSidewalkYellowMaterial = (repeatS, repeatT) => {
+    const aoMap = objectManager.getObject("pavement_ao"); aoMap.wrapS = THREE.RepeatWrapping; aoMap.wrapT = THREE.RepeatWrapping; aoMap.repeat.set(repeatS, repeatT);
+    const roughnessMap  = objectManager.getObject("pavement_roughness"); roughnessMap.wrapS = THREE.RepeatWrapping; roughnessMap.wrapT = THREE.RepeatWrapping; roughnessMap.repeat.set(repeatS, repeatT);
+    const normalMap = objectManager.getObject("pavement_normal"); normalMap.wrapS = THREE.RepeatWrapping; normalMap.wrapT = THREE.RepeatWrapping; normalMap.repeat.set(repeatS, repeatT);
 
-    map.wrapS = THREE.RepeatWrapping;
-    map.wrapT = THREE.RepeatWrapping;
-
-    map.repeat.set(1, 20);
-
-    if (!sidewalk_yellow_material) {
-        sidewalk_yellow_material = new THREE.MeshToonMaterial({
-            color: 0xEFE3B2,
-            side: THREE.DoubleSide,
-            map: map,
-        });
-    }
+    const sidewalk_yellow_material = new THREE.MeshStandardMaterial({
+        color: 0xEFD56B,
+        aoMap: aoMap,
+        roughnessMap: roughnessMap,
+        normalMap: normalMap,
+    });
 
     return sidewalk_yellow_material;
 };
@@ -64,7 +59,7 @@ export function make_path(x, z, length, gray_side) {
     const grayMesh = new THREE.Mesh(grayGeo, grayMat);
 
     const yellowGeo = new THREE.BoxGeometry(yellow_width, path_height, length);
-    const yellowMat = getSidewalkYellowMaterial();
+    const yellowMat = getSidewalkYellowMaterial(1, length/5);
     const yellowMesh = new THREE.Mesh(yellowGeo, yellowMat);
 
     if (gray_side === 'left') {

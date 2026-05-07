@@ -10,7 +10,6 @@ export const between_parts_length = part_length*0.66;
 const road_material = new THREE.MeshToonMaterial({color: 0x444444, side: THREE.DoubleSide, fog: false});
 const road_part_material = new THREE.MeshToonMaterial({color: 0xDDDDDD, side: THREE.DoubleSide, fog: false});
 const barrier_material = new THREE.MeshToonMaterial({ color: 0xd7d7d7, side: THREE.DoubleSide , fog: false});
-let sidewalk_yellow_material = null;
 const sidewalk_gray_material = new THREE.MeshToonMaterial({ color: 0xD6D6D6, side: THREE.DoubleSide });
 const roundabout_middle_ring_material =  new THREE.MeshToonMaterial({ color: 0xcccccc, side: THREE.DoubleSide , fog: false});
 const roundabout_middle_material = new THREE.MeshToonMaterial({ color: 0xa4b774, side: THREE.DoubleSide , fog: false});
@@ -19,21 +18,17 @@ const sidewalk_width = 5;
 const sidewalk_gray_width = 1.2;
 const sidewalk_height = 0.4;
 
-const getSidewalkYellowMaterial = () => {
-    const map = objectManager.getObject("pavement_color");
+const getSidewalkYellowMaterial = (repeatS, repeatT) => {
+    const aoMap = objectManager.getObject("pavement_ao"); aoMap.wrapS = THREE.RepeatWrapping; aoMap.wrapT = THREE.RepeatWrapping; aoMap.repeat.set(repeatS, repeatT);
+    const roughnessMap  = objectManager.getObject("pavement_roughness"); roughnessMap.wrapS = THREE.RepeatWrapping; roughnessMap.wrapT = THREE.RepeatWrapping; roughnessMap.repeat.set(repeatS, repeatT);
+    const normalMap = objectManager.getObject("pavement_normal"); normalMap.wrapS = THREE.RepeatWrapping; normalMap.wrapT = THREE.RepeatWrapping; normalMap.repeat.set(repeatS, repeatT);
 
-    map.wrapS = THREE.RepeatWrapping;
-        map.wrapT = THREE.RepeatWrapping;
-    
-        map.repeat.set(0.2, 0.2);
-
-    if (!sidewalk_yellow_material) {
-        sidewalk_yellow_material = new THREE.MeshToonMaterial({
-            color: 0xEFE3B2,
-            side: THREE.DoubleSide,
-            map: map,
-        });
-    }
+    const sidewalk_yellow_material = new THREE.MeshStandardMaterial({
+        color: 0xEFD56B,
+        aoMap: aoMap,
+        roughnessMap: roughnessMap,
+        normalMap: normalMap,
+    });
 
     return sidewalk_yellow_material;
 };
@@ -225,7 +220,7 @@ export function make_road_corner(x, z, direction) {
         0,
         Math.PI/2,
         sidewalk_height,
-        getSidewalkYellowMaterial(),
+        getSidewalkYellowMaterial(0.2, 0.2),
     );
     sidewalkYellow.rotateX(-Math.PI/2);
     sidewalkYellow.position.set(sidewalkCenterX, 0.01, sidewalkCenterZ);
@@ -284,7 +279,7 @@ export function make_roundabout(x, z, radius) {
     const pathGrayOuterRadius = pathInnerRadius + pathGrayWidth;
     const pathOuterRadius = pathInnerRadius + pathWidth;
     const pathGrayMat = sidewalk_gray_material;
-    const pathYellowMat = getSidewalkYellowMaterial();
+    const pathYellowMat = getSidewalkYellowMaterial(0.2, 0.2);
     const corridorHalfWidth = road_width / 2;
     const gapRatio = Math.min(0.95, corridorHalfWidth / pathInnerRadius);
     const maxGapHalfAngle = Math.PI / 4 - 0.05;

@@ -89,8 +89,23 @@ const objects = [
 
     // Ground textures
     {
-        "id": "pavement_color",
-        "path": "../assets/textures/pavement/PavingStones145_1K-JPG_Color.jpg",
+        "id": "pavement_ao",
+        "path": "../assets/textures/pavement/PavingStones145_1K-JPG_AmbientOcclusion.jpg",
+        "type": "texture",
+    },
+    {
+        "id": "pavement_roughness",
+        "path": "../assets/textures/pavement/PavingStones145_1K-JPG_Roughness.jpg",
+        "type": "texture",
+    },
+    {
+        "id": "pavement_normal",
+        "path": "../assets/textures/pavement/PavingStones145_1K-JPG_NormalGL.jpg",
+        "type": "texture",
+    },
+    {
+        "id": "pavement_displacement",
+        "path": "../assets/textures/pavement/PavingStones145_1K-JPG_Displacement.jpg",
         "type": "texture",
     },
 
