@@ -12,6 +12,11 @@ const sidewalk_gray_material = new THREE.MeshToonMaterial({ color: 0xD6D6D6, sid
 const getSidewalkYellowMaterial = () => {
     const map = objectManager.getObject("pavement_color");
 
+    map.wrapS = THREE.RepeatWrapping;
+    map.wrapT = THREE.RepeatWrapping;
+
+    map.repeat.set(1, 20);
+
     if (!sidewalk_yellow_material) {
         sidewalk_yellow_material = new THREE.MeshToonMaterial({
             color: 0xEFE3B2,

@@ -1,20 +1,10 @@
-import WorldObject from "../object/world_object.js";
+import BaseItem from "./base_item.js";
 
-class PlaceHolderItem extends WorldObject {
+class PlaceHolderItem extends BaseItem {
     constructor(position, rotation, scale) {
-        super(position, rotation, scale, true);
+        super(position, rotation, scale);
 
         this.model = 'citizen';
-    }
-
-    onInteract(player) {
-        // Add item to player's inventory
-        player.inventory.push(this);
-        
-        // Remove from scene
-        if (this._model && player.scene) {
-            player.scene.remove(this._model);
-        }
     }
 }
 

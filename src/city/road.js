@@ -21,6 +21,12 @@ const sidewalk_height = 0.4;
 
 const getSidewalkYellowMaterial = () => {
     const map = objectManager.getObject("pavement_color");
+
+    map.wrapS = THREE.RepeatWrapping;
+        map.wrapT = THREE.RepeatWrapping;
+    
+        map.repeat.set(0.2, 0.2);
+
     if (!sidewalk_yellow_material) {
         sidewalk_yellow_material = new THREE.MeshToonMaterial({
             color: 0xEFE3B2,
