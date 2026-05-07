@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { inputManager } from './input_manager.js';
+import { inputManager } from '../utils/input_manager.js';
 
 class CameraControls {
     constructor(camera, domElement = document.body) {

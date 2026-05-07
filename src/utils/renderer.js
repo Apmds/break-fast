@@ -11,7 +11,7 @@ class Renderer {
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.0;
         this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
         const outline_vert_shader = objectManager.getObject("outline_vert_shader", false);
         const outline_frag_shader = objectManager.getObject("outline_frag_shader", false);

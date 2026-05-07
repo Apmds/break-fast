@@ -1,7 +1,7 @@
 import CameraControls from './camera_controls.js';
 import * as CANNON from 'cannon-es';
 import * as THREE from 'three';
-import { inputManager } from './input_manager.js';
+import { inputManager } from '../utils/input_manager.js';
 
 class Player {
     constructor(camera, domElement = document.body, physicsWorld, scene = null) {

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import Renderer from './render.js';
+import Renderer from './renderer.js';
 import GUI from './GUI.js';
 
 class Scene {

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import WorldObject from '../utils/world_object.js';
+import WorldObject from '../object/world_object.js';
 
 class Car extends WorldObject {
     constructor(position, rotation = new THREE.Vector3(), interactable = false) {

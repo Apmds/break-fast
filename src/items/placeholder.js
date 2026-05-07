@@ -1,4 +1,4 @@
-import WorldObject from "../utils/world_object.js";
+import WorldObject from "../object/world_object.js";
 
 class PlaceHolderItem extends WorldObject {
     constructor(position, rotation, scale) {

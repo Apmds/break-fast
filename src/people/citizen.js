@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import WorldObject from '../utils/world_object.js';
-import Conversation from '../utils/conversation.js';
+import WorldObject from '../object/world_object.js';
+import Conversation from './conversation.js';
 import objectManager from '../utils/object_manager.js';
 
 class Citizen extends WorldObject {

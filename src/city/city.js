@@ -15,7 +15,7 @@ import DcMonalds from './dcmonalds.js';
 import Scene from '../utils/scene.js';
 import PlaceHolderItem from '../items/placeholder.js';
 import House from './house.js';
-import Path from '../utils/path.js';
+import Path from '../object/path.js';
 
 class City extends Scene {
     constructor(camera) {
