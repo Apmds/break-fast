@@ -230,7 +230,7 @@ class WorldObject {
         // Override when a subclass is interactable (to start a dialogue, for example)
     }
 
-    playAnimation(anim_name, repeat = false, crossfade = false) {
+    playAnimation(anim_name, repeat = false, crossfade = false, onEnd) {
         if (!this._animationMixer || !this._animations) {
             return;
         }
@@ -244,11 +244,20 @@ class WorldObject {
         nextAction.reset();
         if (repeat) {
             nextAction.setLoop(THREE.LoopRepeat);
+        } else {
+            nextAction.setLoop(THREE.LoopOnce);
+            nextAction.clampWhenFinished = true;
         }
-        nextAction.play();
 
+        this._animationMixer.addEventListener("finished", () => {
+            if (onEnd) {
+                onEnd();
+            }
+        });
+
+        nextAction.play();
         if (crossfade && this._currentAction && this._currentAction !== nextAction) {
-            this._currentAction.crossFadeTo(nextAction, 0.2, false);
+            this._currentAction.crossFadeTo(nextAction, 0.2, true);
         }
 
         this._currentAction = nextAction;
