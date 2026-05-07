@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import objectManager from '../utils/object_manager.js';
 
 export function make_trees_instanced(positions, scales, tree_function) {
     const trees = new THREE.Object3D();
@@ -38,7 +39,7 @@ export function make_tree(x, y, z, scale) {
 
     const logHeight = 20;
     const logGeo = new THREE.CylinderGeometry(0.5, 0.8, logHeight, 8);
-    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a , fog: false });
+    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a , fog: false, gradientMap: objectManager.getObject("five_tone") });
     const log = new THREE.Mesh(logGeo, logMat);
     log.position.set(0, logHeight / 2, 0);
     tree.add(log);
@@ -68,6 +69,7 @@ export function make_tree(x, y, z, scale) {
         const innerMat = new THREE.MeshToonMaterial({
             color: darkGreen,
             side: THREE.DoubleSide,
+            gradientMap: objectManager.getObject("five_tone"),
             fog: false
         });
         const innerLeaves = new THREE.Mesh(innerGeo, innerMat);
@@ -85,6 +87,7 @@ export function make_tree(x, y, z, scale) {
         const outerMat = new THREE.MeshToonMaterial({
             color: brightGreen,
             side: THREE.DoubleSide,
+            gradientMap: objectManager.getObject("five_tone"),
             fog: false
         });
         const outerLeaves = new THREE.Mesh(outerGeo, outerMat);
@@ -101,7 +104,7 @@ export function make_tree(x, y, z, scale) {
 export function make_tree_crowns(x, y, z, scale) {
     const tree = new THREE.Object3D();
 
-    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a , fog: false });
+    const logMat = new THREE.MeshToonMaterial({ color: 0x47300a , fog: false, gradientMap: objectManager.getObject("five_tone") });
 
     const logSegments = [
         // Main log
@@ -301,6 +304,7 @@ export function make_tree_crowns(x, y, z, scale) {
         const crownMat = new THREE.MeshToonMaterial({
             color: layer.color,
             side: THREE.DoubleSide,
+            gradientMap: objectManager.getObject("five_tone"),
             fog: false
         });
         const crown = new THREE.Mesh(
