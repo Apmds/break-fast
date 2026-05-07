@@ -117,6 +117,9 @@ class ObjectManager {
             }
             return returnval;
         }
+
+
+        console.log(`${id} is null dummy`)
         return null;
     }
 

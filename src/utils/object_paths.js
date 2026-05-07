@@ -5,7 +5,7 @@ const objects = [
         "id": "house",
         "path": "../assets/models/Buildings/house.glb",
         "type": "gltf",
-        "material_map": {
+        "material_map": null,/*{
             "Ceiling": new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.5 , fog: false }),
             "Walls": new THREE.MeshStandardMaterial({ color: 0xebcbb0, roughness: 0.7 , fog: false }),
             "Garage Door": new THREE.MeshStandardMaterial({ color: 0x8b7355, roughness: 0.8, metalness: 0.3 , fog: false }),
@@ -14,7 +14,7 @@ const objects = [
             "Window Ceiling": new THREE.MeshStandardMaterial({ color: 0x87ceeb, roughness: 0.1, metalness: 0.5 , fog: false }),
             "Cover": new THREE.MeshStandardMaterial({ color: 0xa0522d, roughness: 0.8 , fog: false }),
             "Cover Pillars": new THREE.MeshStandardMaterial({ color: 0xdaa520, roughness: 0.6 , fog: false })
-        },
+        }*/
     },
 
     {
@@ -71,6 +71,26 @@ const objects = [
     {
         "id": "skybox_nz",
         "path": "../assets/skybox/nz.png",
+        "type": "texture",
+    },
+
+    // Tone textures for MeshToonMaterial
+    {
+        "id": "three_tone",
+        "path": "../assets/textures/threeTone.jpg",
+        "type": "texture",
+    },
+
+    {
+        "id": "five_tone",
+        "path": "../assets/textures/fiveTone.jpg",
+        "type": "texture",
+    },
+
+    // Ground textures
+    {
+        "id": "pavement_color",
+        "path": "../assets/textures/pavement/PavingStones145_1K-JPG_Color.jpg",
         "type": "texture",
     },
 

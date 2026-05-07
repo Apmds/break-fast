@@ -1,9 +1,28 @@
 import * as THREE from 'three';
 import { part_length, between_parts_length, road_width } from './road.js';
+import objectManager from '../utils/object_manager.js';
 
 export const path_width = 5;
 export const path_height = 0.4;
 export const path_gray_width = 1.2;
+
+let sidewalk_yellow_material = null;
+const sidewalk_gray_material = new THREE.MeshToonMaterial({ color: 0xD6D6D6, side: THREE.DoubleSide });
+
+const getSidewalkYellowMaterial = () => {
+    const map = objectManager.getObject("pavement_color");
+
+    if (!sidewalk_yellow_material) {
+        sidewalk_yellow_material = new THREE.MeshToonMaterial({
+            color: 0xEFE3B2,
+            side: THREE.DoubleSide,
+            map: map,
+        });
+    }
+
+    return sidewalk_yellow_material;
+};
+
 
 export function make_road_paths(x, z, direction, num_parts) {
     const paths = new THREE.Object3D();
@@ -36,11 +55,11 @@ export function make_path(x, z, length, gray_side) {
     const yellow_width = path_width - path_gray_width;
 
     const grayGeo = new THREE.BoxGeometry(path_gray_width, path_height, length);
-    const grayMat = new THREE.MeshToonMaterial({ color: 0xD6D6D6 });
+    const grayMat = sidewalk_gray_material;
     const grayMesh = new THREE.Mesh(grayGeo, grayMat);
 
     const yellowGeo = new THREE.BoxGeometry(yellow_width, path_height, length);
-    const yellowMat = new THREE.MeshToonMaterial({ color: 0xEFE3B2 });
+    const yellowMat = getSidewalkYellowMaterial();
     const yellowMesh = new THREE.Mesh(yellowGeo, yellowMat);
 
     if (gray_side === 'left') {
