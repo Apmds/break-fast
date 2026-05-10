@@ -69,7 +69,7 @@
 			flex: 1;
 			padding: 15px 20px;
 			color: #555555;
-			font-size: 18px;
+			font-size: 30px;
 			line-height: 1.4;
 			overflow-y: auto;
 			display: flex;
@@ -78,9 +78,55 @@
 		.invisible {
 			display: none;
 		}
+
+		.loading-screen {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: #1a1a1a;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			z-index: 1000;
+		}
+
+		.loading-screen.hidden {
+			display: none;
+		}
+
+		.loading-text {
+			color: #ffffff;
+			font-size: 24px;
+			margin-bottom: 20px;
+		}
+
+		.loading-bar {
+			width: 200px;
+			height: 10px;
+			background-color: #333333;
+			border-radius: 5px;
+			overflow: hidden;
+		}
+
+		.loading-progress {
+			height: 100%;
+			background-color: #ffffff;
+			width: 0%;
+			transition: width 0.3s ease;
+		}
 	</style>
 </head>
 <body>
+	<div id="loading-screen" class="loading-screen">
+		<div class="loading-text">Loading...</div>
+		<div class="loading-bar">
+			<div id="loading-progress" class="loading-progress"></div>
+		</div>
+	</div>
+
 	<div class="crossair"></div>
 
 	<div id="dialog-box" class="dialog-box invisible">
