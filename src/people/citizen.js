@@ -18,6 +18,7 @@ class Citizen extends WorldObject {
             "Construction_Pants": new THREE.MeshToonMaterial({color: 0xf9ad13, fog: false, gradientMap: objectManager.getObject("three_tone")}),
             "Pants": new THREE.MeshToonMaterial({color: 0x5c727c, fog: false, gradientMap: objectManager.getObject("three_tone")}),
             "Shoes": new THREE.MeshToonMaterial({color: 0x6b4b1c, fog: false, gradientMap: objectManager.getObject("three_tone")}),
+            "Hair": new THREE.MeshToonMaterial({color: 0x6b4b1c, fog: false, gradientMap: objectManager.getObject("three_tone")}),
         }
 
         this.model = 'citizen';
