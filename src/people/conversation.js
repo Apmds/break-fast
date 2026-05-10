@@ -13,6 +13,8 @@ class Conversation {
         this.ended = false;
         this._autoskip = false;
         this._sound = true;
+        this._speed = 30;
+        this._animation = null;
     }
 
     load(convKey, onEnd = null, ignoreNext = false, index = 0, root = null) {
@@ -27,6 +29,12 @@ class Conversation {
         }
         if (entry.sound !== undefined) {
             this._sound = entry.sound;
+        }
+        if (entry.speed !== undefined) {
+            this._speed = entry.speed;
+        }
+        if (entry.animation !== undefined) {
+            this._animation = entry.animation;
         }
 
         this.speaker = entry.speaker;
@@ -90,6 +98,14 @@ class Conversation {
 
     hasSound() {
         return this._sound;
+    }
+
+    getSpeed() {
+        return this._speed;
+    }
+
+    getAnimation() {
+        return this._animation;
     }
 }
 

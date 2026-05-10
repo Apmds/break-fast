@@ -34,7 +34,6 @@ class Citizen extends WorldObject {
         this.isTypingDialogue = false;
         this.dialogueTypewriterTimeouts = [];
         this.soundTimeoutIds = [];
-        this.dialogueLetterSpeed = 30;
 
         this.dialogue_box = document.getElementById("dialog-box");
         this.dialogue_speaker = document.getElementById("dialog-speaker");
@@ -97,7 +96,12 @@ class Citizen extends WorldObject {
 
         // Start dialogue
         this.dialogue_speaker.innerText = currentDialogue.speaker.toUpperCase();
-        this.typeDialogueText(currentDialogue.text, this.dialogueLetterSpeed);
+        this.typeDialogueText(currentDialogue.text, currentDialogue.getSpeed());
+
+        const anim = currentDialogue.getAnimation();
+        if (anim !== null) {
+            this.playAnimation(anim, false, true, () => this.playAnimation("idle", true, true));
+        }
 
     }
 

@@ -76,9 +76,45 @@ const dialogueMap = {
 
     "boss_restaurant": {
         "conversation": [
+            { "speaker": "Construction Worker", "text": [
+                "Umm... hi. Can I help you?"
+            ]},
+            { "speaker": "Me", "text": [
+                "(he has a hard hat, so he must be with the construction crew)",
+            ], sound: false},
+            { "speaker": "Me", "text": [
+                "Do you know where I could find your boss?",
+            ]},
+            { "speaker": "Construction Worker", "text": [
+                "I'm my own boss, that you very much.",
+            ]},
             { "speaker": "The Boss", "text": [
-                "oh shit"
-            ]}
+                "Oh, you mean the boss of the construction crew? That's also me. My name is The Boss, don't forget the \"The\". Most people forget my first name for some reason.",
+            ]},
+            { "speaker": "Me", "text": [
+                "I finally found you, thank god!",
+            ]},
+            { "speaker": "Me", "text": [
+                "Now, WHERE WERE YOU??",
+            ]},
+            { "speaker": "Me", "text": [
+                "DO YOU KNOW HOW MUCH TIME I'VE BEEN WAITING FOR A BREAK? IT'S PROBABLY BEEN",
+            ], autoskip: true, speed: 60},
+            { "speaker": "The Boss", "text": [
+                "WOW, calm down man. I'm on my lunch break, can't you see?",
+            ], speed: 20},
+            { "speaker": "The Boss", "text": [
+                "Besides, why are you rushing me to get back anyway? The construction does not end until-",
+            ], autoskip: true, speed: 20},
+            { "speaker": "Me", "text": [
+                "It ends today. The construction ends today. Your guys are just waiting for you to leave.",
+            ]},
+            { "speaker": "Me", "text": [
+                "And I'M also waiting for you. Do you know how much I worked to be able to have this bre-",
+            ], autoskip: true},
+            { "speaker": "The Boss", "text": [
+                "Wait, WHAT? I have to get back, QUICK!",
+            ], animation: "scare"},
         ]
     },
 
