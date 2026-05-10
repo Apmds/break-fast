@@ -17,6 +17,7 @@ import PlaceHolderItem from '../items/placeholder.js';
 import House from './house.js';
 import Path from '../object/path.js';
 import CityHall from './city_hall.js';
+import BuilderCitizen from '../people/builder_citizen.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -339,7 +340,7 @@ class City extends Scene {
             .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI - 1.09, 0), 25)
         );
         boss_guy.loadDialogue("boss_restaurant", () => {
-            boss_guy.playAnimation("fast_run", true);
+            boss_guy.playAnimation("fast_run", true, true);
             boss_guy.interactable = false;
             boss_guy.followPath(false, () => {
                 boss_guy.playAnimation("idle", true, true);
@@ -367,7 +368,7 @@ class City extends Scene {
         );
         this.add(citizen3, "citizen3");
 
-        const bridge_guy = new Citizen(
+        const bridge_guy = new BuilderCitizen(
             new THREE.Vector3(-85, 0.4, -309),
             new THREE.Vector3(0, Math.PI / 2, 0),
             true

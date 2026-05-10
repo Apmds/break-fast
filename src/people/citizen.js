@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import WorldObject from '../object/world_object.js';
 import Conversation from './conversation.js';
 import objectManager from '../utils/object_manager.js';
+import { MeshBasicMaterial } from 'three';
 
 class Citizen extends WorldObject {
     constructor(position, rotation = new THREE.Vector3(), interactable = false) {
@@ -10,11 +11,20 @@ class Citizen extends WorldObject {
 
         super(position, rotation, scale, interactable);
 
+        const material_map = {
+            "Citizen": new THREE.MeshToonMaterial({color: 0xf4cb73, fog: false, gradientMap: objectManager.getObject("three_tone") }),
+            "Hard_hat": new THREE.MeshToonMaterial({color: 0xf7e120, fog: false, gradientMap: objectManager.getObject("three_tone") }),
+            "Construction_Shirt": new THREE.MeshToonMaterial({color: 0xf9ad13, fog: false, gradientMap: objectManager.getObject("three_tone")}),
+            "Construction_Pants": new THREE.MeshToonMaterial({color: 0xf9ad13, fog: false, gradientMap: objectManager.getObject("three_tone")}),
+            "Pants": new THREE.MeshToonMaterial({color: 0x5c727c, fog: false, gradientMap: objectManager.getObject("three_tone")}),
+            "Shoes": new THREE.MeshToonMaterial({color: 0x6b4b1c, fog: false, gradientMap: objectManager.getObject("three_tone")}),
+        }
+
         this.model = 'citizen';
         this.model.userData.outline = false;
         this.model.traverse((node) => {
-            if (node.isMesh && node.name == "Citizen") {
-                node.material = new THREE.MeshToonMaterial({color: 0xf4cb73, fog: false, gradientMap: objectManager.getObject("three_tone") });
+            if (node.isMesh && material_map[node.name]) {
+                node.material = material_map[node.name];
             }
         });
         
@@ -35,6 +45,20 @@ class Citizen extends WorldObject {
 
         this.dialogue = null;
         this.last_dialogue = this.dialogue;
+    }
+
+    showParts(parts) {
+        this.model.traverse((node) => {
+            if (!node.isMesh) {
+                return;
+            }
+
+            if (parts.includes(node.name)) {
+                node.material.visible = true;
+            } else {
+                node.material.visible = false;
+            }
+        });
     }
 
     loadDialogue(val, onEnd = null) {
