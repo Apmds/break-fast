@@ -23,6 +23,26 @@ class WorldObject {
         this._onPathEnd = null;
     }
 
+    applyMaterialMap(material_map, full_override = false) {
+        if (!this._model) {
+            return;
+        }
+
+        this.model.traverse((node) => {
+            if (!node.isMesh) {
+                return;
+            }
+
+            if (full_override) {
+                node.material = null;
+            }
+
+            if (material_map[node.name]) {
+                node.material = material_map[node.name];
+            }
+        });
+    }
+
     setPath(path) {
         this._path = path;
     }
