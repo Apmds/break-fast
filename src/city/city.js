@@ -405,10 +405,6 @@ class City extends Scene {
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
         ambientLight.name = "ambientLight";
         this.addModel(ambientLight);
-    
-        const hemisphereLight = new THREE.HemisphereLight(0xd8ecff, 0x9bb07a, 0.55);
-        hemisphereLight.name = "hemisphereLight";
-        this.addModel(hemisphereLight);
 
         // Position of the sun (keylight)
         this.sunpos = new THREE.Vector3(150, 300, 150);
@@ -416,8 +412,8 @@ class City extends Scene {
         const keyLight = new THREE.DirectionalLight(0xfff3dc, 2.2);
         keyLight.position.copy(this.sunpos);
         keyLight.lookAt(this.scene.position)
-        keyLight.castShadow = true;
-        keyLight.shadow.mapSize.set(8096, 8096);
+        //keyLight.castShadow = true;
+        keyLight.shadow.mapSize.set(2048, 2048);
     
         keyLight.shadow.camera.near = 10;
         keyLight.shadow.camera.far = 1200;
@@ -481,7 +477,6 @@ class City extends Scene {
         this.gui.add('Lighting', 'key intensity', keyLight, 'intensity', 0, 5, 0.01);
         this.gui.add('Lighting', 'fill intensity', fillLight, 'intensity', 0, 2, 0.01);
         this.gui.add('Lighting', 'rim intensity', rimLight, 'intensity', 0, 2, 0.01);
-        this.gui.add('Lighting', 'hemi intensity', hemisphereLight, 'intensity', 0, 2, 0.01);
     }
 
     update(delta) {
