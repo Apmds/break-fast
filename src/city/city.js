@@ -272,8 +272,10 @@ class City extends Scene {
         });
 
         // Cars
+        const player_car = new Car(new THREE.Vector3(-63, 0.6, -313), new THREE.Vector3(0, Math.PI, 0));
+        this.add(player_car, "player_car");
+
         const static_cars = [
-            new Car(new THREE.Vector3(-63, 0.6, -313), new THREE.Vector3(0, Math.PI, 0)),
         ];
 
         static_cars.forEach((car, index) => this.add(car, `car_${index}`));
@@ -347,7 +349,11 @@ class City extends Scene {
 
                 boss_guy.loadDialogue("boss_end", () => {
                     boss_guy.interactable = false;
-                    console.log("GOAT");
+
+                    player_car.interactable = true;
+                    player_car.onInteract = () => {
+                        console.log("GOAT");
+                    };
                 });
 
                 boss_guy.interactable = true;

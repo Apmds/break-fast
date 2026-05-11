@@ -77,43 +77,67 @@ const dialogueMap = {
     "boss_restaurant": {
         "conversation": [
             { "speaker": "Construction Worker", "text": [
-                "Umm... hi. Can I help you?"
+                {"text": "Umm... ", delay: 0.2},
+                {"text": "hi.", delay: 0.2},
+                " Can I help you?"
             ]},
             { "speaker": "Me", "text": [
-                "(he has a hard hat, so he must be with the construction crew)",
+                {"text": "(he has a hard hat so he must be with the construction crew)", delay: 0.2},
             ], sound: false},
             { "speaker": "Me", "text": [
-                "Do you know where I could find your boss?",
+                {"text": "Do you know where I could find your boss?", delay: 0.2},
             ]},
             { "speaker": "Construction Worker", "text": [
-                "I'm my own boss, that you very much.",
+                {"text": "I'm my own boss", delay: 0.2},
+                {"text": ", thank you very much.", delay: 0.2},
             ]},
             { "speaker": "The Boss", "text": [
-                "Oh, you mean the boss of the construction crew? That's also me. My name is The Boss, don't forget the \"The\". Most people forget my first name for some reason.",
+                {"text": "Oh", delay: 0.2},
+                {"text": ", you mean the boss of the construction crew?", delay: 0.2},
+                {"text": " That's also me.", delay: 0.2},
+                {"text": " My name is The Boss", delay: 0.2},
+                {"text": ", don't forget the \"The\".", delay: 0.2},
+                {"text": " Most people forget my first name for some reason.", delay: 0.2},
             ]},
             { "speaker": "Me", "text": [
-                "I finally found you, thank god!",
+                {"text": "I finally found you", delay: 0.2},
+                {"text": ", thank god!", delay: 0.2},
             ]},
             { "speaker": "Me", "text": [
-                "Now, WHERE WERE YOU??",
+                {"text": "Now, ", delay: 0.2},
+                {"text": "WHERE ", delay: 0.2},
+                {"text": "WERE ", delay: 0.2},
+                {"text": "YOU??", delay: 0.2},
             ]},
             { "speaker": "Me", "text": [
-                "DO YOU KNOW HOW MUCH TIME I'VE BEEN WAITING FOR A BREAK? IT'S PROBABLY BEEN",
+                {"text": "DO YOU KNOW HOW MUCH TIME I'VE BEEN WAITING FOR A BREAK?", delay: 0.2},
+                {"text": " IT'S PROBABLY BEEN"},
             ], autoskip: true, speed: 60},
             { "speaker": "The Boss", "text": [
-                "WOW, calm down man. I'm on my lunch break, can't you see?",
+                {"text": "WOW", delay: 0.75},
+                {"text": ", calm down man.", delay: 0.3},
+                {"text": " I'm on my lunch break", delay: 0.2},
+                {"text": ", can't you see?", delay: 0.3},
             ], speed: 20},
             { "speaker": "The Boss", "text": [
-                "Besides, why are you rushing me to get back anyway? The construction does not end until-",
+                {"text": "Besides", delay: 0.2},
+                {"text": ", why are you rushing me to get back anyway?", delay: 0.2},
+                {"text": " The construction does not end until-"},
             ], autoskip: true, speed: 20},
             { "speaker": "Me", "text": [
-                "It ends today. The construction ends today. Your guys are just waiting for you to leave.",
+                {"text": "It ends today.", delay: 0.5},
+                {"text": " The construction ends today.", delay: 0.4},
+                {"text": " Your guys are just waiting for you to leave.", delay: 0.2},
             ]},
             { "speaker": "Me", "text": [
-                "And I'M also waiting for you. Do you know how much I worked to be able to have this bre-",
-            ], autoskip: true},
+                {"text": "And I'M also waiting for you.", delay: 0.2},
+                {"text": " Do you know how much I worked to be able to have this bre-"},
+            ], autoskip: true, spped: 45},
             { "speaker": "The Boss", "text": [
-                "Wait, WHAT? I have to get back, QUICK!",
+                {"text": "Wait", delay: 0.2},
+                {"text": ", WHAT?", delay: 0.2},
+                {"text": " I have to get back", delay: 0.2},
+                {"text": ", QUICK!", delay: 0.2},
             ], animation: "scare"},
         ]
     },
@@ -121,10 +145,48 @@ const dialogueMap = {
     "boss_end": {
         "conversation": [
             { "speaker": "The Boss", "text": [
-                "you won bro"
-            ]}
+                {"text": "H-hey sorry guys", delay: 0.2},
+                {"text": ", I completely forgot that the contruction ended today.", delay: 0.2}
+            ]},
+            { "speaker": "Construction Worker", "text": [
+                {"text": "It's weird that you didn't know", delay: 0.2},
+                {"text": ", since you're our boss and all...", delay: 0.2}
+            ]},
+            { "speaker": "The Boss", "text": [
+                {"text": "I usually have Pi to remind me of this kinds of stuff", delay: 0.2},
+                {"text": ", but he's been missing since yesterday.", delay: 0.2}
+            ]},
+            { "speaker": "Construction Worker", "text": [
+                {"text": "Oh", delay: 0.2},
+                {"text": ", so that's why we didn't recieve the usual welcome message today.", delay: 0.2}
+            ]},
+            { "speaker": "Me", "text": [
+                {"text": "So your pet pigeon is named Pi?"},
+            ]},
+            { "speaker": "The Boss", "text": [
+                {"text": "Yes", delay: 0.2},
+                {"text": ", Pi G. Eon", delay: 0.2},
+                {"text": ", he usually never strays too far off from where I am so he's probably around here somewhere.", delay: 0.2},
+                {"text": " Good thing this town is small so I can go look for him later.", delay: 0.2}
+            ]},
+            { "speaker": "The Boss", "text": [
+                {"text": "That doesn't matter now", delay: 0.2},
+                {"text": ", you did good in finding me.", delay: 0.2},
+                {"text": " I would repay you", delay: 0.2},
+                {"text": ", but I waste all my money on DcMonalds and pigeon food.", delay: 0.2}
+            ]},
+            { "speaker": "Me", "text": [
+                {"text": "(he really is that guy huh)"},
+            ], sound: false},
+            { "speaker": "The Boss", "text": [
+                {"text": "You can go on your vacation or whatever.", delay: 0.2},
+                {"text": " Get in your car and get out of here.", delay: 0.2},
+                {"text": " You are becoming noise pollution.", delay: 0.2}
+            ]},
         ]
     },
+
+    
 };
 
 export default dialogueMap;
