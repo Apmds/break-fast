@@ -418,7 +418,7 @@ class City extends Scene {
         const keyLight = new THREE.DirectionalLight(0xfff3dc, 2.2);
         keyLight.position.copy(this.sunpos);
         keyLight.lookAt(this.scene.position)
-        //keyLight.castShadow = true;
+        keyLight.castShadow = true;
         keyLight.shadow.mapSize.set(2048, 2048);
     
         keyLight.shadow.camera.near = 10;
