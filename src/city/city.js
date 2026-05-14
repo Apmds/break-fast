@@ -440,7 +440,22 @@ class City extends Scene {
                 new THREE.Vector3(23, 0.4, -393),
                 new THREE.Vector3(0, Math.PI, 0)
             );
-            citizen4.playAnimation("walk", true, true)
+            citizen4.playAnimation("walk", true, true);
+            citizen4.setPath(new Path()
+                .addPoint(new THREE.Vector3(23, 0.4, -393), new THREE.Vector3(0, Math.PI, 0), 10)
+                .addPoint(new THREE.Vector3(23, 0.4, -594.4), new THREE.Vector3(0, Math.PI, 0), 0.15)
+                .addPoint(new THREE.Vector3(24, 0.4, -603.8), new THREE.Vector3(0, 3*Math.PI/4, 0))
+                .addPoint(new THREE.Vector3(31, 0.4, -605), new THREE.Vector3(0, Math.PI/2, 0))
+                .addPoint(new THREE.Vector3(159, 0.4, -605), new THREE.Vector3(0, Math.PI/2, 0), 0.15)
+
+                .addPoint(new THREE.Vector3(159, 0.4, -605), new THREE.Vector3(0, 3*Math.PI/2, 0), 10)
+
+                .addPoint(new THREE.Vector3(31, 0.4, -605), new THREE.Vector3(0, 3*Math.PI/2, 0), 0.15)
+                .addPoint(new THREE.Vector3(24, 0.4, -603.8), new THREE.Vector3(0, 7*Math.PI/4, 0))
+                .addPoint(new THREE.Vector3(23, 0.4, -594.4), new THREE.Vector3(0, 8*Math.PI/4, 0))
+                .addPoint(new THREE.Vector3(23, 0.4, -393), new THREE.Vector3(0, 8*Math.PI/4, 0), 0.15)
+            );
+            citizen4.followPath(true);
             citizen4.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
             citizen4.applyMaterialColors({
                 "Hair": 0x3d2817,
@@ -454,7 +469,27 @@ class City extends Scene {
                 new THREE.Vector3(192, 0.4, -120),
                 new THREE.Vector3(0, Math.PI, 0)
             );
-            citizen5.playAnimation("walk", true, true)
+            citizen5.playAnimation("walk", true, true);
+            citizen5.setPath(new Path()
+                .addPoint(new THREE.Vector3(192, 0.4, -120), new THREE.Vector3(0, Math.PI, 0), 10)
+                .addPoint(new THREE.Vector3(192, 0.4, -608), new THREE.Vector3(0, Math.PI, 0), 0.05)
+                .addPoint(new THREE.Vector3(192, 0.4, -608), new THREE.Vector3(0, Math.PI + 0.213, 0), 100)
+                .addPoint(new THREE.Vector3(190.4, 0.4, -618.4), new THREE.Vector3(0, Math.PI + 0.213, 0), 1)
+                .addPoint(new THREE.Vector3(190.4, 0.4, -618.4), new THREE.Vector3(0, Math.PI + 0.727, 0), 100)
+                .addPoint(new THREE.Vector3(179.4, 0.4, -630.7), new THREE.Vector3(0, Math.PI + 0.727, 0), 1)
+                .addPoint(new THREE.Vector3(179.4, 0.4, -630.7), new THREE.Vector3(0, 3*Math.PI/2, 0), 100)
+                .addPoint(new THREE.Vector3(19, 0.4, -630.7), new THREE.Vector3(0, 3*Math.PI/2, 0), 0.2)
+
+                .addPoint(new THREE.Vector3(19, 0.4, -630.7), new THREE.Vector3(0, Math.PI/2, 0), 10)
+
+                .addPoint(new THREE.Vector3(179.4, 0.4, -630.7), new THREE.Vector3(0, Math.PI/2, 0), 0.2)
+                .addPoint(new THREE.Vector3(179.4, 0.4, -630.7), new THREE.Vector3(0, 0.727, 0), 100)
+                .addPoint(new THREE.Vector3(190.4, 0.4, -618.4), new THREE.Vector3(0, 0.727, 0), 1)
+                .addPoint(new THREE.Vector3(190.4, 0.4, -618.4), new THREE.Vector3(0, 0.213, 0), 100)
+                .addPoint(new THREE.Vector3(192, 0.4, -608), new THREE.Vector3(0, 0.213, 0), 1)
+                .addPoint(new THREE.Vector3(192, 0.4, -120), new THREE.Vector3(0, 0, 0), 0.05)
+            );
+            citizen5.followPath(true);
             citizen5.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
             citizen5.applyMaterialColors({
                 "Hair": 0x4a2511,
@@ -483,6 +518,43 @@ class City extends Scene {
                 new THREE.Vector3(0, Math.PI/2, 0)
             );
             citizen7.playAnimation("walk", true, true)
+
+            const c7_path1 = new Path()
+                .addPoint(new THREE.Vector3(65, 0.4, -294), new THREE.Vector3(0, Math.PI/2, 0))
+                .addPoint(new THREE.Vector3(165.5, 0.4, -294), new THREE.Vector3(0, Math.PI/2, 0), 0.3)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -294), new THREE.Vector3(0, 0, 0), 10)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -144), new THREE.Vector3(0, 0, 0), 0.15)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -144), new THREE.Vector3(0, -Math.PI/2, 0), 10)
+
+            const c7_path2 = new Path()
+                .addPoint(new THREE.Vector3(165.5, 0.4, -144), new THREE.Vector3(0, -Math.PI/2, 0))
+                .addPoint(new THREE.Vector3(165.5, 0.4, -144), new THREE.Vector3(0, -Math.PI, 0), 10)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -294), new THREE.Vector3(0, -Math.PI, 0), 0.15)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -294), new THREE.Vector3(0, -Math.PI/2, 0), 10)
+                .addPoint(new THREE.Vector3(65, 0.4, -294), new THREE.Vector3(0, -Math.PI/2, 0), 0.3)
+                .addPoint(new THREE.Vector3(65, 0.4, -294), new THREE.Vector3(0, Math.PI/2, 0), 10)
+
+            let c7_path1_onend;
+            let c7_path2_onend;
+            c7_path1_onend = () => {
+                citizen7.playAnimation("idle", true, true);
+                setTimeout(() => {
+                    citizen7.playAnimation("walk", true, true);
+                    citizen7.setPath(c7_path2);
+                    citizen7.followPath(false, c7_path2_onend);
+                }, 5000);
+            };
+            c7_path2_onend = () => {
+                citizen7.playAnimation("idle", true, true);
+                setTimeout(() => {
+                    citizen7.playAnimation("walk", true, true);
+                    citizen7.setPath(c7_path1);
+                    citizen7.followPath(false, c7_path1_onend);
+                }, 2500);
+            };
+            
+            citizen7.setPath(c7_path1);
+            citizen7.followPath(false, c7_path1_onend);
             citizen7.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
             citizen7.applyMaterialColors({
                 "Hair": 0x1a0f2e,
