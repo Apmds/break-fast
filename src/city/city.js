@@ -314,7 +314,7 @@ class City extends Scene {
         this.add(city_hall, "city_hall");
 
         // Citizens
-        const boss_guy = new Citizen(
+        const boss_guy = new BuilderCitizen(
             new THREE.Vector3(-2, 0.4, -170),
             new THREE.Vector3(0, Math.PI/2, 0),
             true
@@ -362,18 +362,6 @@ class City extends Scene {
         });
         this.add(boss_guy, "boss_guy");
 
-        const citizen2 = new Citizen(
-            new THREE.Vector3(23, 0.4, -233),
-            new THREE.Vector3(0, Math.PI*0.3, 0)
-        );
-        this.add(citizen2, "citizen2");
-
-        const citizen3 = new Citizen(
-            new THREE.Vector3(17, 0.4, -228),
-            new THREE.Vector3(0, Math.PI*1.3, 0)
-        );
-        this.add(citizen3, "citizen3");
-
         const bridge_guy = new BuilderCitizen(
             new THREE.Vector3(-85, 0.4, -309),
             new THREE.Vector3(0, Math.PI / 2, 0),
@@ -384,7 +372,70 @@ class City extends Scene {
 
         this.addModel(make_skybox());
         this.scene.fog = new THREE.Fog(0xAAAAAA, 300, 600);
+        
+        // Not important citizens
+        {
+            const citizen2 = new Citizen(
+                new THREE.Vector3(23, 0.4, -220),
+                new THREE.Vector3(0, 0, 0)
+            );
+            citizen2.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen2.applyMaterialColors({
+                "Hair": 0x28241f,
+                "Pants": 0xdb7b32,
+                "Shoes": 0x6b4b1c,
+            })
+            this.add(citizen2, "citizen2");
 
+            const citizen3 = new Citizen(
+                new THREE.Vector3(23, 0.4, -216),
+                new THREE.Vector3(0, Math.PI, 0)
+            );
+            citizen3.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen3.applyMaterialColors({
+                "Hair": 0x5b3902,
+                "Shirt": 0x6dc3db,
+                "Pants": 0x1c49ed,
+                "Shoes": 0x6b4b1c,
+            })
+            this.add(citizen3, "citizen3");
+
+
+            
+            const citizen4 = new Citizen(
+                new THREE.Vector3(23, 0.4, -393),
+                new THREE.Vector3(0, Math.PI, 0)
+            );
+            citizen4.playAnimation("walk", true, true)
+            citizen4.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            this.add(citizen4, "citizen4");
+
+            const citizen5 = new Citizen(
+                new THREE.Vector3(192, 0.4, -120),
+                new THREE.Vector3(0, Math.PI, 0)
+            );
+            citizen5.playAnimation("walk", true, true)
+            citizen5.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            this.add(citizen5, "citizen5");
+
+            const citizen6 = new Citizen(
+                new THREE.Vector3(26, 0.4, -600),
+                new THREE.Vector3(0, 0, 0)
+            );
+            citizen6.playAnimation("walk", true, true)
+            citizen6.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            this.add(citizen6, "citizen6");
+            
+            const citizen7 = new Citizen(
+                new THREE.Vector3(65, 0.4, -294),
+                new THREE.Vector3(0, Math.PI/2, 0)
+            );
+            citizen7.playAnimation("walk", true, true)
+            citizen7.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            this.add(citizen7, "citizen7");
+            
+        }
+        
         // Placeholder objects
         const item1 = new PlaceHolderItem(
             new THREE.Vector3(8, 0, -305),
@@ -392,7 +443,7 @@ class City extends Scene {
             new THREE.Vector3(1, 1, 1)
         );
         this.add(item1, "placeholderitem_1");
-
+        
         const item2 = new PlaceHolderItem(
             new THREE.Vector3(3, 2, -312),
             new THREE.Vector3(Math.PI/2, 0, Math.PI/3),

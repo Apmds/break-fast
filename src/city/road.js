@@ -14,7 +14,7 @@ const sidewalk_gray_material = new THREE.MeshToonMaterial({ color: 0xD6D6D6, sid
 const roundabout_middle_ring_material = new THREE.MeshToonMaterial({ color: 0xcccccc, side: THREE.DoubleSide , fog: false});
 const roundabout_middle_material = new THREE.MeshToonMaterial({ color: 0xa4b774, side: THREE.DoubleSide , fog: false});
 
-const sidewalk_width = 5;
+const sidewalk_width = 7;
 const sidewalk_gray_width = 1.2;
 const sidewalk_height = 0.4;
 

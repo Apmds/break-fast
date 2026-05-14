@@ -43,6 +43,23 @@ class WorldObject {
         });
     }
 
+    applyMaterialColors(material_colors) {
+        if (!this._model) {
+            return;
+        }
+
+        this.model.traverse((node) => {
+            if (!node.isMesh) {
+                return;
+            }
+
+            if (material_colors[node.name]) {
+                node.material.color.setHex(material_colors[node.name]);
+                node.material.needsUpdate = true;
+            }
+        });
+    }
+
     setPath(path) {
         this._path = path;
     }
@@ -259,6 +276,7 @@ class WorldObject {
 
         const clip = this._animations.find((anim) => anim.name === anim_name);
         if (!clip) {
+            console.log(`Animation named "${anim_name}" does not exist`)
             return;
         }
 
