@@ -343,23 +343,23 @@ class City extends Scene {
             .addPoint(new THREE.Vector3(-2, 0.4, -170), new THREE.Vector3(0, Math.PI/2, 0))
             .addPoint(new THREE.Vector3(-2, 0.4, -170), new THREE.Vector3(0, Math.PI, 0), 100)
             
-            .addPoint(new THREE.Vector3(-2, 0.4, -257), new THREE.Vector3(0, Math.PI, 0), 3.5)
-            .addPoint(new THREE.Vector3(-2, 0.4, -257), new THREE.Vector3(0, Math.PI + 1.2, 0), 50)
+            .addPoint(new THREE.Vector3(-2, 0.4, -257), new THREE.Vector3(0, Math.PI, 0), 5)
+            .addPoint(new THREE.Vector3(-2, 0.4, -257), new THREE.Vector3(0, Math.PI + 1.2, 0), 100)
 
-            .addPoint(new THREE.Vector3(-12.7, 0.4, -260.5), new THREE.Vector3(0, Math.PI + 1.2, 0), 13)
-            .addPoint(new THREE.Vector3(-12.7, 0.4, -260.5), new THREE.Vector3(0, Math.PI + 0.88, 0), 50)
+            .addPoint(new THREE.Vector3(-12.7, 0.4, -260.5), new THREE.Vector3(0, Math.PI + 1.2, 0), 20)
+            .addPoint(new THREE.Vector3(-12.7, 0.4, -260.5), new THREE.Vector3(0, Math.PI + 0.88, 0), 100)
 
-            .addPoint(new THREE.Vector3(-25.1, 0.4, -269), new THREE.Vector3(0, Math.PI + 0.88, 0), 10)
-            .addPoint(new THREE.Vector3(-25.1, 0.4, -269), new THREE.Vector3(0, Math.PI + 0.68, 0), 50)
+            .addPoint(new THREE.Vector3(-25.1, 0.4, -269), new THREE.Vector3(0, Math.PI + 0.88, 0), 20)
+            .addPoint(new THREE.Vector3(-25.1, 0.4, -269), new THREE.Vector3(0, Math.PI + 0.68, 0), 100)
 
-            .addPoint(new THREE.Vector3(-35.2, 0.4, -281), new THREE.Vector3(0, Math.PI + 0.68, 0), 10)
-            .addPoint(new THREE.Vector3(-35.2, 0.4, -281), new THREE.Vector3(0, Math.PI + 0.39, 0), 50)
+            .addPoint(new THREE.Vector3(-35.2, 0.4, -281), new THREE.Vector3(0, Math.PI + 0.68, 0), 20)
+            .addPoint(new THREE.Vector3(-35.2, 0.4, -281), new THREE.Vector3(0, Math.PI + 0.39, 0), 100)
 
-            .addPoint(new THREE.Vector3(-41.6, 0.4, -296.1), new THREE.Vector3(0, Math.PI + 0.39, 0), 10)
-            .addPoint(new THREE.Vector3(-41.6, 0.4, -296.1), new THREE.Vector3(0, Math.PI + 1.35, 0), 50)
+            .addPoint(new THREE.Vector3(-41.6, 0.4, -296.1), new THREE.Vector3(0, Math.PI + 0.39, 0), 20)
+            .addPoint(new THREE.Vector3(-41.6, 0.4, -296.1), new THREE.Vector3(0, Math.PI + 1.35, 0), 100)
 
-            .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI + 1.35, 0), 6)
-            .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI - 1.09, 0), 25)
+            .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI + 1.35, 0), 12)
+            .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI - 1.09, 0), 50)
         );
         boss_guy.loadDialogue("boss_restaurant", () => {
             boss_guy.playAnimation("fast_run", true, true);
