@@ -408,6 +408,12 @@ class City extends Scene {
             );
             citizen4.playAnimation("walk", true, true)
             citizen4.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen4.applyMaterialColors({
+                "Hair": 0x3d2817,
+                "Shirt": 0xe8714d,
+                "Pants": 0x2d4a3f,
+                "Shoes": 0x6b4b1c,
+            })
             this.add(citizen4, "citizen4");
 
             const citizen5 = new Citizen(
@@ -416,6 +422,12 @@ class City extends Scene {
             );
             citizen5.playAnimation("walk", true, true)
             citizen5.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen5.applyMaterialColors({
+                "Hair": 0x4a2511,
+                "Shirt": 0x7cb342,
+                "Pants": 0xd4a574,
+                "Shoes": 0x5c4033,
+            })
             this.add(citizen5, "citizen5");
 
             const citizen6 = new Citizen(
@@ -424,6 +436,12 @@ class City extends Scene {
             );
             citizen6.playAnimation("walk", true, true)
             citizen6.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen6.applyMaterialColors({
+                "Hair": 0x2c1810,
+                "Shirt": 0xd32f2f,
+                "Pants": 0x3e2723,
+                "Shoes": 0x6b4b1c,
+            })
             this.add(citizen6, "citizen6");
             
             const citizen7 = new Citizen(
@@ -432,6 +450,12 @@ class City extends Scene {
             );
             citizen7.playAnimation("walk", true, true)
             citizen7.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen7.applyMaterialColors({
+                "Hair": 0x1a0f2e,
+                "Shirt": 0x7c4dff,
+                "Pants": 0x5e5e5e,
+                "Shoes": 0x2a2a2a,
+            })
             this.add(citizen7, "citizen7");
             
         }
