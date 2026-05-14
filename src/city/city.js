@@ -47,6 +47,26 @@ class City extends Scene {
         base_ground_other_side.position.y = -50.1;
         cityGroup.add(base_ground_other_side);
 
+        // River (NOT good)
+        const river = new THREE.Mesh(
+            new THREE.BoxGeometry(1000, 40, 1800),
+            new THREE.MeshToonMaterial({color: 0x2ea7d3, fog: false, transparent: true, opacity: 0.6}),
+        );
+        river.name = "river";
+        river.position.x = -615;
+        river.position.y = -60;
+        river.position.z = -350;
+        cityGroup.add(river);
+
+        const bedrock = new THREE.Mesh(
+            new THREE.BoxGeometry(1000, 10, 1800),
+            new THREE.MeshToonMaterial({color: 0x2ea7d3, fog: false}),
+        );
+        bedrock.position.x = -615;
+        bedrock.position.y = -80;
+        bedrock.position.z = -350;
+        cityGroup.add(bedrock);
+
         // Base grass
         {
             const base_grass = new THREE.Mesh(
@@ -265,7 +285,7 @@ class City extends Scene {
 
         // Ensure every city mesh participates in shadow rendering.
         cityGroup.traverse((node) => {
-            if (node.isMesh) {
+            if (node.isMesh && node.name != "river") {
                 node.castShadow = true;
                 node.receiveShadow = true;
             }

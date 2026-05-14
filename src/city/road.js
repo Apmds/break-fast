@@ -278,7 +278,7 @@ export function make_roundabout(x, z, radius) {
     const pathWidth = sidewalk_width;
     const pathGrayWidth = sidewalk_gray_width;
     const pathHeight = sidewalk_height;
-    const pathRaise = 0.12;
+    const pathRaise = 0.01;
     const pathInnerRadius = radius + 0.02;
     const pathGrayOuterRadius = pathInnerRadius + pathGrayWidth;
     const pathOuterRadius = pathInnerRadius + pathWidth;
@@ -308,7 +308,7 @@ export function make_roundabout(x, z, radius) {
             curveSegments,
         );
         mesh.rotateX(-Math.PI/2);
-        mesh.position.y = pathRaise + 0.01;
+        mesh.position.y = pathRaise;
         roundabout.add(mesh);
     };
 
