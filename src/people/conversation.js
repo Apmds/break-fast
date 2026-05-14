@@ -13,6 +13,7 @@ class Conversation {
         this.ended = false;
         this._autoskip = false;
         this._sound = true;
+        this._pitch = 1.0;
         this._speed = 30;
         this._animation = null;
     }
@@ -35,6 +36,9 @@ class Conversation {
         }
         if (entry.animation !== undefined) {
             this._animation = entry.animation;
+        }
+        if (entry.pitch !== undefined) {
+            this._pitch = entry.pitch;
         }
 
         this.speaker = entry.speaker;
@@ -106,6 +110,10 @@ class Conversation {
 
     getAnimation() {
         return this._animation;
+    }
+
+    getPitch() {
+        return this._pitch;
     }
 }
 

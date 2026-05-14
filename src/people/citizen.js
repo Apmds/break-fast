@@ -149,6 +149,7 @@ class Citizen extends WorldObject {
         const typingDelay = Math.floor(1000 / Math.max(1, defaultLettersPerSecond));
         const shouldAutoSkip = this.last_dialogue.isAutoSkip();
         const shouldPlaySound = this.last_dialogue.hasSound();
+        const pitch = this.last_dialogue.getPitch();
 
         let currentCharacterCount = 0;
         let cumulativeDelay = 0;
@@ -170,7 +171,7 @@ class Citizen extends WorldObject {
                     }
 
                     if (shouldPlaySound && isSoundTick) {
-                        this.play_grunt();
+                        this.play_grunt(pitch);
                     }
                 }, cumulativeDelay);
 
@@ -214,7 +215,7 @@ class Citizen extends WorldObject {
         this.soundTimeoutIds = [];
     }
 
-    play_grunt() {
+    play_grunt(pitch = 1.0) {
         const grunts = ['grunt1', 'grunt2', 'grunt3', 'grunt4'];
         const randomGrunt = grunts[Math.floor(Math.random() * grunts.length)];
         const audioBuffer = objectManager.getObject(randomGrunt, false);
@@ -222,7 +223,8 @@ class Citizen extends WorldObject {
         const listener = new THREE.AudioListener();
         const audio = new THREE.Audio(listener);
         audio.setBuffer(audioBuffer);
-        
+        audio.setPlaybackRate(pitch);
+
         // Get the audio context and source
         const context = listener.context;
         const source = audio.getOutput();

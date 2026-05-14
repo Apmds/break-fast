@@ -72,6 +72,16 @@ const dialogueMap = {
                 " you are becoming noise pollution.",
             ]},
         ],
+        "next": "bridge_continue_1"
+    },
+
+    "bridge_continue_1": {
+        "conversation": [
+            {"speaker": "Construction Worker", "text": [
+                "Get out >:("
+            ]},
+        ],
+        "next": "bridge_continue_1"
     },
 
     "boss_restaurant": {
@@ -187,6 +197,57 @@ const dialogueMap = {
     },
 
     
+    "random_conversation": {
+        "conversation": [
+            {"speaker": "1", "text": [
+                {"text": "I'm telling you,", delay: 0.2},
+                {"text": " Uno is MUCH better than Monopoly."},
+            ], pitch: 1.2},
+
+            {"speaker": "2", "text": [
+                {"text": "Well,", delay: 0.2},
+                {"text": " I never played uno so I wouldn't know."},
+            ], pitch: 1.5},
+
+            {"speaker": "1", "text": [
+                {"text": "Why not? ", delay: 0.2},
+                {"text": "I'm pretty sure you have it in your game console."},
+            ], pitch: 1.2},
+            
+            {"speaker": "2", "text": [
+                {"text": "I don't have uno."},
+            ], pitch: 1.5},
+
+            {"speaker": "1", "text": [
+                {"text": "Of course you do,", delay: 0.2},
+                {"text": " everyone has UNO d-"},
+            ], pitch: 1.2, autoskip: true},
+
+            {"speaker": "Me", "text": [
+                {"text": "Hi, has any of you seen the boss of the contruction crew?", delay: 0.3},
+                {"text": " They were supposed to finnish up today but he's missing."},
+            ]},
+
+            {"speaker": "2", "text": [
+                {"text": "Nope.", delay: 0.3},
+                {"text": " You can try asking other people though,", delay: 0.2},
+                {"text": " they might know where he is."},
+            ], pitch: 1.5},
+
+            {"speaker": "1", "text": [
+                {"text": "I heard he likes running.", delay: 0.2},
+                {"text": " Maybe he's jogging somewhere."},
+            ], pitch: 1.2},
+
+            {"speaker": "1", "text": [
+                {"text": "Good luck finding him.", delay: 0.2},
+                {"text": " If you see him,", delay: 0.2},
+                {"text": " please ask if he likes uno or monopoly better."},
+            ], pitch: 1.2},
+        ]
+    },
+
+
 };
 
 export default dialogueMap;

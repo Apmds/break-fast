@@ -397,7 +397,8 @@ class City extends Scene {
         {
             const citizen2 = new Citizen(
                 new THREE.Vector3(23, 0.4, -220),
-                new THREE.Vector3(0, 0, 0)
+                new THREE.Vector3(0, 0, 0),
+                true
             );
             citizen2.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
             citizen2.applyMaterialColors({
@@ -406,10 +407,11 @@ class City extends Scene {
                 "Shoes": 0x6b4b1c,
             })
             this.add(citizen2, "citizen2");
-
+            
             const citizen3 = new Citizen(
                 new THREE.Vector3(23, 0.4, -216),
-                new THREE.Vector3(0, Math.PI, 0)
+                new THREE.Vector3(0, Math.PI, 0),
+                true
             );
             citizen3.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
             citizen3.applyMaterialColors({
@@ -420,6 +422,18 @@ class City extends Scene {
             })
             this.add(citizen3, "citizen3");
 
+            citizen2.loadDialogue("random_conversation", () => {
+                citizen2.interactable = false;
+
+                citizen3.dialogue = null;
+                citizen3.interactable = false;
+            })
+            citizen3.loadDialogue("random_conversation", () => {
+                citizen3.interactable = false;
+                
+                citizen2.dialogue = null;
+                citizen2.interactable = false;
+            })
 
             
             const citizen4 = new Citizen(
