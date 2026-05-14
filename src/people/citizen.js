@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import WorldObject from '../object/world_object.js';
 import Conversation from './conversation.js';
 import objectManager from '../utils/object_manager.js';
+import { MeshBasicMaterial } from 'three';
 
 class Citizen extends WorldObject {
     constructor(position, rotation = new THREE.Vector3(), interactable = false) {
@@ -10,13 +11,19 @@ class Citizen extends WorldObject {
 
         super(position, rotation, scale, interactable);
 
+        // Default materials for citizen
+        const material_map = {
+            "Citizen": new THREE.MeshToonMaterial({color: 0xf4cb73, fog: false, gradientMap: objectManager.getObject("three_tone") }),
+            "Hard_hat": new THREE.MeshToonMaterial({color: 0xf7e120, fog: false, gradientMap: objectManager.getObject("three_tone") }),
+            "Shirt": new THREE.MeshToonMaterial({color: 0xf9ad13, fog: false, gradientMap: objectManager.getObject("three_tone")}),
+            "Pants": new THREE.MeshToonMaterial({color: 0x5c727c, fog: false, gradientMap: objectManager.getObject("three_tone")}),
+            "Shoes": new THREE.MeshToonMaterial({color: 0x6b4b1c, fog: false, gradientMap: objectManager.getObject("three_tone")}),
+            "Hair": new THREE.MeshToonMaterial({color: 0x6b4b1c, fog: false, gradientMap: objectManager.getObject("three_tone")}),
+        }
+
         this.model = 'citizen';
         this.model.userData.outline = false;
-        this.model.traverse((node) => {
-            if (node.isMesh && node.name == "Citizen") {
-                node.material = new THREE.MeshToonMaterial({color: 0xf4cb73, fog: false, gradientMap: objectManager.getObject("three_tone") });
-            }
-        });
+        this.applyMaterialMap(material_map);
         
         this.createBasicBody();
         
@@ -27,7 +34,6 @@ class Citizen extends WorldObject {
         this.isTypingDialogue = false;
         this.dialogueTypewriterTimeouts = [];
         this.soundTimeoutIds = [];
-        this.dialogueLetterSpeed = 30;
 
         this.dialogue_box = document.getElementById("dialog-box");
         this.dialogue_speaker = document.getElementById("dialog-speaker");
@@ -35,6 +41,20 @@ class Citizen extends WorldObject {
 
         this.dialogue = null;
         this.last_dialogue = this.dialogue;
+    }
+
+    showParts(parts) {
+        this.model.traverse((node) => {
+            if (!node.isMesh) {
+                return;
+            }
+
+            if (parts.includes(node.name)) {
+                node.material.visible = true;
+            } else {
+                node.material.visible = false;
+            }
+        });
     }
 
     loadDialogue(val, onEnd = null) {
@@ -76,7 +96,12 @@ class Citizen extends WorldObject {
 
         // Start dialogue
         this.dialogue_speaker.innerText = currentDialogue.speaker.toUpperCase();
-        this.typeDialogueText(currentDialogue.text, this.dialogueLetterSpeed);
+        this.typeDialogueText(currentDialogue.text, currentDialogue.getSpeed());
+
+        const anim = currentDialogue.getAnimation();
+        if (anim !== null) {
+            this.playAnimation(anim, false, true, () => this.playAnimation("idle", true, true));
+        }
 
     }
 
@@ -124,6 +149,7 @@ class Citizen extends WorldObject {
         const typingDelay = Math.floor(1000 / Math.max(1, defaultLettersPerSecond));
         const shouldAutoSkip = this.last_dialogue.isAutoSkip();
         const shouldPlaySound = this.last_dialogue.hasSound();
+        const pitch = this.last_dialogue.getPitch();
 
         let currentCharacterCount = 0;
         let cumulativeDelay = 0;
@@ -145,7 +171,7 @@ class Citizen extends WorldObject {
                     }
 
                     if (shouldPlaySound && isSoundTick) {
-                        this.play_grunt();
+                        this.play_grunt(pitch);
                     }
                 }, cumulativeDelay);
 
@@ -189,7 +215,7 @@ class Citizen extends WorldObject {
         this.soundTimeoutIds = [];
     }
 
-    play_grunt() {
+    play_grunt(pitch = 1.0) {
         const grunts = ['grunt1', 'grunt2', 'grunt3', 'grunt4'];
         const randomGrunt = grunts[Math.floor(Math.random() * grunts.length)];
         const audioBuffer = objectManager.getObject(randomGrunt, false);
@@ -197,7 +223,8 @@ class Citizen extends WorldObject {
         const listener = new THREE.AudioListener();
         const audio = new THREE.Audio(listener);
         audio.setBuffer(audioBuffer);
-        
+        audio.setPlaybackRate(pitch);
+
         // Get the audio context and source
         const context = listener.context;
         const source = audio.getOutput();

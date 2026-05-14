@@ -14,7 +14,7 @@ const sidewalk_gray_material = new THREE.MeshToonMaterial({ color: 0xD6D6D6, sid
 const roundabout_middle_ring_material = new THREE.MeshToonMaterial({ color: 0xcccccc, side: THREE.DoubleSide , fog: false});
 const roundabout_middle_material = new THREE.MeshToonMaterial({ color: 0xa4b774, side: THREE.DoubleSide , fog: false});
 
-const sidewalk_width = 5;
+const sidewalk_width = 7;
 const sidewalk_gray_width = 1.2;
 const sidewalk_height = 0.4;
 
@@ -51,6 +51,8 @@ const createRingSegmentMesh = (innerRadius, outerRadius, thetaStart, thetaLength
 };
 
 export function make_road(x, y, z, direction, num_parts, tilt_angle = 0, has_barriers = false) {
+    //return [new THREE.Object3D(), new THREE.Vector3(), new CANNON.Body({ mass: 0 })];
+
     const road = new THREE.Object3D();    
 
     const road_length = (num_parts * part_length) + ((num_parts-1) * between_parts_length) + (2*between_parts_length/2);
@@ -62,16 +64,15 @@ export function make_road(x, y, z, direction, num_parts, tilt_angle = 0, has_bar
     roadMesh.position.z -= road_length/2;
 
     const partGeo = new THREE.PlaneGeometry(part_width, part_length);
-    const partMat = road_part_material;
+    const partsInstanced = new THREE.InstancedMesh(partGeo, road_part_material, num_parts);
+    const dummy = new THREE.Object3D();
     for (let i = 0; i < num_parts; i++) {
-        const partMesh = new THREE.Mesh(partGeo, partMat);
-        partMesh.rotateX(-Math.PI/2);
-
-        partMesh.position.z = -(i*(between_parts_length + part_length) + between_parts_length/2 + part_length/2);
-        partMesh.position.y = 0.01;
-
-        road.add(partMesh);
+        dummy.rotation.set(-Math.PI/2, 0, 0);
+        dummy.position.set(0, 0.01, -(i*(between_parts_length + part_length) + between_parts_length/2 + part_length/2));
+        dummy.updateMatrix();
+        partsInstanced.setMatrixAt(i, dummy.matrix);
     }
+    road.add(partsInstanced);
     road.add(roadMesh);
 
     // Physics body - only if not flat on ground OR has barriers
@@ -102,36 +103,36 @@ export function make_road(x, y, z, direction, num_parts, tilt_angle = 0, has_bar
 
             const railGeo = new THREE.BoxGeometry(railThickness, railThickness, road_length);
             const postGeo = new THREE.BoxGeometry(postThickness, postHeight, postThickness);
-            const barrierMat = barrier_material;
+            const barrierDummy = new THREE.Object3D();
 
-            const leftRailTop = new THREE.Mesh(railGeo, barrierMat);
-            leftRailTop.position.set(-sideOffset, railHeightTop, -road_length / 2);
-            road.add(leftRailTop);
-
-            const leftRailBottom = new THREE.Mesh(railGeo, barrierMat);
-            leftRailBottom.position.set(-sideOffset, railHeightBottom, -road_length / 2);
-            road.add(leftRailBottom);
-
-            const rightRailTop = new THREE.Mesh(railGeo, barrierMat);
-            rightRailTop.position.set(sideOffset, railHeightTop, -road_length / 2);
-            road.add(rightRailTop);
-
-            const rightRailBottom = new THREE.Mesh(railGeo, barrierMat);
-            rightRailBottom.position.set(sideOffset, railHeightBottom, -road_length / 2);
-            road.add(rightRailBottom);
+            const railsInstanced = new THREE.InstancedMesh(railGeo, barrier_material, 4);
+            const railPositions = [
+                [-sideOffset, railHeightTop,    -road_length / 2],
+                [-sideOffset, railHeightBottom, -road_length / 2],
+                [ sideOffset, railHeightTop,    -road_length / 2],
+                [ sideOffset, railHeightBottom, -road_length / 2],
+            ];
+            for (let i = 0; i < 4; i++) {
+                barrierDummy.position.set(...railPositions[i]);
+                barrierDummy.rotation.set(0, 0, 0);
+                barrierDummy.updateMatrix();
+                railsInstanced.setMatrixAt(i, barrierDummy.matrix);
+            }
+            road.add(railsInstanced);
 
             const postCount = Math.floor(road_length / postSpacing) + 1;
+            const postsInstanced = new THREE.InstancedMesh(postGeo, barrier_material, postCount * 2);
             for (let i = 0; i < postCount; i++) {
                 const z = -i * postSpacing;
-
-                const leftPost = new THREE.Mesh(postGeo, barrierMat);
-                leftPost.position.set(-sideOffset, postHeight / 2, z);
-                road.add(leftPost);
-
-                const rightPost = new THREE.Mesh(postGeo, barrierMat);
-                rightPost.position.set(sideOffset, postHeight / 2, z);
-                road.add(rightPost);
+                barrierDummy.rotation.set(0, 0, 0);
+                barrierDummy.position.set(-sideOffset, postHeight / 2, z);
+                barrierDummy.updateMatrix();
+                postsInstanced.setMatrixAt(i * 2,     barrierDummy.matrix);
+                barrierDummy.position.set( sideOffset, postHeight / 2, z);
+                barrierDummy.updateMatrix();
+                postsInstanced.setMatrixAt(i * 2 + 1, barrierDummy.matrix);
             }
+            road.add(postsInstanced);
         }
 
         // Sync body transform
@@ -157,6 +158,8 @@ export function make_road(x, y, z, direction, num_parts, tilt_angle = 0, has_bar
 }
 
 export function make_road_corner(x, z, direction) {
+    //return [new THREE.Object3D(), new THREE.Vector3(), new CANNON.Body({ mass: 0 })];
+
     const road = new THREE.Object3D();
 
     const num_parts = 3;
@@ -171,28 +174,27 @@ export function make_road_corner(x, z, direction) {
     roadMesh.position.z += road_width*direction.offset.y;
 
     const partGeo = new THREE.PlaneGeometry(part_width, part_length);
-    const partMat = road_part_material;
     const partRadius = road_width/2;
     const partCenterX = -road_width/2;
     const partCenterZ = 0;
-
+    const partsInstanced = new THREE.InstancedMesh(partGeo, road_part_material, num_parts);
+    const dummy = new THREE.Object3D();
     for (let i = 0; i < num_parts; i++) {
-        const partMesh = new THREE.Mesh(partGeo, partMat);
-        partMesh.rotateX(-Math.PI/2);
-
         const arcOffset = i*(between_parts_length + part_length) + between_parts_length/2 + part_length/2;
         const partAngle = arcOffset/partRadius;
 
-        partMesh.position.x = partCenterX + partRadius*Math.cos(partAngle-Math.PI/2);
-        partMesh.position.y = 0.01;
-        partMesh.position.z = partCenterZ + partRadius*Math.sin(partAngle-Math.PI/2);
-        partMesh.rotateZ(-partAngle+Math.PI/2);
-
-        partMesh.position.x += road_width*direction.offset.x;
-        partMesh.position.z += road_width*direction.offset.y;
-
-        road.add(partMesh);
+        dummy.rotation.set(0, 0, 0);
+        dummy.rotateX(-Math.PI/2);
+        dummy.rotateZ(-partAngle+Math.PI/2);
+        dummy.position.set(
+            partCenterX + partRadius*Math.cos(partAngle-Math.PI/2) + road_width*direction.offset.x,
+            0.01,
+            partCenterZ + partRadius*Math.sin(partAngle-Math.PI/2) + road_width*direction.offset.y
+        );
+        dummy.updateMatrix();
+        partsInstanced.setMatrixAt(i, dummy.matrix);
     }
+    road.add(partsInstanced);
 
     road.add(roadMesh);
 
@@ -245,6 +247,8 @@ export function make_road_corner(x, z, direction) {
 }
 
 export function make_roundabout(x, z, radius) {
+    //return [new THREE.Object3D(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new CANNON.Body({ mass: 0 })];
+
     const roundabout = new THREE.Object3D();
 
     const roadGeo = new THREE.RingGeometry(radius - road_width, radius, 40);
@@ -274,7 +278,7 @@ export function make_roundabout(x, z, radius) {
     const pathWidth = sidewalk_width;
     const pathGrayWidth = sidewalk_gray_width;
     const pathHeight = sidewalk_height;
-    const pathRaise = 0.12;
+    const pathRaise = 0.01;
     const pathInnerRadius = radius + 0.02;
     const pathGrayOuterRadius = pathInnerRadius + pathGrayWidth;
     const pathOuterRadius = pathInnerRadius + pathWidth;
@@ -304,7 +308,7 @@ export function make_roundabout(x, z, radius) {
             curveSegments,
         );
         mesh.rotateX(-Math.PI/2);
-        mesh.position.y = pathRaise + 0.01;
+        mesh.position.y = pathRaise;
         roundabout.add(mesh);
     };
 
@@ -332,17 +336,16 @@ export function make_roundabout(x, z, radius) {
     const marking_count = 28;
     const marking_radius = radius - road_width/2;
     const markingGeo = new THREE.BoxGeometry(part_width, 0.05, part_length*0.8);
-    const markingMat = road_part_material;
-
+    const markingsInstanced = new THREE.InstancedMesh(markingGeo, road_part_material, marking_count);
+    const markingDummy = new THREE.Object3D();
     for (let i = 0; i < marking_count; i++) {
         const angle = (i/marking_count) * Math.PI*2;
-        const markingMesh = new THREE.Mesh(markingGeo, markingMat);
-        markingMesh.position.x = marking_radius * Math.cos(angle);
-        markingMesh.position.y = 0.03;
-        markingMesh.position.z = marking_radius * Math.sin(angle);
-        markingMesh.rotateY(-angle);
-        roundabout.add(markingMesh);
+        markingDummy.position.set(marking_radius * Math.cos(angle), 0.03, marking_radius * Math.sin(angle));
+        markingDummy.rotation.set(0, -angle, 0);
+        markingDummy.updateMatrix();
+        markingsInstanced.setMatrixAt(i, markingDummy.matrix);
     }
+    roundabout.add(markingsInstanced);
 
     roundabout.position.set(x, 0, z);
 

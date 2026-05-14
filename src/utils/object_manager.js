@@ -4,9 +4,11 @@ import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 class ObjectManager {
     constructor() {
-        this.gltfloader = new GLTFLoader();
-        this.textureLoader = new THREE.TextureLoader();
-        this.audioLoader = new THREE.AudioLoader();
+        this.loadingManager = new THREE.LoadingManager();
+        this.gltfloader = new GLTFLoader(this.loadingManager);
+        this.textureLoader = new THREE.TextureLoader(this.loadingManager);
+        this.audioLoader = new THREE.AudioLoader(this.loadingManager);
+        this.fileLoader = new THREE.FileLoader(this.loadingManager);
         this.objectCache = {};
         this.animationCache = {};
     }
@@ -44,14 +46,8 @@ class ObjectManager {
         const needs_loading = !this.objectCache[id];
 
         if (needs_loading) {
-            const { scene, animations } = await new Promise((resolve, reject) => {
-                this.gltfloader.load(path, (gltf) => {
-                    resolve({ scene: gltf.scene, animations: gltf.animations });
-                }, undefined, (error) => {
-                    console.error(`Failed to load GTLF model object ${id} at ${path}:`, error);
-                    reject(error);
-                });
-            });
+            const gltf = await this.gltfloader.loadAsync(path);
+            const { scene, animations } = gltf;
             
             // Apply materials
             if (material_map) {
@@ -103,14 +99,9 @@ class ObjectManager {
 
         if (needs_loading) {
             try {
-                const response = await fetch(path);
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-
-                this.objectCache[id] = await response.text();
+                this.objectCache[id] = await this.fileLoader.loadAsync(path);
             } catch (error) {
-                console.error(error.message);
+                console.error(`Failed to load shader ${id} at ${path}:`, error);
             }
         }
 

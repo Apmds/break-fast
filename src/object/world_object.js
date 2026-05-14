@@ -23,6 +23,43 @@ class WorldObject {
         this._onPathEnd = null;
     }
 
+    applyMaterialMap(material_map, full_override = false) {
+        if (!this._model) {
+            return;
+        }
+
+        this.model.traverse((node) => {
+            if (!node.isMesh) {
+                return;
+            }
+
+            if (full_override) {
+                node.material = null;
+            }
+
+            if (material_map[node.name]) {
+                node.material = material_map[node.name];
+            }
+        });
+    }
+
+    applyMaterialColors(material_colors) {
+        if (!this._model) {
+            return;
+        }
+
+        this.model.traverse((node) => {
+            if (!node.isMesh) {
+                return;
+            }
+
+            if (material_colors[node.name]) {
+                node.material.color.setHex(material_colors[node.name]);
+                node.material.needsUpdate = true;
+            }
+        });
+    }
+
     setPath(path) {
         this._path = path;
     }
@@ -239,6 +276,7 @@ class WorldObject {
 
         const clip = this._animations.find((anim) => anim.name === anim_name);
         if (!clip) {
+            console.log(`Animation named "${anim_name}" does not exist`)
             return;
         }
 

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { part_length, between_parts_length, road_width } from './road.js';
 import objectManager from '../utils/object_manager.js';
 
-export const path_width = 5;
+export const path_width = 7;
 export const path_height = 0.4;
 export const path_gray_width = 1.2;
 

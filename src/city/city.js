@@ -17,6 +17,7 @@ import PlaceHolderItem from '../items/placeholder.js';
 import House from './house.js';
 import Path from '../object/path.js';
 import CityHall from './city_hall.js';
+import BuilderCitizen from '../people/builder_citizen.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -45,6 +46,26 @@ class City extends Scene {
         base_ground_other_side.position.z = -300;
         base_ground_other_side.position.y = -50.1;
         cityGroup.add(base_ground_other_side);
+
+        // River (NOT good)
+        const river = new THREE.Mesh(
+            new THREE.BoxGeometry(1000, 40, 1800),
+            new THREE.MeshToonMaterial({color: 0x2ea7d3, fog: false, transparent: true, opacity: 0.6}),
+        );
+        river.name = "river";
+        river.position.x = -615;
+        river.position.y = -60;
+        river.position.z = -350;
+        cityGroup.add(river);
+
+        const bedrock = new THREE.Mesh(
+            new THREE.BoxGeometry(1000, 10, 1800),
+            new THREE.MeshToonMaterial({color: 0x2ea7d3, fog: false}),
+        );
+        bedrock.position.x = -615;
+        bedrock.position.y = -80;
+        bedrock.position.z = -350;
+        cityGroup.add(bedrock);
 
         // Base grass
         {
@@ -264,15 +285,17 @@ class City extends Scene {
 
         // Ensure every city mesh participates in shadow rendering.
         cityGroup.traverse((node) => {
-            if (node.isMesh) {
+            if (node.isMesh && node.name != "river") {
                 node.castShadow = true;
                 node.receiveShadow = true;
             }
         });
 
         // Cars
+        const player_car = new Car(new THREE.Vector3(-63, 0.6, -313), new THREE.Vector3(0, Math.PI, 0));
+        this.add(player_car, "player_car");
+
         const static_cars = [
-            new Car(new THREE.Vector3(-63, 0.6, -313), new THREE.Vector3(0, Math.PI, 0)),
         ];
 
         static_cars.forEach((car, index) => this.add(car, `car_${index}`));
@@ -311,7 +334,7 @@ class City extends Scene {
         this.add(city_hall, "city_hall");
 
         // Citizens
-        const boss_guy = new Citizen(
+        const boss_guy = new BuilderCitizen(
             new THREE.Vector3(-2, 0.4, -170),
             new THREE.Vector3(0, Math.PI/2, 0),
             true
@@ -339,14 +362,18 @@ class City extends Scene {
             .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI - 1.09, 0), 25)
         );
         boss_guy.loadDialogue("boss_restaurant", () => {
-            boss_guy.playAnimation("fast_run", true);
+            boss_guy.playAnimation("fast_run", true, true);
             boss_guy.interactable = false;
             boss_guy.followPath(false, () => {
                 boss_guy.playAnimation("idle", true, true);
 
                 boss_guy.loadDialogue("boss_end", () => {
                     boss_guy.interactable = false;
-                    console.log("GOAT");
+
+                    player_car.interactable = true;
+                    player_car.onInteract = () => {
+                        console.log("GOAT");
+                    };
                 });
 
                 boss_guy.interactable = true;
@@ -355,19 +382,7 @@ class City extends Scene {
         });
         this.add(boss_guy, "boss_guy");
 
-        const citizen2 = new Citizen(
-            new THREE.Vector3(23, 0.4, -233),
-            new THREE.Vector3(0, Math.PI*0.3, 0)
-        );
-        this.add(citizen2, "citizen2");
-
-        const citizen3 = new Citizen(
-            new THREE.Vector3(17, 0.4, -228),
-            new THREE.Vector3(0, Math.PI*1.3, 0)
-        );
-        this.add(citizen3, "citizen3");
-
-        const bridge_guy = new Citizen(
+        const bridge_guy = new BuilderCitizen(
             new THREE.Vector3(-85, 0.4, -309),
             new THREE.Vector3(0, Math.PI / 2, 0),
             true
@@ -377,7 +392,180 @@ class City extends Scene {
 
         this.addModel(make_skybox());
         this.scene.fog = new THREE.Fog(0xAAAAAA, 300, 600);
+        
+        // Not important citizens
+        {
+            const citizen2 = new Citizen(
+                new THREE.Vector3(23, 0.4, -220),
+                new THREE.Vector3(0, 0, 0),
+                true
+            );
+            citizen2.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen2.applyMaterialColors({
+                "Hair": 0x28241f,
+                "Pants": 0xdb7b32,
+                "Shoes": 0x6b4b1c,
+            })
+            this.add(citizen2, "citizen2");
+            
+            const citizen3 = new Citizen(
+                new THREE.Vector3(23, 0.4, -216),
+                new THREE.Vector3(0, Math.PI, 0),
+                true
+            );
+            citizen3.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen3.applyMaterialColors({
+                "Hair": 0x5b3902,
+                "Shirt": 0x6dc3db,
+                "Pants": 0x1c49ed,
+                "Shoes": 0x6b4b1c,
+            })
+            this.add(citizen3, "citizen3");
 
+            citizen2.loadDialogue("random_conversation", () => {
+                citizen2.interactable = false;
+
+                citizen3.dialogue = null;
+                citizen3.interactable = false;
+            })
+            citizen3.loadDialogue("random_conversation", () => {
+                citizen3.interactable = false;
+                
+                citizen2.dialogue = null;
+                citizen2.interactable = false;
+            })
+
+            
+            const citizen4 = new Citizen(
+                new THREE.Vector3(23, 0.4, -393),
+                new THREE.Vector3(0, Math.PI, 0)
+            );
+            citizen4.playAnimation("walk", true, true);
+            citizen4.setPath(new Path()
+                .addPoint(new THREE.Vector3(23, 0.4, -393), new THREE.Vector3(0, Math.PI, 0), 10)
+                .addPoint(new THREE.Vector3(23, 0.4, -594.4), new THREE.Vector3(0, Math.PI, 0), 0.15)
+                .addPoint(new THREE.Vector3(24, 0.4, -603.8), new THREE.Vector3(0, 3*Math.PI/4, 0))
+                .addPoint(new THREE.Vector3(31, 0.4, -605), new THREE.Vector3(0, Math.PI/2, 0))
+                .addPoint(new THREE.Vector3(159, 0.4, -605), new THREE.Vector3(0, Math.PI/2, 0), 0.15)
+
+                .addPoint(new THREE.Vector3(159, 0.4, -605), new THREE.Vector3(0, 3*Math.PI/2, 0), 10)
+
+                .addPoint(new THREE.Vector3(31, 0.4, -605), new THREE.Vector3(0, 3*Math.PI/2, 0), 0.15)
+                .addPoint(new THREE.Vector3(24, 0.4, -603.8), new THREE.Vector3(0, 7*Math.PI/4, 0))
+                .addPoint(new THREE.Vector3(23, 0.4, -594.4), new THREE.Vector3(0, 8*Math.PI/4, 0))
+                .addPoint(new THREE.Vector3(23, 0.4, -393), new THREE.Vector3(0, 8*Math.PI/4, 0), 0.15)
+            );
+            citizen4.followPath(true);
+            citizen4.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen4.applyMaterialColors({
+                "Hair": 0x3d2817,
+                "Shirt": 0xe8714d,
+                "Pants": 0x2d4a3f,
+                "Shoes": 0x6b4b1c,
+            })
+            this.add(citizen4, "citizen4");
+
+            const citizen5 = new Citizen(
+                new THREE.Vector3(192, 0.4, -120),
+                new THREE.Vector3(0, Math.PI, 0)
+            );
+            citizen5.playAnimation("walk", true, true);
+            citizen5.setPath(new Path()
+                .addPoint(new THREE.Vector3(192, 0.4, -120), new THREE.Vector3(0, Math.PI, 0), 10)
+                .addPoint(new THREE.Vector3(192, 0.4, -608), new THREE.Vector3(0, Math.PI, 0), 0.05)
+                .addPoint(new THREE.Vector3(192, 0.4, -608), new THREE.Vector3(0, Math.PI + 0.213, 0), 100)
+                .addPoint(new THREE.Vector3(190.4, 0.4, -618.4), new THREE.Vector3(0, Math.PI + 0.213, 0), 1)
+                .addPoint(new THREE.Vector3(190.4, 0.4, -618.4), new THREE.Vector3(0, Math.PI + 0.727, 0), 100)
+                .addPoint(new THREE.Vector3(179.4, 0.4, -630.7), new THREE.Vector3(0, Math.PI + 0.727, 0), 1)
+                .addPoint(new THREE.Vector3(179.4, 0.4, -630.7), new THREE.Vector3(0, 3*Math.PI/2, 0), 100)
+                .addPoint(new THREE.Vector3(19, 0.4, -630.7), new THREE.Vector3(0, 3*Math.PI/2, 0), 0.2)
+
+                .addPoint(new THREE.Vector3(19, 0.4, -630.7), new THREE.Vector3(0, Math.PI/2, 0), 10)
+
+                .addPoint(new THREE.Vector3(179.4, 0.4, -630.7), new THREE.Vector3(0, Math.PI/2, 0), 0.2)
+                .addPoint(new THREE.Vector3(179.4, 0.4, -630.7), new THREE.Vector3(0, 0.727, 0), 100)
+                .addPoint(new THREE.Vector3(190.4, 0.4, -618.4), new THREE.Vector3(0, 0.727, 0), 1)
+                .addPoint(new THREE.Vector3(190.4, 0.4, -618.4), new THREE.Vector3(0, 0.213, 0), 100)
+                .addPoint(new THREE.Vector3(192, 0.4, -608), new THREE.Vector3(0, 0.213, 0), 1)
+                .addPoint(new THREE.Vector3(192, 0.4, -120), new THREE.Vector3(0, 0, 0), 0.05)
+            );
+            citizen5.followPath(true);
+            citizen5.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen5.applyMaterialColors({
+                "Hair": 0x4a2511,
+                "Shirt": 0x7cb342,
+                "Pants": 0xd4a574,
+                "Shoes": 0x5c4033,
+            })
+            this.add(citizen5, "citizen5");
+
+            const citizen6 = new Citizen(
+                new THREE.Vector3(26, 0.4, -600),
+                new THREE.Vector3(0, 0, 0)
+            );
+            citizen6.playAnimation("walk", true, true)
+            citizen6.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen6.applyMaterialColors({
+                "Hair": 0x2c1810,
+                "Shirt": 0xd32f2f,
+                "Pants": 0x3e2723,
+                "Shoes": 0x6b4b1c,
+            })
+            this.add(citizen6, "citizen6");
+            
+            const citizen7 = new Citizen(
+                new THREE.Vector3(65, 0.4, -294),
+                new THREE.Vector3(0, Math.PI/2, 0)
+            );
+            citizen7.playAnimation("walk", true, true)
+
+            const c7_path1 = new Path()
+                .addPoint(new THREE.Vector3(65, 0.4, -294), new THREE.Vector3(0, Math.PI/2, 0))
+                .addPoint(new THREE.Vector3(165.5, 0.4, -294), new THREE.Vector3(0, Math.PI/2, 0), 0.3)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -294), new THREE.Vector3(0, 0, 0), 10)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -144), new THREE.Vector3(0, 0, 0), 0.15)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -144), new THREE.Vector3(0, -Math.PI/2, 0), 10)
+
+            const c7_path2 = new Path()
+                .addPoint(new THREE.Vector3(165.5, 0.4, -144), new THREE.Vector3(0, -Math.PI/2, 0))
+                .addPoint(new THREE.Vector3(165.5, 0.4, -144), new THREE.Vector3(0, -Math.PI, 0), 10)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -294), new THREE.Vector3(0, -Math.PI, 0), 0.15)
+                .addPoint(new THREE.Vector3(165.5, 0.4, -294), new THREE.Vector3(0, -Math.PI/2, 0), 10)
+                .addPoint(new THREE.Vector3(65, 0.4, -294), new THREE.Vector3(0, -Math.PI/2, 0), 0.3)
+                .addPoint(new THREE.Vector3(65, 0.4, -294), new THREE.Vector3(0, Math.PI/2, 0), 10)
+
+            let c7_path1_onend;
+            let c7_path2_onend;
+            c7_path1_onend = () => {
+                citizen7.playAnimation("idle", true, true);
+                setTimeout(() => {
+                    citizen7.playAnimation("walk", true, true);
+                    citizen7.setPath(c7_path2);
+                    citizen7.followPath(false, c7_path2_onend);
+                }, 5000);
+            };
+            c7_path2_onend = () => {
+                citizen7.playAnimation("idle", true, true);
+                setTimeout(() => {
+                    citizen7.playAnimation("walk", true, true);
+                    citizen7.setPath(c7_path1);
+                    citizen7.followPath(false, c7_path1_onend);
+                }, 2500);
+            };
+            
+            citizen7.setPath(c7_path1);
+            citizen7.followPath(false, c7_path1_onend);
+            citizen7.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen7.applyMaterialColors({
+                "Hair": 0x1a0f2e,
+                "Shirt": 0x7c4dff,
+                "Pants": 0x5e5e5e,
+                "Shoes": 0x2a2a2a,
+            })
+            this.add(citizen7, "citizen7");
+            
+        }
+        
         // Placeholder objects
         const item1 = new PlaceHolderItem(
             new THREE.Vector3(8, 0, -305),
@@ -385,7 +573,7 @@ class City extends Scene {
             new THREE.Vector3(1, 1, 1)
         );
         this.add(item1, "placeholderitem_1");
-
+        
         const item2 = new PlaceHolderItem(
             new THREE.Vector3(3, 2, -312),
             new THREE.Vector3(Math.PI/2, 0, Math.PI/3),
@@ -404,10 +592,6 @@ class City extends Scene {
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
         ambientLight.name = "ambientLight";
         this.addModel(ambientLight);
-    
-        const hemisphereLight = new THREE.HemisphereLight(0xd8ecff, 0x9bb07a, 0.55);
-        hemisphereLight.name = "hemisphereLight";
-        this.addModel(hemisphereLight);
 
         // Position of the sun (keylight)
         this.sunpos = new THREE.Vector3(150, 300, 150);
@@ -416,7 +600,7 @@ class City extends Scene {
         keyLight.position.copy(this.sunpos);
         keyLight.lookAt(this.scene.position)
         keyLight.castShadow = true;
-        keyLight.shadow.mapSize.set(8096, 8096);
+        keyLight.shadow.mapSize.set(2048, 2048);
     
         keyLight.shadow.camera.near = 10;
         keyLight.shadow.camera.far = 1200;
@@ -480,7 +664,6 @@ class City extends Scene {
         this.gui.add('Lighting', 'key intensity', keyLight, 'intensity', 0, 5, 0.01);
         this.gui.add('Lighting', 'fill intensity', fillLight, 'intensity', 0, 2, 0.01);
         this.gui.add('Lighting', 'rim intensity', rimLight, 'intensity', 0, 2, 0.01);
-        this.gui.add('Lighting', 'hemi intensity', hemisphereLight, 'intensity', 0, 2, 0.01);
     }
 
     update(delta) {

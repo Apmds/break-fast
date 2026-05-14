@@ -3,19 +3,16 @@ import objectManager from './utils/object_manager.js';
 import objects from './utils/object_paths.js';
 
 async function preload_objects() {
-    const loadPromises = objects.map(async (obj) => {
+    const loadPromises = objects.map((obj) => {
         switch (obj.type) {
             case "gltf":
-                return await objectManager.loadGLTF(obj.path, obj.id, obj.material_map);
-                
+                return objectManager.loadGLTF(obj.path, obj.id, obj.material_map);
             case "texture":
-                return await objectManager.loadTexture(obj.path, obj.id, obj.minFilter, obj.magFilter);
-
+                return objectManager.loadTexture(obj.path, obj.id, obj.minFilter, obj.magFilter);
             case "mp3":
-                return await objectManager.loadMP3(obj.path, obj.id);
-            
+                return objectManager.loadMP3(obj.path, obj.id);
             case "shader":
-                return await objectManager.loadShader(obj.path, obj.id);
+                return objectManager.loadShader(obj.path, obj.id);
         }
     });
 
@@ -23,12 +20,20 @@ async function preload_objects() {
 }
 
 async function init() {
+    const progressBar = document.getElementById('loading-progress');
+    const loadingScreen = document.getElementById('loading-screen');
+
+    objectManager.loadingManager.onProgress = (url, loaded, total) => {
+        progressBar.style.width = `${(loaded / total) * 100}%`;
+    };
+
     await preload_objects();
+
+    loadingScreen.classList.add('hidden');
 
     const gameManager = new GameManager();
     function animate() {
         requestAnimationFrame(animate);
-
         gameManager.frameUpdate();
     }
     animate();

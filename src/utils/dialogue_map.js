@@ -72,23 +72,182 @@ const dialogueMap = {
                 " you are becoming noise pollution.",
             ]},
         ],
+        "next": "bridge_continue_1"
+    },
+
+    "bridge_continue_1": {
+        "conversation": [
+            {"speaker": "Construction Worker", "text": [
+                "Get out >:("
+            ]},
+        ],
+        "next": "bridge_continue_1"
     },
 
     "boss_restaurant": {
         "conversation": [
+            { "speaker": "Construction Worker", "text": [
+                {"text": "Umm... ", delay: 0.2},
+                {"text": "hi.", delay: 0.2},
+                " Can I help you?"
+            ]},
+            { "speaker": "Me", "text": [
+                {"text": "(he has a hard hat so he must be with the construction crew)", delay: 0.2},
+            ], sound: false},
+            { "speaker": "Me", "text": [
+                {"text": "Do you know where I could find your boss?", delay: 0.2},
+            ]},
+            { "speaker": "Construction Worker", "text": [
+                {"text": "I'm my own boss", delay: 0.2},
+                {"text": ", thank you very much.", delay: 0.2},
+            ]},
             { "speaker": "The Boss", "text": [
-                "oh shit"
-            ]}
+                {"text": "Oh", delay: 0.2},
+                {"text": ", you mean the boss of the construction crew?", delay: 0.2},
+                {"text": " That's also me.", delay: 0.2},
+                {"text": " My name is The Boss", delay: 0.2},
+                {"text": ", don't forget the \"The\".", delay: 0.2},
+                {"text": " Most people forget my first name for some reason.", delay: 0.2},
+            ]},
+            { "speaker": "Me", "text": [
+                {"text": "I finally found you", delay: 0.2},
+                {"text": ", thank god!", delay: 0.2},
+            ]},
+            { "speaker": "Me", "text": [
+                {"text": "Now, ", delay: 0.2},
+                {"text": "WHERE ", delay: 0.2},
+                {"text": "WERE ", delay: 0.2},
+                {"text": "YOU??", delay: 0.2},
+            ]},
+            { "speaker": "Me", "text": [
+                {"text": "DO YOU KNOW HOW MUCH TIME I'VE BEEN WAITING FOR A BREAK?", delay: 0.2},
+                {"text": " IT'S PROBABLY BEEN"},
+            ], autoskip: true, speed: 60},
+            { "speaker": "The Boss", "text": [
+                {"text": "WOW", delay: 0.75},
+                {"text": ", calm down man.", delay: 0.3},
+                {"text": " I'm on my lunch break", delay: 0.2},
+                {"text": ", can't you see?", delay: 0.3},
+            ], speed: 20},
+            { "speaker": "The Boss", "text": [
+                {"text": "Besides", delay: 0.2},
+                {"text": ", why are you rushing me to get back anyway?", delay: 0.2},
+                {"text": " The construction does not end until-"},
+            ], autoskip: true, speed: 20},
+            { "speaker": "Me", "text": [
+                {"text": "It ends today.", delay: 0.5},
+                {"text": " The construction ends today.", delay: 0.4},
+                {"text": " Your guys are just waiting for you to leave.", delay: 0.2},
+            ]},
+            { "speaker": "Me", "text": [
+                {"text": "And I'M also waiting for you.", delay: 0.2},
+                {"text": " Do you know how much I worked to be able to have this bre-"},
+            ], autoskip: true, spped: 45},
+            { "speaker": "The Boss", "text": [
+                {"text": "Wait", delay: 0.2},
+                {"text": ", WHAT?", delay: 0.2},
+                {"text": " I have to get back", delay: 0.2},
+                {"text": ", QUICK!", delay: 0.2},
+            ], animation: "scare"},
         ]
     },
 
     "boss_end": {
         "conversation": [
             { "speaker": "The Boss", "text": [
-                "you won bro"
-            ]}
+                {"text": "H-hey sorry guys", delay: 0.2},
+                {"text": ", I completely forgot that the contruction ended today.", delay: 0.2}
+            ]},
+            { "speaker": "Construction Worker", "text": [
+                {"text": "It's weird that you didn't know", delay: 0.2},
+                {"text": ", since you're our boss and all...", delay: 0.2}
+            ]},
+            { "speaker": "The Boss", "text": [
+                {"text": "I usually have Pi to remind me of this kinds of stuff", delay: 0.2},
+                {"text": ", but he's been missing since yesterday.", delay: 0.2}
+            ]},
+            { "speaker": "Construction Worker", "text": [
+                {"text": "Oh", delay: 0.2},
+                {"text": ", so that's why we didn't recieve the usual welcome message today.", delay: 0.2}
+            ]},
+            { "speaker": "Me", "text": [
+                {"text": "So your pet pigeon is named Pi?"},
+            ]},
+            { "speaker": "The Boss", "text": [
+                {"text": "Yes", delay: 0.2},
+                {"text": ", Pi G. Eon", delay: 0.2},
+                {"text": ", he usually never strays too far off from where I am so he's probably around here somewhere.", delay: 0.2},
+                {"text": " Good thing this town is small so I can go look for him later.", delay: 0.2}
+            ]},
+            { "speaker": "The Boss", "text": [
+                {"text": "That doesn't matter now", delay: 0.2},
+                {"text": ", you did good in finding me.", delay: 0.2},
+                {"text": " I would repay you", delay: 0.2},
+                {"text": ", but I waste all my money on DcMonalds and pigeon food.", delay: 0.2}
+            ]},
+            { "speaker": "Me", "text": [
+                {"text": "(he really is that guy huh)"},
+            ], sound: false},
+            { "speaker": "The Boss", "text": [
+                {"text": "You can go on your vacation or whatever.", delay: 0.2},
+                {"text": " Get in your car and get out of here.", delay: 0.2},
+                {"text": " You are becoming noise pollution.", delay: 0.2}
+            ]},
         ]
     },
+
+    
+    "random_conversation": {
+        "conversation": [
+            {"speaker": "1", "text": [
+                {"text": "I'm telling you,", delay: 0.2},
+                {"text": " Uno is MUCH better than Monopoly."},
+            ], pitch: 1.2},
+
+            {"speaker": "2", "text": [
+                {"text": "Well,", delay: 0.2},
+                {"text": " I never played uno so I wouldn't know."},
+            ], pitch: 1.5},
+
+            {"speaker": "1", "text": [
+                {"text": "Why not? ", delay: 0.2},
+                {"text": "I'm pretty sure you have it in your game console."},
+            ], pitch: 1.2},
+            
+            {"speaker": "2", "text": [
+                {"text": "I don't have uno."},
+            ], pitch: 1.5},
+
+            {"speaker": "1", "text": [
+                {"text": "Of course you do,", delay: 0.2},
+                {"text": " everyone has UNO d-"},
+            ], pitch: 1.2, autoskip: true},
+
+            {"speaker": "Me", "text": [
+                {"text": "Hi, has any of you seen the boss of the contruction crew?", delay: 0.3},
+                {"text": " They were supposed to finnish up today but he's missing."},
+            ]},
+
+            {"speaker": "2", "text": [
+                {"text": "Nope.", delay: 0.3},
+                {"text": " You can try asking other people though,", delay: 0.2},
+                {"text": " they might know where he is."},
+            ], pitch: 1.5},
+
+            {"speaker": "1", "text": [
+                {"text": "I heard he likes running.", delay: 0.2},
+                {"text": " Maybe he's jogging somewhere."},
+            ], pitch: 1.2},
+
+            {"speaker": "1", "text": [
+                {"text": "Good luck finding him.", delay: 0.2},
+                {"text": " If you see him,", delay: 0.2},
+                {"text": " please ask if he likes uno or monopoly better."},
+            ], pitch: 1.2},
+        ]
+    },
+
+
 };
 
 export default dialogueMap;
