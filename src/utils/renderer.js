@@ -81,6 +81,10 @@ class Renderer {
                     return;
                 }
 
+                if (!child.visible || (child.material && !child.material.visible)) {
+                    return;
+                }
+
                 activeMeshIds.add(child.uuid);
                 const helper = this.ensureOutlineHelper(child);
                 helper.visible = true;
