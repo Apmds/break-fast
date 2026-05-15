@@ -147,6 +147,11 @@ canvas {
     margin: 0 0 60px 0;
     letter-spacing: 2px;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    color: #F07167;
+}
+
+.menu-title .first-word {
+    color: #00AFB9;
 }
 
 .start-button {
