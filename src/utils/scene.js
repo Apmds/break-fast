@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import Renderer from './renderer.js';
-import GUI from './GUI.js';
+import DebugUI from '../ui/debug_ui.js';
 
 class Scene {
     constructor(camera, player) {
@@ -14,7 +14,7 @@ class Scene {
 
         this.physicsWorld = new CANNON.World();
 
-        this.gui = new GUI();
+        this.debug_ui = new DebugUI();
 
         this._objects = {};
     }
@@ -91,11 +91,11 @@ class Scene {
     }
 
     begin() {
-        this.gui.begin();
+        this.debug_ui.begin();
     }
 
     end() {
-        this.gui.end();
+        this.debug_ui.end();
     }
 }
 

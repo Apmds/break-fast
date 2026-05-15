@@ -387,7 +387,12 @@ class City extends Scene {
             new THREE.Vector3(0, Math.PI / 2, 0),
             true
         );
-        bridge_guy.loadDialogue("bridge_start");
+
+        const crosshair = document.getElementById('crossair');
+        bridge_guy.loadDialogue("bridge_start", () => {
+            this.player.canMove = true;
+            crosshair.classList.remove('invisible');
+        });
         this.add(bridge_guy, "bridge_guy");
 
         this.addModel(make_skybox());
@@ -647,23 +652,23 @@ class City extends Scene {
             if (body) this.physicsWorld.addBody(body);
         });
 
-        // GUI
-        //this.gui.hide();
-        this.gui.makeFolder('Camera Position');
-        this.gui.add('Camera Position', 'X', camera.position, 'x').listen();
-        this.gui.add('Camera Position', 'Y', camera.position, 'y').listen();
-        this.gui.add('Camera Position', 'Z', camera.position, 'z').listen();
+        // Debug UI
+        //this.debug_ui.hide();
+        this.debug_ui.makeFolder('Camera Position');
+        this.debug_ui.add('Camera Position', 'X', camera.position, 'x').listen();
+        this.debug_ui.add('Camera Position', 'Y', camera.position, 'y').listen();
+        this.debug_ui.add('Camera Position', 'Z', camera.position, 'z').listen();
 
-        this.gui.makeFolder('Camera Rotation');
-        this.gui.add('Camera Rotation', 'X', camera.rotation, 'x').listen();
-        this.gui.add('Camera Rotation', 'Y', camera.rotation, 'y').listen();
-        this.gui.add('Camera Rotation', 'Z', camera.rotation, 'z').listen();
+        this.debug_ui.makeFolder('Camera Rotation');
+        this.debug_ui.add('Camera Rotation', 'X', camera.rotation, 'x').listen();
+        this.debug_ui.add('Camera Rotation', 'Y', camera.rotation, 'y').listen();
+        this.debug_ui.add('Camera Rotation', 'Z', camera.rotation, 'z').listen();
 
-        this.gui.makeFolder('Lighting');
+        this.debug_ui.makeFolder('Lighting');
         
-        this.gui.add('Lighting', 'key intensity', keyLight, 'intensity', 0, 5, 0.01);
-        this.gui.add('Lighting', 'fill intensity', fillLight, 'intensity', 0, 2, 0.01);
-        this.gui.add('Lighting', 'rim intensity', rimLight, 'intensity', 0, 2, 0.01);
+        this.debug_ui.add('Lighting', 'key intensity', keyLight, 'intensity', 0, 5, 0.01);
+        this.debug_ui.add('Lighting', 'fill intensity', fillLight, 'intensity', 0, 2, 0.01);
+        this.debug_ui.add('Lighting', 'rim intensity', rimLight, 'intensity', 0, 2, 0.01);
     }
 
     update(delta) {

@@ -1,7 +1,7 @@
 import LilGUI from 'lil-gui';
 import Stats from 'three/addons/libs/stats.module.js';
 
-class GUI {
+class DebugUI {
     constructor() {
         // FPS monitor
         this.stats = new Stats();
@@ -45,4 +45,4 @@ class GUI {
 }
 
 
-export default GUI;
+export default DebugUI;

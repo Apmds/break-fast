@@ -29,7 +29,7 @@ async function init() {
 
     await preload_objects();
 
-    loadingScreen.classList.add('hidden');
+    loadingScreen.classList.add('invisible');
 
     const gameManager = new GameManager();
     function animate() {
