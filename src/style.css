@@ -138,11 +138,13 @@ canvas {
 
 .menu-content {
     text-align: center;
+    justify-content: center;
+    align-items: center;
     color: #ffffff;
 }
 
 .menu-title {
-    font-size: 72px;
+    font-size: 130px;
     font-weight: 700;
     margin: 0 0 60px 0;
     letter-spacing: 2px;
