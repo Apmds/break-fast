@@ -45,6 +45,13 @@ const objects = [
         "material_map": null,
     },
 
+    {
+        "id": "straw_hat",
+        "path": "../assets/models/Objects/straw_hat.glb",
+        "type": "gltf",
+        "material_map": null,
+    },
+
     // Skybox textures
     {
         "id": "skybox_px",

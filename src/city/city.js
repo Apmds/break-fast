@@ -18,6 +18,7 @@ import House from './house.js';
 import Path from '../object/path.js';
 import CityHall from './city_hall.js';
 import BuilderCitizen from '../people/builder_citizen.js';
+import StrawHat from '../items/straw_hat.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -586,12 +587,12 @@ class City extends Scene {
         );
         this.add(item2, "placeholderitem_2");
 
-        const item3 = new PlaceHolderItem(
+        const straw_hat = new StrawHat(
             new THREE.Vector3(10, 2, -309),
-            new THREE.Vector3(0, Math.PI/3, Math.PI/2),
+            new THREE.Vector3(0, 0, 0),
             new THREE.Vector3(1, 1, 1)
         );
-        this.add(item3, "placeholderitem_3");
+        this.add(straw_hat, "straw_hat_item");
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
