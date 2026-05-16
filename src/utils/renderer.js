@@ -76,12 +76,19 @@ class Renderer {
                 return;
             }
 
+            const worldObject = node.userData?.worldObject;
+            const ignoreSet = worldObject?.outlineIgnore;
+
             node.traverse((child) => {
                 if (!child.isMesh || child.userData?.isOutline === true) {
                     return;
                 }
 
                 if (!child.visible || (child.material && !child.material.visible)) {
+                    return;
+                }
+
+                if (ignoreSet?.has(child.name)) {
                     return;
                 }
 

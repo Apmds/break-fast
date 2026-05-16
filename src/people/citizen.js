@@ -25,6 +25,8 @@ class Citizen extends WorldObject {
 
         this.model = 'citizen';
         this.model.userData.outline = false;
+        this.addOutlineIgnore("Glasses");
+        this.addOutlineIgnore("Glasses_lens");
         this.applyMaterialMap(material_map);
         
         this.createBasicBody();

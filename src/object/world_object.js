@@ -21,6 +21,15 @@ class WorldObject {
         this._followingPathLoop = false;
         this._path = null;
         this._onPathEnd = null;
+        this._outlineIgnore = new Set();
+    }
+
+    addOutlineIgnore(meshName) {
+        this._outlineIgnore.add(meshName);
+    }
+
+    get outlineIgnore() {
+        return this._outlineIgnore;
     }
 
     applyMaterialMap(material_map, full_override = false) {
