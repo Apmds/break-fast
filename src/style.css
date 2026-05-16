@@ -199,6 +199,15 @@ canvas {
 
 .item-container .item {
     min-height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item-image {
+    max-height: 150px;
+    max-width: 300px;
+    object-fit: contain;
 }
 
 .item-container .description {

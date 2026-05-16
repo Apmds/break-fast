@@ -1,18 +1,27 @@
 import WorldObject from "../object/world_object.js";
+import UIUtils from "../utils/ui_utils.js";
 
 class BaseItem extends WorldObject {
-    constructor(position, rotation, scale) {
+    constructor(title, description, position, rotation, scale) {
         super(position, rotation, scale, true);
+
+        this.itemImage = null;
+        this.title = title;
+        this.description = description;
+    }
+
+    setItemImage(value) {
+        this.itemImage = value;
     }
 
     onInteract(player) {
         player.canMove = false;
         player.hasItem = true;
 
-        // Add item to player's inventory
+        UIUtils.showGetItemMenu(this.title, this.description, this.itemImage);
+
         player.inventory.push(this);
-        
-        // Remove from scene
+
         if (this._model && player.scene) {
             player.scene.remove(this._model);
         }

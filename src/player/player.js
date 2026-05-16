@@ -2,6 +2,7 @@ import CameraControls from './camera_controls.js';
 import * as CANNON from 'cannon-es';
 import * as THREE from 'three';
 import { inputManager } from '../utils/input_manager.js';
+import UIUtils from '../utils/ui_utils.js';
 
 class Player {
     constructor(camera, domElement = document.body, physicsWorld, scene = null) {
@@ -49,6 +50,7 @@ class Player {
         if (inputManager.keyJustPressed(this.interactionKey)) {
             if (this.hasItem) {
                 this.hasItem = false;
+                this.canMove = true;
             }
 
             if (this.currentHoveredObject && this.currentHoveredObject.interactable) {
@@ -141,8 +143,8 @@ class Player {
     set hasItem(value) {
         this._hasItem = value;
 
-        if (!this.hasItem) {
-            // hide the item elements
+        if (!this._hasItem) {
+            UIUtils.hideGetItemMenu();
         }
     }
 
