@@ -28,6 +28,7 @@ class Player {
         this.currentHoveredObject = null;
         this.interactionKey = 'KeyE';
 
+        this._hasItem = false;
 
         this.inventory = [];
     }
@@ -45,8 +46,14 @@ class Player {
     }
 
     handleInteraction() {
-        if (inputManager.keyJustPressed(this.interactionKey) && this.currentHoveredObject && this.currentHoveredObject.interactable) {
-            this.currentHoveredObject.onInteract(this);
+        if (inputManager.keyJustPressed(this.interactionKey)) {
+            if (this.hasItem) {
+                this.hasItem = false;
+            }
+
+            if (this.currentHoveredObject && this.currentHoveredObject.interactable) {
+                this.currentHoveredObject.onInteract(this);
+            } 
         }
     
         this.updateRaycaster();
@@ -129,6 +136,18 @@ class Player {
         if (!value) {
             this.stopMovement();
         }
+    }
+
+    set hasItem(value) {
+        this._hasItem = value;
+
+        if (!this.hasItem) {
+            // hide the item elements
+        }
+    }
+
+    get hasItem() {
+        return this._hasItem;
     }
 
     get speed() {

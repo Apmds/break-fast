@@ -19,6 +19,37 @@ async function preload_objects() {
     await Promise.all(loadPromises);
 }
 
+
+/* https://claude.ai/share/41278cda-119b-4647-9a0b-42f5d6266fd0 */
+function make_item_ring_lines() {
+    const ring = document.getElementById('ring');
+    const count = 48;
+    const radius = 40;
+
+    for (let i = 0; i < count; i++) {
+        const angle = (360 / count) * i;
+        const minLen = (70 + Math.random() * 12).toFixed(1);
+        const maxLen = (80 + Math.random() * 12).toFixed(1);
+        const gap  = radius;
+        const gap2 = (radius + Math.random() * 20).toFixed(1);
+        const dur  = (1.2 + Math.random() * 2).toFixed(2);
+        const delay = (Math.random() * -4).toFixed(2);
+
+        const el = document.createElement('div');
+        el.className = 'line';
+        el.style.cssText = `
+            --angle: ${angle}deg;
+            --min: ${minLen}px;
+            --max: ${maxLen}px;
+            --gap: ${gap}px;
+            --gap2: ${gap2}px;
+            --dur: ${dur}s;
+            --delay: ${delay}s;
+        `;
+        ring.appendChild(el);
+    }
+}
+
 async function init() {
     const progressBar = document.getElementById('loading-progress');
     const loadingScreen = document.getElementById('loading-screen');
@@ -28,6 +59,8 @@ async function init() {
     };
 
     await preload_objects();
+
+    make_item_ring_lines();
 
     loadingScreen.classList.add('invisible');
 

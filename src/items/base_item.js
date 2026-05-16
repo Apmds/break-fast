@@ -6,6 +6,9 @@ class BaseItem extends WorldObject {
     }
 
     onInteract(player) {
+        player.canMove = false;
+        player.hasItem = true;
+
         // Add item to player's inventory
         player.inventory.push(this);
         
