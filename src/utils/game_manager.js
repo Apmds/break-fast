@@ -35,7 +35,7 @@ class GameManager {
 
         this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene.scene);
         this.scene.setPlayer(this.player);
-        this.player.canMove = false;
+        this.player.canMove = isDebugMode();
 
         this.clock = new THREE.Timer();
         
@@ -66,6 +66,22 @@ class GameManager {
             // Engage pointer lock — player stays frozen until bridge_guy convo done
             this.player.lock();
         };
+
+        // Skip main menu on debug mode
+        if (isDebugMode()) {
+            this.gameState = GameState.PLAYING;
+            this.main_menu.hide();
+            this.camera.position.copy(this.playerStartPos);
+            this.camera.quaternion.setFromEuler(this.playerStartEuler);
+            this.player.physicsBody.position.set(
+                this.playerStartPos.x,
+                this.playerStartPos.y - 1.2,
+                this.playerStartPos.z
+            );
+            this.player.cameraControls.pitch = this.playerStartPitch;
+            this.player.cameraControls.yaw = this.playerStartYaw;
+            this.player.lock();
+        }
 
         window.addEventListener('resize', () => {
             this.scene.handleResize();
