@@ -38,6 +38,12 @@ class MainMenu {
         this.menuElement.classList.remove('invisible');
     }
 
+    reset() {
+        this.started = false;
+        this.cameraTransition.elapsed = 0;
+        this.cameraTransition.isComplete = false;
+    }
+
     setOnStartCallback(callback) {
         this.onStart = callback;
     }

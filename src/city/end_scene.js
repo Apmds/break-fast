@@ -5,6 +5,7 @@ import { make_road } from "./road.js";
 import { ROAD_DIR } from '../utils/road.js';
 import make_skybox from './skybox.js';
 import Path from '../object/path.js';
+import UIUtils from '../utils/ui_utils.js';
 
 class EndScene extends Scene {
     constructor(camera, player) {
@@ -41,6 +42,10 @@ class EndScene extends Scene {
         );
         this._car.followPath(false, () => {
             this._roadMoving = true;
+
+            setTimeout(() => {
+                UIUtils.showEndMenu(player.inventory.map((el) => el.itemImage));
+            }, 500);
         });
         this._car.runAnimation();
         this.add(this._car, "car");

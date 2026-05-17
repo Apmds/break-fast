@@ -6,6 +6,7 @@ import MainMenu from '../ui/main_menu.js';
 import CannonDebugger from 'cannon-es-debugger';
 import isDebugMode from "./debug_utils.js";
 import EndScene from "../city/end_scene.js";
+import UIUtils from './ui_utils.js';
 
 const GameState = {
     MAIN_MENU: "MAIN_MENU",
@@ -51,6 +52,8 @@ class GameManager {
         }
 
         this.main_menu = new MainMenu(this.camera, this.menuCameraPos, this.menuCameraEuler, this.playerStartPos, this.playerStartEuler);
+        UIUtils.getEndMenuButton().addEventListener('click', () => this.goToMainMenu());
+
         this.main_menu.onStart = () => {
             this.gameState = GameState.TRANSITIONING;
         };
@@ -154,6 +157,34 @@ class GameManager {
 
     render() {
         this.scene.render();
+    }
+
+    goToMainMenu() {
+        UIUtils.hideEndMenu();
+
+        this.scene.unsetAsCurrent();
+
+        this.scene = new City(this.camera, () => {
+            this.scene.unsetAsCurrent();
+            this.scene = new EndScene(this.camera, this.player);
+            this.scene.setAsCurrent();
+        });
+        this.scene.setAsCurrent();
+
+        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene.scene);
+        this.scene.setPlayer(this.player);
+        this.player.canMove = false;
+
+        if (isDebugMode()) {
+            this.cannonDebugger = new CannonDebugger(this.scene.scene, this.scene.physicsWorld);
+        }
+
+        this.camera.position.copy(this.menuCameraPos);
+        this.camera.quaternion.setFromEuler(this.menuCameraEuler);
+
+        this.main_menu.reset();
+        this.main_menu.show();
+        this.gameState = GameState.MAIN_MENU;
     }
 }
 

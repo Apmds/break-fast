@@ -21,7 +21,7 @@ class CameraControls {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onPointerLockChange = this.onPointerLockChange.bind(this);
 
-        this.domElement.addEventListener('click', () => {
+        document.addEventListener('click', () => {
             this.lock();
         });
         document.addEventListener('mousemove', this.onMouseMove);

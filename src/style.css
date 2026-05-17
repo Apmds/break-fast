@@ -26,7 +26,7 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    z-index: 501;
+    z-index: 600;
 }
 
 .dialog-box {
@@ -49,7 +49,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    z-index: 501;
+    z-index: 600;
 }
 
 .dialog-speaker {
@@ -127,7 +127,7 @@ canvas {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 500;
+    z-index: 505;
     transition: opacity 0.8s ease-out;
 }
 
