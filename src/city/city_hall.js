@@ -9,6 +9,12 @@ class CityHall extends WorldObject {
         
         this.model = 'city_hall';
         this.createBasicBody();
+
+        this.openDoors();
+
+        setTimeout(() => {
+            this.closeDoors();
+        }, 20000);
     }
 
     openDoors() {

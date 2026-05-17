@@ -1,5 +1,6 @@
 import LilGUI from 'lil-gui';
 import Stats from 'three/addons/libs/stats.module.js';
+import isDebugMode from '../utils/debug_utils.js';
 
 class DebugUI {
     constructor() {
@@ -12,7 +13,11 @@ class DebugUI {
         
         this.gui_folders = {};
 
-        this.hidden = false;
+        if (isDebugMode()) {
+            this.show();
+        } else {
+            this.hide();
+        }
     }
 
     makeFolder(name) {
