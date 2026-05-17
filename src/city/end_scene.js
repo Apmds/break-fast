@@ -4,16 +4,20 @@ import Car from "./car.js";
 import { make_road } from "./road.js";
 import { ROAD_DIR } from '../utils/road.js';
 import make_skybox from './skybox.js';
+import Path from '../object/path.js';
 
 class EndScene extends Scene {
     constructor(camera, player) {
         super(camera, player);
 
+        this._roadMoving = false;
+
         player.canMove = false;
         player.unlock();
 
         const [road] = make_road(50, -0.6, 0, ROAD_DIR.LEFT, 80, 0);
-        this.addModel(road);
+        this._road = road;
+        this.addModel(this._road);
 
         // River below
         const river = new THREE.Mesh(
@@ -30,7 +34,14 @@ class EndScene extends Scene {
         bedrock.position.set(0, -45, -200);
         this.addModel(bedrock);
 
-        this._car = new Car(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, Math.PI, 0));
+        this._car = new Car(new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, Math.PI, 0));
+        this._car.setPath(new Path()
+            .addPoint(new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, Math.PI, 0), 1)
+            .addPoint(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, Math.PI, 0), 3)
+        );
+        this._car.followPath(false, () => {
+            this._roadMoving = true;
+        });
         this._car.runAnimation();
         this.add(this._car, "car");
 
@@ -70,9 +81,16 @@ class EndScene extends Scene {
     update(delta) {
         super.update(delta);
 
+        if (this._roadMoving) {
+            this._road.position.x += 30 * delta;
+            if (this._road.position.x > 50) {
+                this._road.position.x -= 5;
+            }
+        }
+
         // Static camera
         this.camera.position.copy(this._camPos);
-        this.camera.lookAt(this._car.position);
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
     }
 }
 
