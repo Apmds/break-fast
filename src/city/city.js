@@ -19,6 +19,7 @@ import Path from '../object/path.js';
 import CityHall from './city_hall.js';
 import BuilderCitizen from '../people/builder_citizen.js';
 import StrawHat from '../items/straw_hat.js';
+import Parasol from '../items/parasol.js';
 
 class City extends Scene {
     constructor(camera) {
@@ -333,6 +334,8 @@ class City extends Scene {
 
         const city_hall = new CityHall(new THREE.Vector3(100, -0.5, -160), new THREE.Vector3(0, Math.PI/2, 0));
         this.add(city_hall, "city_hall");
+        this._cityHall = city_hall;
+        this._cityHallEntered = false;
 
         // Citizens
         const boss_guy = new BuilderCitizen(
@@ -580,12 +583,13 @@ class City extends Scene {
         );
         this.add(item1, "placeholderitem_1");
         
-        const item2 = new PlaceHolderItem(
-            new THREE.Vector3(3, 2, -312),
-            new THREE.Vector3(Math.PI/2, 0, Math.PI/3),
+        this._parasol = new Parasol(
+            new THREE.Vector3(136, 2.1, -160),
+            new THREE.Vector3(Math.PI/2 + 0.1, 0, 0),
             new THREE.Vector3(1, 1, 1)
         );
-        this.add(item2, "placeholderitem_2");
+        this.add(this._parasol, "parasol_item");
+        this._parasol.hide();
 
         const straw_hat = new StrawHat(
             new THREE.Vector3(10, 2, -309),
@@ -677,9 +681,33 @@ class City extends Scene {
 
         const keyLight = this.getObject("keyLight");
         keyLight.position.copy(new THREE.Vector3().addVectors(this.player.position, this.sunpos));
-        
+
         keyLight.target.position.copy(this.player.position);
         keyLight.target.updateMatrixWorld();
+
+        if (!this._cityHallEntered && this.player) {
+            const px = this.player.position.x;
+            const pz = this.player.position.z;
+            if (px >= 63.6 && px <= 126.6 && pz >= -218.6 && pz <= -101.2) {
+                this._cityHallEntered = true;
+                this._onEnterCityHall();
+            }
+        }
+    }
+
+    _onEnterCityHall() {
+        this.player.canMove = false;
+        this.player.physicsBody.position.set(110, this.player.physicsBody.position.y, -161);
+        this.player.physicsBody.velocity.set(0, 0, 0);
+        this.player.physicsBody.angularVelocity.set(0, 0, 0);
+
+        setTimeout(() => {
+            this.player.cameraControls.pitch = -0.148;
+            this.player.cameraControls.yaw = Math.PI / 2;
+            this._cityHall.hideDarkness();
+            this._parasol.show();
+            this.player.canMove = true;
+        }, 5000);
     }
 }
 

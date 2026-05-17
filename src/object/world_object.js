@@ -321,6 +321,14 @@ class WorldObject {
         this._currentAction = null;
     }
 
+    hide() {
+        this.model.visible = false;
+    }
+
+    show() {
+        this.model.visible = true;
+    }
+
     update(delta) {
         if (this._animationMixer) {
             this._animationMixer.update(delta);

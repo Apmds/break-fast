@@ -59,9 +59,9 @@ class CityHall extends WorldObject {
         center_bottom.addVectors(center, new THREE.Vector3(-2.2, -7.54, 5.6));
 
         const main_geo = new THREE.BoxGeometry(size.x * 0.95, size.y * 0.65, size.z * 0.75);
-        const main_darkness = new THREE.Mesh(main_geo, mat);
-        main_darkness.position.copy(center_main);
-        this._model.add(main_darkness);
+        this._mainDarkness = new THREE.Mesh(main_geo, mat);
+        this._mainDarkness.position.copy(center_main);
+        this._model.add(this._mainDarkness);
 
 
         const left_right_geo = new THREE.BoxGeometry(size.x * 0.1, size.y * 0.21, size.z * 0.1);
@@ -78,8 +78,10 @@ class CityHall extends WorldObject {
         this._model.add(right_darkness);
         this._model.add(top_darkness);
         this._model.add(bottom_darkness);
+    }
 
-
+    hideDarkness() {
+        if (this._mainDarkness) this._mainDarkness.visible = false;
     }
 
     openDoors() {
