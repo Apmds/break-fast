@@ -31,6 +31,7 @@ class Scene {
 
     unsetAsCurrent() {
         this.renderer.removeFromDom();
+        this.debug_ui.hide();
     }
 
     get domElement() {

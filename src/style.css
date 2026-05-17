@@ -152,11 +152,21 @@ canvas {
     color: #F07167;
 }
 
+#end-menu-title {
+    font-size: 100px;
+    margin-bottom: 0px;
+}
+
+.menu-subtitle {
+    font-size: 80px;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+}
+
 .menu-title .first-word {
     color: #00AFB9;
 }
 
-.start-button {
+.game-button {
     padding: 16px 48px;
     font-size: 28px;
     font-family: "Winky Sans", sans-serif;
@@ -171,13 +181,13 @@ canvas {
     transition: all 0.3s ease;
 }
 
-.start-button:hover {
+.game-button:hover {
     background-color: #FEE5C9;
     transform: translateY(-2px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
 }
 
-.start-button:active {
+.game-button:active {
     transform: translateY(0);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
@@ -248,4 +258,21 @@ canvas {
 @keyframes pulse {
   0%   { height: var(--min); transform: rotate(var(--angle)) translateY(var(--gap)); opacity: 0.25; }
   100% { height: var(--max); transform: rotate(var(--angle)) translateY(var(--gap2)); opacity: 0.95; }
+}
+
+.end-menu {
+    position: fixed;
+    padding-left: 50px;
+    padding-top: 30px;
+    color: #FDFCDC;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    z-index: 500;
+    transition: opacity 0.8s ease-out;
 }

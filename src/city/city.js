@@ -658,7 +658,6 @@ class City extends Scene {
         });
 
         // Debug UI
-        //this.debug_ui.hide();
         this.debug_ui.makeFolder('Camera Position');
         this.debug_ui.add('Camera Position', 'X', camera.position, 'x').listen();
         this.debug_ui.add('Camera Position', 'Y', camera.position, 'y').listen();
