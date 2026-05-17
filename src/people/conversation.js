@@ -1,4 +1,4 @@
-import dialogueMap from "../utils/dialogue_map.js";
+import dialogueMap from "../data/dialogue_map.js";
 import ConversationText from "./conversationText.js";
 
 class Conversation {

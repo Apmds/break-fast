@@ -1,6 +1,6 @@
 import GameManager from './utils/game_manager.js';
 import objectManager from './utils/object_manager.js';
-import objects from './utils/object_paths.js';
+import objects from './data/object_paths.js';
 
 async function preload_objects() {
     const loadPromises = objects.map((obj) => {
