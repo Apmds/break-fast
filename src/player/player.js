@@ -116,10 +116,6 @@ class Player {
         document.exitPointerLock?.();
     }
 
-    dispose() {
-        this.cameraControls.dispose();
-    }
-
     get position() {
         return this.camera.position;
     }

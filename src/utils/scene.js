@@ -4,7 +4,7 @@ import Renderer from './renderer.js';
 import DebugUI from '../ui/debug_ui.js';
 
 class Scene {
-    constructor(camera, player) {
+    constructor(camera, player, onExit = null) {
         this.player = player;
         this.camera = camera;
         this.renderer = new Renderer(this.camera);
@@ -17,6 +17,8 @@ class Scene {
         this.debug_ui = new DebugUI();
 
         this._objects = {};
+
+        this.onExit = onExit;
     }
 
     setPlayer(player) {
@@ -37,6 +39,12 @@ class Scene {
 
     getObject(name) {
         return this.scene.getObjectByName(name);
+    }
+
+    exit() {
+        if (this.onExit) {
+            this.onExit();
+        }
     }
 
     add(obj, name) {

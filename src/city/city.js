@@ -22,8 +22,8 @@ import StrawHat from '../items/straw_hat.js';
 import Parasol from '../items/parasol.js';
 
 class City extends Scene {
-    constructor(camera) {
-        super(camera);
+    constructor(camera, onExit = null) {
+        super(camera, null, onExit);
 
         // Build city
         const cityGroup = new THREE.Object3D();
@@ -376,7 +376,7 @@ class City extends Scene {
 
                     player_car.interactable = true;
                     player_car.onInteract = () => {
-                        console.log("GOAT");
+                        this.exit();
                     };
                 });
 
