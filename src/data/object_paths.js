@@ -52,6 +52,13 @@ const objects = [
         "material_map": null,
     },
 
+    {
+        "id": "parasol",
+        "path": "../assets/models/Objects/parasol.glb",
+        "type": "gltf",
+        "material_map": null,
+    },
+
     // Skybox textures
     {
         "id": "skybox_px",
