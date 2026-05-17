@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import Player from '../player/player.js';
 import City from "../city/city.js";
 import MainMenu from '../ui/main_menu.js';
+import CannonDebugger from 'cannon-es-debugger';
 
 const GameState = {
     MAIN_MENU: "MAIN_MENU",
@@ -36,6 +37,8 @@ class GameManager {
         this.player.canMove = false;
 
         this.clock = new THREE.Timer();
+        
+        this.cannonDebugger = new CannonDebugger(this.scene.scene, this.scene.physicsWorld);
 
         this.main_menu = new MainMenu(this.camera, this.menuCameraPos, this.menuCameraEuler, this.playerStartPos, this.playerStartEuler);
         this.main_menu.onStart = () => {
@@ -87,6 +90,7 @@ class GameManager {
         }
 
         this.scene.update(delta);
+        this.cannonDebugger.update();
         this.clock.update();
         inputManager.update();
     }

@@ -11,20 +11,14 @@ class CityHall extends WorldObject {
         this.createBasicBody();
     }
 
-    runAnimation() {
-        if (!this._animationMixer || !this._animations) {
-            return;
-        }
-
-        this.animationNames.forEach((name) => {
-            this.playAnimation(name, true);
-        });
+    openDoors() {
+        this.playAnimation("Open", false, true, false);
+        this.playAnimation("Open.001", false, true, false);
     }
 
-    stopRunAnimation() {
-        this.animationNames.forEach(() => {
-            this.stopAnimation();
-        });
+    closeDoors() {
+        this.playAnimation("Open", false, true, true);
+        this.playAnimation("Open.001", false, true, true);
     }
 }
 

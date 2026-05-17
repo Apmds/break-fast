@@ -278,7 +278,7 @@ class WorldObject {
         // Override when a subclass is interactable (to start a dialogue, for example)
     }
 
-    playAnimation(anim_name, repeat = false, crossfade = false, onEnd) {
+    playAnimation(anim_name, repeat = false, crossfade = false, reverse = false, onEnd) {
         if (!this._animationMixer || !this._animations) {
             return;
         }

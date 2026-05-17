@@ -104,7 +104,7 @@ class Citizen extends WorldObject {
 
         const anim = currentDialogue.getAnimation();
         if (anim !== null) {
-            this.playAnimation(anim, false, true, () => this.playAnimation("idle", true, true));
+            this.playAnimation(anim, false, true, false, () => this.playAnimation("idle", true, true));
         }
 
     }
