@@ -59,6 +59,13 @@ const objects = [
         "material_map": null,
     },
 
+    {
+        "id": "sunglasses",
+        "path": "../assets/models/Objects/sunglasses.glb",
+        "type": "gltf",
+        "material_map": null,
+    },
+
     // Skybox textures
     {
         "id": "skybox_px",

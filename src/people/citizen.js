@@ -48,7 +48,7 @@ class Citizen extends WorldObject {
 
     showParts(parts) {
         this.model.traverse((node) => {
-            if (!node.isMesh) {
+            if (!node.isMesh || node.userData?.isOutline) {
                 return;
             }
 

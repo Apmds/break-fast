@@ -18,6 +18,10 @@ class BossCitizen extends Citizen {
 
         this.showParts(["Citizen", "Glasses", "Glasses_lens", "Moustache", "Hard_hat", "Shirt", "Pants", "Shoes"]);
     }
+
+    removeGlasses() {
+        this.showParts(["Citizen", "Moustache", "Hard_hat", "Shirt", "Pants", "Shoes"]);
+    }
 }
 
 

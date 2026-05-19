@@ -8,7 +8,6 @@ class CityHall extends WorldObject {
         super(position, rotation, new THREE.Vector3(SCALE, SCALE, SCALE), true);
         
         this.model = 'city_hall';
-        //this.createBasicBody();
 
         this.addOutlineIgnore("Stadhuis_blinn1_0");
         this._addInteriorDarkness();
@@ -112,10 +111,6 @@ class CityHall extends WorldObject {
         this.addOutlineIgnore(top_darkness.name);
         this.addOutlineIgnore(bottom_darkness.name);
         this.addOutlineIgnore(back_darkness.name);
-
-        this._model.traverse((node) => {
-            console.log(node.name)
-        });
     }
 
     setupCollisions() {

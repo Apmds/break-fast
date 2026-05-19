@@ -21,6 +21,7 @@ import BuilderCitizen from '../people/builder_citizen.js';
 import StrawHat from '../items/straw_hat.js';
 import Parasol from '../items/parasol.js';
 import BossCitizen from '../people/boss_citizen.js';
+import Sunglasses from '../items/sunglasses.js';
 
 class City extends Scene {
     constructor(camera, onExit = null) {
@@ -226,6 +227,7 @@ class City extends Scene {
         cityGroup.add(road);
         roadBodies.push(rBody);
 
+        // THIS IS PROBABLY BAD
         road_start = endpoint.clone();
         [road, endpoint, rBody] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.RIGHT, 30, 0);
         cityGroup.add(road);
@@ -249,6 +251,7 @@ class City extends Scene {
         roadBodies.push(rBody);
         cityGroup.add(make_road_paths(road_start.x, road_start.z, ROAD_DIR.LEFT, 22));
         
+        // THIS SHOULD WORK FINE
         road_start = new THREE.Vector3(endpoint.x, 0, endpoint.z);
         [road, endpoint, rBody] = make_road(road_start.x, 0, road_start.z, ROAD_DIR.DOWN, 4, 0);
         cityGroup.add(road);
@@ -376,6 +379,8 @@ class City extends Scene {
 
                 boss_guy.loadDialogue("boss_end", () => {
                     boss_guy.interactable = false;
+                    boss_guy.removeGlasses();
+                    this._sunglasses.show();
 
                     player_car.interactable = true;
                     player_car.onInteract = () => {
@@ -578,13 +583,14 @@ class City extends Scene {
             
         }
         
-        // Placeholder objects
-        const item1 = new PlaceHolderItem(
-            new THREE.Vector3(8, 0, -305),
+        // Objects
+        this._sunglasses = new Sunglasses(
+            new THREE.Vector3(-68.1, 3.5, -312.2),
             new THREE.Vector3(0, Math.PI/2, Math.PI/3),
             new THREE.Vector3(1, 1, 1)
         );
-        this.add(item1, "placeholderitem_1");
+        this._sunglasses.hide();
+        this.add(this._sunglasses, "sunglasses_item");
         
         this._parasol = new Parasol(
             new THREE.Vector3(136, 2.1, -160),
