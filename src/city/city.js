@@ -20,6 +20,7 @@ import CityHall from './city_hall.js';
 import BuilderCitizen from '../people/builder_citizen.js';
 import StrawHat from '../items/straw_hat.js';
 import Parasol from '../items/parasol.js';
+import BossCitizen from '../people/boss_citizen.js';
 
 class City extends Scene {
     constructor(camera, onExit = null) {
@@ -334,11 +335,13 @@ class City extends Scene {
 
         const city_hall = new CityHall(new THREE.Vector3(100, -0.5, -160), new THREE.Vector3(0, Math.PI/2, 0));
         this.add(city_hall, "city_hall");
+        city_hall.setupCollisions();
+        city_hall.collisionBodies.forEach(body => this.physicsWorld.addBody(body));
         this._cityHall = city_hall;
         this._cityHallEntered = false;
 
         // Citizens
-        const boss_guy = new BuilderCitizen(
+        const boss_guy = new BossCitizen(
             new THREE.Vector3(-2, 0.4, -170),
             new THREE.Vector3(0, Math.PI/2, 0),
             true
@@ -700,12 +703,15 @@ class City extends Scene {
         this.player.physicsBody.velocity.set(0, 0, 0);
         this.player.physicsBody.angularVelocity.set(0, 0, 0);
 
+        this._cityHall.closeDoors();
+
         setTimeout(() => {
             this.player.cameraControls.pitch = -0.148;
             this.player.cameraControls.yaw = Math.PI / 2;
             this._cityHall.hideDarkness();
             this._parasol.show();
             this.player.canMove = true;
+            this._cityHall.openDoors();
         }, 5000);
     }
 }
