@@ -291,6 +291,11 @@ class WorldObject {
 
         const nextAction = this._animationMixer.clipAction(clip);
         nextAction.reset();
+        if (reverse) {
+            nextAction.setEffectiveTimeScale(-1);
+        } else {
+            nextAction.setEffectiveTimeScale(1);
+        }
         if (repeat) {
             nextAction.setLoop(THREE.LoopRepeat);
         } else {

@@ -12,11 +12,11 @@ class CityHall extends WorldObject {
 
         this._addInteriorDarkness();
 
-        this.openDoors();
+        //this.openDoors();
+        this.closeDoors();
 
-        setTimeout(() => {
-            this.closeDoors();
-        }, 20000);
+        //setTimeout(() => {
+        //}, 20000);
     }
 
     _addInteriorDarkness() {
