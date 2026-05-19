@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { inputManager } from '../utils/input_manager.js';
+import isDebugMode from '../utils/debug_utils.js';
 
 class CameraControls {
     constructor(camera, domElement = document.body) {
@@ -46,7 +47,7 @@ class CameraControls {
         this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch));
     }
 
-    update(delta, physicsBody = null, moveVelocity = null) {
+    update(delta, physicsBody = null, moveVelocity = null, isGrounded = false) {
         this.euler.set(this.pitch, this.yaw, 0);
         this.camera.quaternion.setFromEuler(this.euler);
 
@@ -90,8 +91,8 @@ class CameraControls {
             physicsBody.velocity.z = moveVelocity.z;
 
             // Jump
-            if (inputManager.keyPressed("Space")) {
-                physicsBody.velocity.y = 15; // Jump force
+            if (inputManager.keyPressed("Space") && (isDebugMode() || isGrounded)) {
+                physicsBody.velocity.y = 15;
             }
         } else {
             // Fallback movement for non-physics mode

@@ -34,8 +34,18 @@ class Player {
         this.inventory = [];
     }
 
+    checkGrounded() {
+        for (const contact of this.physicsWorld.contacts) {
+            if (contact.bi === this.physicsBody || contact.bj === this.physicsBody) {
+                const normalY = contact.bi === this.physicsBody ? -contact.ni.y : contact.ni.y;
+                if (normalY > 0.5) return true;
+            }
+        }
+        return false;
+    }
+
     update(delta) {
-        this.cameraControls.update(delta, this.physicsBody, this.moveVelocity);
+        this.cameraControls.update(delta, this.physicsBody, this.moveVelocity, this.checkGrounded());
         
         // Update camera position to match physics body
         this.camera.position.set(
