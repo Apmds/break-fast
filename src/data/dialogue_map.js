@@ -189,7 +189,15 @@ const dialogueMap = {
                 {"text": "(he really is that guy huh)"},
             ], sound: false},
             { "speaker": "The Boss", "text": [
-                {"text": "You can go on your vacation or whatever.", delay: 0.2},
+                {"text": "Just to thank you, ", delay: 0.2},
+                {"text": " I will give you my glasses.", delay: 0.4},
+                {"text": "I will teleport them from my head to your car with my magical powers.", delay: 0.2},
+            ], pitch: 0.9},
+            { "speaker": "Construction Worker", "text": [
+                {"text": "(I wish I got those cool glasses for myself :( )"},
+            ], pitch: 0.8, sound: false},
+            { "speaker": "The Boss", "text": [
+                {"text": "Now you can go on your vacation or whatever.", delay: 0.2},
                 {"text": " Get in your car and get out of here.", delay: 0.2},
                 {"text": " You are becoming noise pollution.", delay: 0.2}
             ], pitch: 0.9},
