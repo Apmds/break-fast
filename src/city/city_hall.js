@@ -206,8 +206,23 @@ class CityHall extends WorldObject {
             new THREE.Vector3(size.x * 0.15, size.y * 0.105, size.z * 0.05));
 
         // Top
+        box(new THREE.Vector3(cx, cy - 4.8, cz),
+            new THREE.Vector3(sx * 0.7, 0.2, sy * 0.7));
+
+        // Columns
+        box(new THREE.Vector3(cx - 4.65, sy*0.5, sz - 2),
+            new THREE.Vector3(T*1.2, sy*0.5, T*1.2));
+        box(new THREE.Vector3(cx - 1.6, sy*0.5, sz - 2),
+            new THREE.Vector3(T*1.2, sy*0.5, T*1.2));
+
+        box(new THREE.Vector3(cx + 4.65, sy*0.5, sz - 2),
+            new THREE.Vector3(T*1.2, sy*0.5, T*1.2));
+        box(new THREE.Vector3(cx + 1.6, sy*0.5, sz - 2),
+            new THREE.Vector3(T*1.2, sy*0.5, T*1.2));
+
+        // Floor
         box(new THREE.Vector3(cx, T/2, cz),
-            new THREE.Vector3(size.x * 0.15, size.y * 0.105, size.z * 0.05));
+            new THREE.Vector3(sx * 0.8, 0.2, sy * 0.8));
 
         // --- Door collision body (fills opening when closed) ---
         //const doorLocalCenter = new THREE.Vector3(cx, doorCY, frontZ - T / 2);
