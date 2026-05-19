@@ -86,12 +86,10 @@ class CityHall extends WorldObject {
 
     openDoors() {
         this.playAnimation("Open", false, true, false);
-        this.playAnimation("Open.001", false, true, false);
     }
 
     closeDoors() {
         this.playAnimation("Open", false, true, true);
-        this.playAnimation("Open.001", false, true, true);
     }
 }
 
