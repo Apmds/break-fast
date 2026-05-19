@@ -22,6 +22,7 @@ class WorldObject {
         this._path = null;
         this._onPathEnd = null;
         this._outlineIgnore = new Set();
+        this._collisionBodies = [];
     }
 
     addOutlineIgnore(meshName) {
@@ -30,6 +31,20 @@ class WorldObject {
 
     get outlineIgnore() {
         return this._outlineIgnore;
+    }
+
+    // position: THREE.Vector3 (world), halfExtents: THREE.Vector3, quaternion: THREE.Quaternion
+    addCollisionBox(position, halfExtents, mass = 0, quaternion = null) {
+        const body = new CANNON.Body({ mass });
+        body.addShape(new CANNON.Box(new CANNON.Vec3(halfExtents.x, halfExtents.y, halfExtents.z)));
+        body.position.set(position.x, position.y, position.z);
+        if (quaternion) body.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+        this._collisionBodies.push(body);
+        return body;
+    }
+
+    get collisionBodies() {
+        return this._collisionBodies;
     }
 
     applyMaterialMap(material_map, full_override = false) {
@@ -292,9 +307,11 @@ class WorldObject {
         const nextAction = this._animationMixer.clipAction(clip);
         nextAction.reset();
         if (reverse) {
-            nextAction.setEffectiveTimeScale(-1);
+            nextAction.timeScale = -1;
+            nextAction.time = nextAction.getClip().duration;
         } else {
-            nextAction.setEffectiveTimeScale(1);
+            nextAction.timeScale = 1;
+            nextAction.time = 0;
         }
         if (repeat) {
             nextAction.setLoop(THREE.LoopRepeat);

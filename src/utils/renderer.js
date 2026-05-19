@@ -26,6 +26,8 @@ class Renderer {
             vertexShader: outline_vert_shader,
             fragmentShader: outline_frag_shader,
             side: THREE.BackSide,
+            depthTest: false,
+            depthWrite: false,
         });
     }
     
@@ -60,8 +62,8 @@ class Renderer {
         helper.receiveShadow = false;
         helper.raycast = () => null;
         
-        // Important for transparent or complex scenes
-        helper.renderOrder = sourceMesh.renderOrder - 1; 
+        helper.renderOrder = 999;
+        sourceMesh.renderOrder = 1000;
 
         sourceMesh.add(helper);
         this.outlineHelpers.set(sourceMesh.uuid, helper);
