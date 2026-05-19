@@ -342,6 +342,7 @@ class City extends Scene {
         city_hall.collisionBodies.forEach(body => this.physicsWorld.addBody(body));
         this._cityHall = city_hall;
         this._cityHallEntered = false;
+        this._cityHallExited = false;
 
         // Citizens
         const boss_guy = new BossCitizen(
@@ -701,6 +702,15 @@ class City extends Scene {
                 this._onEnterCityHall();
             }
         }
+
+        if (this._cityHallEntered && !this._cityHallExited && this.player) {
+            const px = this.player.position.x;
+            const pz = this.player.position.z;
+            if (px >= 134.4 && pz >= -218.6 && pz <= -101.2) {
+                this._cityHallExited = true;
+                this._onExitCityHall();
+            }
+        }
     }
 
     _onEnterCityHall() {
@@ -719,6 +729,11 @@ class City extends Scene {
             this.player.canMove = true;
             this._cityHall.openDoors();
         }, 5000);
+    }
+
+    _onExitCityHall() {
+        this._cityHall.interactable = false;
+        this._cityHall.closeDoors();
     }
 }
 

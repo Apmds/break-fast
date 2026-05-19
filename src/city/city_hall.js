@@ -219,10 +219,10 @@ class CityHall extends WorldObject {
         box(new THREE.Vector3(cx, T/2, cz),
             new THREE.Vector3(sx * 0.8, 0.2, sy * 0.8));
 
-        // --- Door collision body (fills opening when closed) ---
-        //const doorLocalCenter = new THREE.Vector3(cx, doorCY, frontZ - T / 2);
-        //this._doorClosedPos = doorLocalCenter.clone().applyMatrix4(this._model.matrixWorld);
-        //this._doorBody = box(doorLocalCenter, new THREE.Vector3(doorHW, doorHH, T / 2));
+        // Door collision
+        const doorLocalCenter = new THREE.Vector3(cx, sy*0.2, sz - 2.3);
+        this._doorClosedPos = doorLocalCenter.clone().applyMatrix4(this._model.matrixWorld);
+        this._doorBody = box(doorLocalCenter, new THREE.Vector3(sx*0.2, sy*0.2, T / 2));
     }
 
     hideDarkness() {
