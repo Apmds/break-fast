@@ -51,7 +51,7 @@ class CameraControls {
     }
 
     update(delta, physicsBody = null, moveVelocity = null, isGrounded = false) {
-        if (inputManager.isMobile) {
+        if (inputManager.isMobile && this.canMove) {
             const rj = inputManager.rightJoystick;
             this.yaw   -= rj.x * 2.5 * delta;
             this.pitch -= rj.y * 2.5 * delta;
