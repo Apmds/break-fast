@@ -135,15 +135,27 @@ function make_park(x, y, z) {
             const [path2_l2_r2_l] = path_helper(endpoint6.x, endpoint6.z, path_width, park_depth*0.12, -Math.PI*0.52);
             park.add(path2_l2_r2_l);
 
-            const [path2_l2_r2_r, endpoint7] = path_helper(endpoint6.x, endpoint6.z, path_width, park_depth*0.2, -Math.PI*1.05);
+            const [path2_l2_r2_r, endpoint7] = path_helper(endpoint6.x, endpoint6.z, path_width, park_depth*0.2053, -Math.PI*1.05);
             park.add(path2_l2_r2_r);
         }
 
         {
-            const [path2_r] = path_helper(endpoint.x, endpoint.z, path_width, park_depth*0.17, -Math.PI*0.8);
+            const [path2_r, endpoint2] = path_helper(endpoint.x, endpoint.z, path_width, park_depth*0.17, -Math.PI*0.8);
             park.add(path2_r);
 
+            const [path2_r2, endpoint3] = path_helper(endpoint2.x - 2.5, endpoint2.z, path_width, park_depth*0.14, -Math.PI*0.4);
+            park.add(path2_r2);
+
+            const [path2_r3] = path_helper(endpoint3.x + 1.6, endpoint3.z - 2.35, path_width, park_depth*0.55, -Math.PI);
+            park.add(path2_r3);
         }
+
+        const [path3] = path_helper(park_width*0.5, park_depth*0.13, path_width, park_depth*0.22, Math.PI*0.6);
+        park.add(path3);
+
+        const [path4] = path_helper(park_width*0.5 + 3.7, park_depth*0.13 + 0.1, path_width, park_depth*0.0191, Math.PI*0.5);
+        park.add(path4);
+    
     }
 
     // Trees
