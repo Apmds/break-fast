@@ -256,6 +256,79 @@ const dialogueMap = {
         ]
     },
 
+    "hat_quest": {
+        "conversation": [
+            { "speaker": "Rofi", "text": [
+                {"text": "Hi!", delay: 0.3},
+                {"text": " My name is Rofi", delay: 0.2},
+                {"text": " and I'm going to be king of the Hats!", delay: 0.1},
+            ], pitch: 1.6, speed: 40},
+            { "speaker": "Me", "text": "Hats?"},
+            { "speaker": "Rofi", "text": [
+                {"text": "Yes,", delay: 0.2},
+                {"text": " it's my new brand of straw hats.", delay: 0.2},
+                {"text": " See?", delay: 0.3},
+                {"text": " Very stylish.", delay: 0.2},
+            ], pitch: 1.6, speed: 40},
+            { "speaker": "Me", "text": [
+                {"text": "(they DO look stylish)"},
+            ], sound: false},
+            { "speaker": "Rofi", "text": [
+                {"text": "This is a new brand,", delay: 0.2},
+                {"text": " and I have a lot of extra supply right now,", delay: 0.2},
+                {"text": " so I'm offering hats to anyone.", delay: 0.1},
+            ], pitch: 1.6, speed: 40},
+            { "speaker": "Me", "text": [
+                {"text": "WOW,", delay: 0.3},
+                {"text": " can I have one?"},
+            ], speed: 40},
+            { "speaker": "Rofi", "text": [
+                {"text": "You want my hats?", delay: 0.3},
+                {"text": " You can have them!", delay: 0.2},
+                {"text": " I left one in this very place.", delay: 0.2},
+                {"text": " Now you just have to find it!", delay: 0.1},
+            ], pitch: 1.6, speed: 40},
+            { "speaker": "Me", "text": [
+                {"text": "If I find it,", delay: 0.2},
+                {"text": " I can keep it forever?"},
+            ]},
+            { "speaker": "Rofi", "text": [
+                {"text": "Yes.", delay: 0.4},
+                {"text": " Now,", delay: 0.2},
+                {"text": " find my treasure!", delay: 0.1},
+            ], pitch: 1.6, speed: 40},
+            { "speaker": "Rofi", "text": [
+                {"text": "One other thing,", delay: 0.2},
+                {"text": " just so I know I'm not crazy,", delay: 0.3},
+                {"text": " that car that passes around here is driving itself isn't it?", delay: 0.2},
+            ], pitch: 1.6, speed: 40},
+            { "speaker": "Me", "text": "Yes."},
+            { "speaker": "Rofi", "text": [
+                {"text": "Oh,", delay: 0.5},
+                {"text": " ok.", delay: 0.2},
+            ], pitch: 1.6, speed: 40},
+        ],
+        "next": "hat_quest_end"
+    },
+
+    "hat_quest_end": {
+        "conversation": [
+            { "speaker": "Rofi", "text": [
+                {"text": "Go find it!", delay: 0.2},
+                {"text": " The hat is out there.", delay: 0.2},
+            ], pitch: 1.6, speed: 40},
+        ],
+        "next": "hat_quest_end"
+    },
+
+    "hat_quest_win": {
+        "conversation": [
+            { "speaker": "Rofi", "text": [
+                {"text": "Looks good on you!", delay: 0.2},
+            ], pitch: 1.6, speed: 40},
+        ],
+        "next": "hat_quest_win"
+    },
 
 };
 

@@ -806,7 +806,8 @@ class City extends Scene {
             
             const citizen8 = new Citizen(
                 new THREE.Vector3(125.3, 0.4, -530),
-                new THREE.Vector3(0, -0.48, 0)
+                new THREE.Vector3(0, -0.48, 0),
+                true
             );
             citizen8.playAnimation("idle", true, true)
             citizen8.showParts(["Citizen", "Straw_Hat", "Straw_Hat_Band", "Hair", "Shirt", "Pants", "Shoes"]);
@@ -815,7 +816,15 @@ class City extends Scene {
                 "Shirt": 0xc62715,
                 "Pants": 0x262220,
                 "Shoes": 0xd19b08,
-            })
+            });
+            citizen8.loadDialogue("hat_quest", () => {
+                this._strawHat.show();
+                const origInteract = this._strawHat.onInteract.bind(this._strawHat);
+                this._strawHat.onInteract = (player) => {
+                    origInteract(player);
+                    citizen8.loadDialogue("hat_quest_win");
+                };
+            });
             this.add(citizen8, "citizen8");
         }
         
@@ -836,12 +845,13 @@ class City extends Scene {
         this.add(this._parasol, "parasol_item");
         this._parasol.hide();
 
-        const straw_hat = new StrawHat(
+        this._strawHat = new StrawHat(
             new THREE.Vector3(83.8, 0.2, -418.1),
             new THREE.Vector3(0, 0, 0),
             new THREE.Vector3(1, 1, 1)
         );
-        this.add(straw_hat, "straw_hat_item");
+        this._strawHat.hide();
+        this.add(this._strawHat, "straw_hat_item");
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
