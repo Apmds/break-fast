@@ -10,7 +10,8 @@ class House extends WorldObject {
 
         this._model.traverse((node) => {
             if (node.isMesh) {
-                if (node.name == 'Cube004' || node.name == 'Cube004_1') {
+                console.log(node.name)
+                if (node.name == 'Cube004' || node.name == 'Cube004_1' || node.name == 'Glass') {
                     node.castShadow = true;
                     node.receiveShadow = false;
                 }
