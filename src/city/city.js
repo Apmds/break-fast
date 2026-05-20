@@ -114,13 +114,34 @@ function make_park(x, y, z) {
             const [path2_l, endpoint2] = path_helper(endpoint.x, endpoint.z, path_width, park_depth*0.1, Math.PI*0.1);
             park.add(path2_l);
 
-            const [path2_l2] = path_helper(endpoint2.x - 0.4, endpoint2.z + 2.2, path_width, park_depth*0.15, -Math.PI*0.2);
+            const [path2_l2, endpoint3] = path_helper(endpoint2.x - 0.4, endpoint2.z + 2.2, path_width, park_depth*0.15, -Math.PI*0.2);
             park.add(path2_l2);
+
+            const [path2_l2_l, endpoint4] = path_helper(endpoint3.x - 0.3, endpoint3.z + 2.2, path_width, park_depth*0.15, Math.PI*0.1);
+            park.add(path2_l2_l);
+
+            const [path2_l2_l_l] = path_helper(endpoint4.x, endpoint4.z, path_width, park_depth*0.175, Math.PI*0.3);
+            park.add(path2_l2_l_l);
+            
+            const [path2_l2_l_r] = path_helper(endpoint4.x, endpoint4.z, path_width, park_depth*0.215, -Math.PI*0.05);
+            park.add(path2_l2_l_r);
+
+            const [path2_l2_r, endpoint5] = path_helper(endpoint3.x, endpoint3.z, path_width, park_depth*0.25, -Math.PI*0.45);
+            park.add(path2_l2_r);
+
+            const [path2_l2_r2, endpoint6] = path_helper(endpoint5.x - 2.6, endpoint5.z - 0.5, path_width, park_depth*0.18, -Math.PI*0.9);
+            park.add(path2_l2_r2);
+
+            const [path2_l2_r2_l] = path_helper(endpoint6.x, endpoint6.z, path_width, park_depth*0.12, -Math.PI*0.52);
+            park.add(path2_l2_r2_l);
+
+            const [path2_l2_r2_r, endpoint7] = path_helper(endpoint6.x, endpoint6.z, path_width, park_depth*0.2, -Math.PI*1.05);
+            park.add(path2_l2_r2_r);
         }
 
         {
-            const [path4] = path_helper(endpoint.x, endpoint.z, path_width, park_depth*0.1, -Math.PI*0.8);
-            park.add(path4);
+            const [path2_r] = path_helper(endpoint.x, endpoint.z, path_width, park_depth*0.17, -Math.PI*0.8);
+            park.add(path2_r);
 
         }
     }
