@@ -723,6 +723,32 @@ class City extends Scene {
                 "Pants": 0x3e2723,
                 "Shoes": 0x6b4b1c,
             })
+            citizen6.setPath(new Path()
+                .addPoint(new THREE.Vector3(26, 0.4, -600), new THREE.Vector3(0, 0, 0), 100)
+                .addPoint(new THREE.Vector3(26, 0.4, -576.3), new THREE.Vector3(0, 0, 0), 1)
+                .addPoint(new THREE.Vector3(26, 0.4, -576.3), new THREE.Vector3(0, 0.93, 0), 30)
+                
+                .addPoint(new THREE.Vector3(58, 0.4, -553.3), new THREE.Vector3(0, 0.93, 0), 0.8)
+                .addPoint(new THREE.Vector3(58, 0.4, -553.3), new THREE.Vector3(0, 0.29, 0), 30)
+                
+                .addPoint(new THREE.Vector3(68.3, 0.4, -521.2), new THREE.Vector3(0, 0.29, 0), 1)
+                .addPoint(new THREE.Vector3(68.3, 0.4, -521.2), new THREE.Vector3(0, -0.60, 0), 30)
+                
+                .addPoint(new THREE.Vector3(49.2, 0.4, -495.2), new THREE.Vector3(0, -0.60, 0), 1)
+                .addPoint(new THREE.Vector3(49.2, 0.4, -495.2), new THREE.Vector3(0, 0.27, 0), 30)
+                
+                .addPoint(new THREE.Vector3(55.7, 0.4, -473.4), new THREE.Vector3(0, 0.27, 0), 1)
+                .addPoint(new THREE.Vector3(55.7, 0.4, -473.4), new THREE.Vector3(0, -0.59, 0), 30)
+                
+                .addPoint(new THREE.Vector3(30.5, 0.4, -437.1), new THREE.Vector3(0, -0.59, 0), 0.8)
+                .addPoint(new THREE.Vector3(30.5, 0.4, -437.1), new THREE.Vector3(0, -Math.PI/2, 0), 30)
+                
+                .addPoint(new THREE.Vector3(26, 0.4, -437.1), new THREE.Vector3(0, -Math.PI/2, 0), 10)
+                .addPoint(new THREE.Vector3(26, 0.4, -437.1), new THREE.Vector3(0, -Math.PI, 0), 30)
+                
+                .addPoint(new THREE.Vector3(26, 0.4, -600), new THREE.Vector3(0, -Math.PI, 0), 0.2)
+            );
+            citizen6.followPath(true);
             this.add(citizen6, "citizen6");
             
             const citizen7 = new Citizen(
