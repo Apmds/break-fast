@@ -16,12 +16,12 @@ class UIUtils {
         if (descEl) descEl.textContent = description ?? '';
 
         document.getElementById('get-item-menu')?.classList.remove('invisible');
-        UIUtils.setJoysticksVisible(false);
+        document.querySelectorAll('.joystick-container').forEach(el => el.classList.add('joystick-hidden'));
     }
 
     static hideGetItemMenu() {
         document.getElementById('get-item-menu')?.classList.add('invisible');
-        UIUtils.setJoysticksVisible(true);
+        document.querySelectorAll('.joystick-container').forEach(el => el.classList.remove('joystick-hidden'));
     }
 
     static showEndMenu(item_paths) {
