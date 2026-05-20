@@ -33,13 +33,29 @@ function make_park(x, y, z) {
     const park = new THREE.Object3D();
     const bodies = [];
 
-    // Green base
-    const base = new THREE.Mesh(
+    // Green bases
+    const base_mat = new THREE.MeshToonMaterial({ color: 0x8f994e, fog: false });
+    const base1 = new THREE.Mesh(
         new THREE.BoxGeometry(park_width, 2, park_depth),
-        new THREE.MeshToonMaterial({ color: 0x8f994e, fog: false })
+        base_mat,
     );
-    base.position.y = -1;
-    park.add(base);
+    base1.position.y = -1;
+    park.add(base1);
+
+    const base2 = new THREE.Mesh(
+        new THREE.BoxGeometry(94, 2, 37),
+        base_mat,
+    );
+    base2.position.set(park_width*0.1385, -1, park_depth/2 + 37/2);
+    park.add(base2);
+
+    const base3 = new THREE.Mesh(
+        new THREE.BoxGeometry(20, 2, 50),
+        base_mat,
+    );
+    base3.rotateY(Math.PI/4);
+    base3.position.set(-park_width*0.2875, -1, park_depth/2 + 37/2 - 13.25);
+    park.add(base3);
 
     // Lake with rock thing around
     const lake_height = 1;
@@ -72,62 +88,45 @@ function make_park(x, y, z) {
     lakeBody.position.set(x, y + lake_height/2, z);
     bodies.push(lakeBody);
 
-    // Paths
-    function path_helper(x, z, width, length) {
+    // Helper to rotate path around start. Returns the path and its endpoint.
+    function path_helper(x, z, width, length, angle = 0) {
         const pivot = new THREE.Object3D();
-        const path = make_yellow_sidewalk(x, z, width, length);
-        pivot.add(path);
+        pivot.position.set(x, -0.2, z);
+        pivot.add(make_yellow_sidewalk(0, 0, width, length));
+        pivot.rotateY(angle);
 
-        path.position.set(width/2, 0, length/2);
-        park.add(path);
+        const dir = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(0, angle, 0));
+        const end = new THREE.Vector3(x + dir.x * length, 0, z + dir.z * length);
+        return [pivot, end];
+    }
 
-        return pivot;
-    }
-    for (let i = 0; i<4;i++){
-        const path = path_helper(-park_width*0.5, -park_depth*0.3, 5, 60);
-        //path.position.set(5/2, 0, 60/2);
-        path.rotateY(i*Math.PI/2)
-        park.add(path);
-    }
-    /*
+    const path_width = 5;
     {
-        const path = path(-park_width*0.5, -park_depth*0.3, 5, 60);
-        //path.position.set(5/2, 0, 60/2);
-        path.rotateY(5*Math.PI/4)
-        park.add(path);
+        const [path1] = path_helper(-park_width*0.5, park_depth*0.2, path_width, 4, -Math.PI*0.5);
+        path1.position.x -= 2;
+        path1.position.z -= 1;
+        park.add(path1);
+
+        const [path2, endpoint] = path_helper(-park_width*0.5, park_depth*0.2, path_width, park_depth*0.2, -Math.PI*0.2);
+        park.add(path2);
+
+        {
+            const [path2_l, endpoint2] = path_helper(endpoint.x, endpoint.z, path_width, park_depth*0.1, Math.PI*0.1);
+            park.add(path2_l);
+
+            const [path2_l2] = path_helper(endpoint2.x - 0.4, endpoint2.z + 2.2, path_width, park_depth*0.15, -Math.PI*0.2);
+            park.add(path2_l2);
+        }
+
+        {
+            const [path4] = path_helper(endpoint.x, endpoint.z, path_width, park_depth*0.1, -Math.PI*0.8);
+            park.add(path4);
+
+        }
     }
-    {
-        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
-        path.rotateY(0*Math.PI/4)
-        park.add(path);
-    }
-    {
-        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
-        path.rotateY(1*Math.PI/4)
-        park.add(path);
-    }
-    {
-        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
-        path.rotateY(2*Math.PI/4)
-        park.add(path);
-    }
-    {
-        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
-        path.rotateY(3*Math.PI/4)
-        park.add(path);
-    }
-    {
-        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
-        path.rotateY(4*Math.PI/4)
-        park.add(path);
-    }
-    */
-//
-    //const path2 = make_yellow_sidewalk(0, 40, 5, 80);
-    //path2.rotation.y = Math.PI / 2;
-    //park.add(path2);
 
     // Trees
+    /*
     const classicPositions = [
         new THREE.Vector3(-42, 0, -50), new THREE.Vector3(-42, 0, 10),
         new THREE.Vector3(-42, 0, 50), new THREE.Vector3(42, 0, -50),
@@ -146,7 +145,7 @@ function make_park(x, y, z) {
 
     park.add(make_trees_instanced(classicPositions, makeScales(classicPositions.length, 0.6, 0.8), make_tree));
     park.add(make_trees_instanced(crownPositions, makeScales(crownPositions.length, 0.5, 0.7), make_tree_crowns));
-
+*/
     park.position.set(x, y, z);
     return [park, bodies];
 }
@@ -399,7 +398,6 @@ class City extends Scene {
 
         // Park
         const [park, park_bodies] = make_park(94, 0.2, -482);
-        console.log(park, park_bodies);
         cityGroup.add(park);
         for (let i = 0; i < park_bodies.length; i++) {
             this.physicsWorld.addBody(park_bodies[i]);
