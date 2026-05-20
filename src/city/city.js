@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 
+import { inputManager } from '../utils/input_manager.js';
 import { make_tree, make_tree_crowns, make_trees_instanced } from './trees.js';
 import { make_road, make_road_corner, make_roundabout, road_width } from './road.js';
 import { make_path_parts, make_road_paths, make_yellow_sidewalk, path_width, path_height } from './sidewalk.js';
@@ -25,6 +26,7 @@ import BossCitizen from '../people/boss_citizen.js';
 import Sunglasses from '../items/sunglasses.js';
 import DcMonaldsPole from './dcmonalds_pole.js';
 import DcMonaldsGroundThing from './dcmonalds_ground_thing.js';
+import isDebugMode from '../utils/debug_utils.js';
 
 function make_park(x, y, z) {
     const park_width = 130;
@@ -159,26 +161,60 @@ function make_park(x, y, z) {
     }
 
     // Trees
-    /*
-    const classicPositions = [
-        new THREE.Vector3(-42, 0, -50), new THREE.Vector3(-42, 0, 10),
-        new THREE.Vector3(-42, 0, 50), new THREE.Vector3(42, 0, -50),
-        new THREE.Vector3(42, 0, 10),  new THREE.Vector3(42, 0, 50),
-        new THREE.Vector3(15, 0, -45), new THREE.Vector3(-18, 0, 45),
+    const treePositions = [
+        new THREE.Vector3(18.1, 0, -31.3),
+        new THREE.Vector3(26.6, 0, 15),
+
+        new THREE.Vector3(-51.6, 0, -104.2),
+        
+        new THREE.Vector3(-8.8, 0, 54.9),
+        new THREE.Vector3(-36.5, 0, 32.1),
+        new THREE.Vector3(-28.9, 0, 59.8),
+        new THREE.Vector3(-30.2, 0, 113.2),
+        new THREE.Vector3(-11.7, 0, 133.7),
+
+        new THREE.Vector3(53.7, 0, 142),
+        new THREE.Vector3(51.2, 0, 77.5),
+
+        new THREE.Vector3(29.2, 0, -71.9),
+        new THREE.Vector3(40.6, 0, -98.0),
+        new THREE.Vector3(12.0, 0, -106.0),
+        new THREE.Vector3(-4.8, 0, -80.7),
+        new THREE.Vector3(-12.8, 0, -52.9),
+        new THREE.Vector3(-19.6, 0, -75.7),
+        new THREE.Vector3(-14.9, 0, -104.3),
     ];
-    const crownPositions = [
-        new THREE.Vector3(-36, 0, -40), new THREE.Vector3(-36, 0, 40),
-        new THREE.Vector3(36, 0, -40),  new THREE.Vector3(36, 0, 40),
-        new THREE.Vector3(20, 0, -50),  new THREE.Vector3(30, 0, 48),
-        new THREE.Vector3(-18, 0, -50),
+    const crownTreePositions = [
+        new THREE.Vector3(28.5, 0, -1.7),
+
+        new THREE.Vector3(-43.9, 0, -36),
+
+        new THREE.Vector3(-28.3, 0, 48.3),
+        new THREE.Vector3(2.7, 0, 67.5),
+        new THREE.Vector3(-46.5, 0, 53.7),
+        new THREE.Vector3(-10.2, 0, 67.4),
+        new THREE.Vector3(-9.6, 0, 85.1),
+        new THREE.Vector3(-34.2, 0, 85.1),
+        new THREE.Vector3(-53.4, 0, 107),
+        new THREE.Vector3(-50.4, 0, 72.6),
+
+
+        new THREE.Vector3(35, 0, 129.8),
+        new THREE.Vector3(52.7, 0, 99.8),
+        new THREE.Vector3(40.8, 0, 58.7),
+        new THREE.Vector3(33.9, 0, 97.4),
+
+        new THREE.Vector3(57.8, 0, -28.4),
+        new THREE.Vector3(1.1, 0, -97.8),
+        new THREE.Vector3(47.2, 0, -53.7),
     ];
 
     const makeScales = (count, min, max) =>
         Array.from({ length: count }, () => THREE.MathUtils.randFloat(min, max));
 
-    park.add(make_trees_instanced(classicPositions, makeScales(classicPositions.length, 0.6, 0.8), make_tree));
-    park.add(make_trees_instanced(crownPositions, makeScales(crownPositions.length, 0.5, 0.7), make_tree_crowns));
-*/
+    park.add(make_trees_instanced(treePositions, makeScales(treePositions.length, 0.6, 0.8), make_tree));
+    park.add(make_trees_instanced(crownTreePositions, makeScales(crownTreePositions.length, 0.5, 0.7), make_tree_crowns));
+
     park.position.set(x, y, z);
     return [park, bodies];
 }
@@ -760,7 +796,7 @@ class City extends Scene {
         this._parasol.hide();
 
         const straw_hat = new StrawHat(
-            new THREE.Vector3(10, 2, -309),
+            new THREE.Vector3(83.8, 0.2, -418.1),
             new THREE.Vector3(0, 0, 0),
             new THREE.Vector3(1, 1, 1)
         );
@@ -836,6 +872,12 @@ class City extends Scene {
         this.debug_ui.add('Camera Rotation', 'Y', camera.rotation, 'y').listen();
         this.debug_ui.add('Camera Rotation', 'Z', camera.rotation, 'z').listen();
 
+        this._relToPark = { x: 0, y: 0, z: 0 };
+        this.debug_ui.makeFolder('Position on Park');
+        this.debug_ui.add('Position on Park', 'X', this._relToPark, 'x').listen();
+        this.debug_ui.add('Position on Park', 'Y', this._relToPark, 'y').listen();
+        this.debug_ui.add('Position on Park', 'Z', this._relToPark, 'z').listen();
+
         this.debug_ui.makeFolder('Lighting');
         
         this.debug_ui.add('Lighting', 'key intensity', keyLight, 'intensity', 0, 5, 0.01);
@@ -845,6 +887,20 @@ class City extends Scene {
 
     update(delta) {
         super.update(delta);
+
+        if (isDebugMode()) {
+            if (this.player) {
+                this._relToPark.x = this.player.position.x - 94;
+                this._relToPark.y = this.player.position.y - 0.2;
+                this._relToPark.z = this.player.position.z - (-482);
+            }
+
+
+            if (inputManager.keyJustPressed("KeyY")) {
+                console.log(`new THREE.Vector3(${this._relToPark.x}, ${this._relToPark.y}, ${this._relToPark.z}),`)
+            }
+        }
+
 
         const keyLight = this.getObject("keyLight");
         keyLight.position.copy(new THREE.Vector3().addVectors(this.player.position, this.sunpos));
