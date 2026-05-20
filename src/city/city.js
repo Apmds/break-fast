@@ -27,29 +27,105 @@ import DcMonaldsPole from './dcmonalds_pole.js';
 import DcMonaldsGroundThing from './dcmonalds_ground_thing.js';
 
 function make_park(x, y, z) {
-    const park = new THREE.Object3D();
+    const park_width = 130;
+    const park_depth = 234;
 
-    // Green base — top surface at local y=0
+    const park = new THREE.Object3D();
+    const bodies = [];
+
+    // Green base
     const base = new THREE.Mesh(
-        new THREE.BoxGeometry(130, 2, 230),
+        new THREE.BoxGeometry(park_width, 2, park_depth),
         new THREE.MeshToonMaterial({ color: 0x8f994e, fog: false })
     );
     base.position.y = -1;
     park.add(base);
 
-    // Lake — sits in upper-right quadrant, clear of both paths
-    const lake = make_lake(24, 24);
-    lake.position.set(18, 0, 28);
+    // Lake with rock thing around
+    const lake_height = 1;
+    const lake_size = 27;
+    const rock_side_length = 5;
+    const lake = new THREE.Object3D();
+    const lake_water = make_lake(lake_size, lake_size, lake_height);
+    lake.add(lake_water);
+
+    const rock_geo = new THREE.BoxGeometry(lake_size + 2*rock_side_length, lake_height, rock_side_length);
+    const rock_mat = new THREE.MeshStandardMaterial({color: 0x847f7c});
+    for (let i = 0; i < 4; i++) {
+        const pivot = new THREE.Object3D();
+        const rock = new THREE.Mesh(rock_geo, rock_mat);
+        pivot.add(rock);
+        
+        rock.position.set(0, lake_height/2, lake_size/2 + rock_side_length/2);
+        pivot.rotateY(i*Math.PI/2);
+
+        lake.add(pivot);
+    }
+
     park.add(lake);
 
-    // N-S main path at x=-5, spanning full park length
-    const ns_path = make_yellow_sidewalk(-5, 60, 5, 120);
-    park.add(ns_path);
+    // Lake collision
+    const lakeBody = new CANNON.Body({
+        mass: 0,
+        shape: new CANNON.Box(new CANNON.Vec3((lake_size + 2*rock_side_length)/2, (lake_height/2), (lake_size + 2*rock_side_length)/2)),
+    });
+    lakeBody.position.set(x, y + lake_height/2, z);
+    bodies.push(lakeBody);
 
-    // E-W cross path at z=0 — create along Z then rotate onto X axis
-    const ew_path = make_yellow_sidewalk(0, 40, 5, 80);
-    ew_path.rotation.y = Math.PI / 2;
-    park.add(ew_path);
+    // Paths
+    function path_helper(x, z, width, length) {
+        const pivot = new THREE.Object3D();
+        const path = make_yellow_sidewalk(x, z, width, length);
+        pivot.add(path);
+
+        path.position.set(width/2, 0, length/2);
+        park.add(path);
+
+        return pivot;
+    }
+    for (let i = 0; i<4;i++){
+        const path = path_helper(-park_width*0.5, -park_depth*0.3, 5, 60);
+        //path.position.set(5/2, 0, 60/2);
+        path.rotateY(i*Math.PI/2)
+        park.add(path);
+    }
+    /*
+    {
+        const path = path(-park_width*0.5, -park_depth*0.3, 5, 60);
+        //path.position.set(5/2, 0, 60/2);
+        path.rotateY(5*Math.PI/4)
+        park.add(path);
+    }
+    {
+        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
+        path.rotateY(0*Math.PI/4)
+        park.add(path);
+    }
+    {
+        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
+        path.rotateY(1*Math.PI/4)
+        park.add(path);
+    }
+    {
+        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
+        path.rotateY(2*Math.PI/4)
+        park.add(path);
+    }
+    {
+        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
+        path.rotateY(3*Math.PI/4)
+        park.add(path);
+    }
+    {
+        const path = make_yellow_sidewalk(-park_width*0.5, -park_depth*0.3, 5, 60);
+        path.rotateY(4*Math.PI/4)
+        park.add(path);
+    }
+    */
+//
+    //const path2 = make_yellow_sidewalk(0, 40, 5, 80);
+    //path2.rotation.y = Math.PI / 2;
+    //park.add(path2);
 
     // Trees
     const classicPositions = [
@@ -72,7 +148,7 @@ function make_park(x, y, z) {
     park.add(make_trees_instanced(crownPositions, makeScales(crownPositions.length, 0.5, 0.7), make_tree_crowns));
 
     park.position.set(x, y, z);
-    return park;
+    return [park, bodies];
 }
 
 class City extends Scene {
@@ -322,7 +398,12 @@ class City extends Scene {
         });
 
         // Park
-        cityGroup.add(make_park(96, 1, -475));
+        const [park, park_bodies] = make_park(94, 0.2, -482);
+        console.log(park, park_bodies);
+        cityGroup.add(park);
+        for (let i = 0; i < park_bodies.length; i++) {
+            this.physicsWorld.addBody(park_bodies[i]);
+        }
 
         // Add final city group to scene
         this.addModel(cityGroup);
