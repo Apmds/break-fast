@@ -262,6 +262,102 @@ canvas {
   100% { height: var(--max); transform: rotate(var(--angle)) translateY(var(--gap2)); opacity: 0.95; }
 }
 
+.joystick-container {
+    display: none;
+    position: fixed;
+    bottom: 50px;
+    z-index: 700;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.touch-device .joystick-container {
+    display: block;
+}
+
+.action-buttons {
+    position: fixed;
+    bottom: 70px;
+    right: 210px;
+    z-index: 700;
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.touch-device .action-buttons {
+    display: flex;
+}
+
+.action-buttons.joystick-hidden {
+    display: none !important;
+}
+
+.action-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2.5px solid rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 28px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    padding: 0;
+    font-family: inherit;
+    transition: background 0.1s;
+}
+
+.action-btn:active,
+.action-btn.pressed {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.action-btn-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    display: block;
+}
+
+.joystick-container.joystick-left   { left: 50px; }
+.joystick-container.joystick-right  { right: 50px; }
+.joystick-container.joystick-hidden { display: none !important; }
+
+.joystick-base {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 2.5px solid rgba(255, 255, 255, 0.35);
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.joystick-knob {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+    border: 2px solid rgba(255, 255, 255, 0.75);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+}
+
 .end-menu {
     position: fixed;
     padding-left: 50px;

@@ -23,6 +23,7 @@ class CameraControls {
         this.onPointerLockChange = this.onPointerLockChange.bind(this);
 
         document.addEventListener('click', () => {
+            if (inputManager.isMobile) return;
             const menu = document.getElementById('main-menu');
             if (menu && !menu.classList.contains('invisible')) return;
             this.lock();
@@ -50,10 +51,18 @@ class CameraControls {
     }
 
     update(delta, physicsBody = null, moveVelocity = null, isGrounded = false) {
+        if (inputManager.isMobile) {
+            const rj = inputManager.rightJoystick;
+            this.yaw   -= rj.x * 2.5 * delta;
+            this.pitch -= rj.y * 2.5 * delta;
+            const maxPitch = Math.PI / 2 - 0.1;
+            this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch));
+        }
+
         this.euler.set(this.pitch, this.yaw, 0);
         this.camera.quaternion.setFromEuler(this.euler);
 
-        if (!this.isLocked || !this.canMove) return;
+        if ((!this.isLocked && !inputManager.isMobile) || !this.canMove) return;
 
         // Use yaw-only movement to avoid pitch affecting speed.
         this.yawEuler.set(0, this.yaw, 0);
@@ -67,6 +76,12 @@ class CameraControls {
         if (inputManager.keyPressed("KeyS")) moveForward -= 1;
         if (inputManager.keyPressed("KeyD")) moveRight += 1;
         if (inputManager.keyPressed("KeyA")) moveRight -= 1;
+
+        if (inputManager.isMobile) {
+            const lj = inputManager.leftJoystick;
+            moveForward += -lj.y;
+            moveRight   +=  lj.x;
+        }
 
         let movSpeed = this.speed;
         if (inputManager.keyPressed("ShiftLeft")) {

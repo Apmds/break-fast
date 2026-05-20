@@ -1,4 +1,10 @@
 class UIUtils {
+    static setJoysticksVisible(visible) {
+        document.querySelectorAll('.joystick-container, .action-buttons').forEach(el => {
+            el.classList.toggle('joystick-hidden', !visible);
+        });
+    }
+
     static showGetItemMenu(title, description, image) {
         const img = document.getElementById('item-image');
         if (img) img.src = image ?? '';
@@ -10,13 +16,16 @@ class UIUtils {
         if (descEl) descEl.textContent = description ?? '';
 
         document.getElementById('get-item-menu')?.classList.remove('invisible');
+        UIUtils.setJoysticksVisible(false);
     }
 
     static hideGetItemMenu() {
         document.getElementById('get-item-menu')?.classList.add('invisible');
+        UIUtils.setJoysticksVisible(true);
     }
 
     static showEndMenu(item_paths) {
+        UIUtils.setJoysticksVisible(false);
         document.getElementById("crossair").classList.remove("invisible");
 
         document.getElementById("end-menu").classList.remove("invisible");
