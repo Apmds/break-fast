@@ -52,11 +52,7 @@ class Citizen extends WorldObject {
                 return;
             }
 
-            if (parts.includes(node.name)) {
-                node.material.visible = true;
-            } else {
-                node.material.visible = false;
-            }
+            node.visible = parts.includes(node.name);
         });
     }
 

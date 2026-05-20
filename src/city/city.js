@@ -716,12 +716,14 @@ class City extends Scene {
                 new THREE.Vector3(0, 0, 0)
             );
             citizen6.playAnimation("walk", true, true)
-            citizen6.showParts(["Citizen", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen6.showParts(["Citizen", "Glasses", "Glasses_lens", "Hair", "Shirt", "Pants", "Shoes"]);
             citizen6.applyMaterialColors({
                 "Hair": 0x2c1810,
-                "Shirt": 0xd32f2f,
-                "Pants": 0x3e2723,
+                "Shirt": 0xe010e8,
+                "Pants": 0x16a6ce,
                 "Shoes": 0x6b4b1c,
+                "Glasses": 0x828c13,
+                "Glasses_lens": 0xf7f3ea,
             })
             citizen6.setPath(new Path()
                 .addPoint(new THREE.Vector3(26, 0.4, -600), new THREE.Vector3(0, 0, 0), 100)
@@ -802,6 +804,19 @@ class City extends Scene {
             })
             this.add(citizen7, "citizen7");
             
+            const citizen8 = new Citizen(
+                new THREE.Vector3(125.3, 0.4, -530),
+                new THREE.Vector3(0, -0.48, 0)
+            );
+            citizen8.playAnimation("idle", true, true)
+            citizen8.showParts(["Citizen", "Straw_Hat", "Straw_Hat_Band", "Hair", "Shirt", "Pants", "Shoes"]);
+            citizen8.applyMaterialColors({
+                "Hair": 0x070504,
+                "Shirt": 0xc62715,
+                "Pants": 0x262220,
+                "Shoes": 0xd19b08,
+            })
+            this.add(citizen8, "citizen8");
         }
         
         // Objects
