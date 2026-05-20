@@ -1,3 +1,5 @@
+import { mobileControls } from './mobile_controls.js';
+
 class UIUtils {
     static showGetItemMenu(title, description, image) {
         const img = document.getElementById('item-image');
@@ -10,10 +12,12 @@ class UIUtils {
         if (descEl) descEl.textContent = description ?? '';
 
         document.getElementById('get-item-menu')?.classList.remove('invisible');
+        mobileControls.showOnlyInteract();
     }
 
     static hideGetItemMenu() {
         document.getElementById('get-item-menu')?.classList.add('invisible');
+        mobileControls.showAll();
     }
 
     static showEndMenu(item_paths) {

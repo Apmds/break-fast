@@ -13,6 +13,7 @@ class CameraControls {
         this.speed = 30;
         this.isLocked = false;
         this.canMove = true;
+        this.isMobile = false;
 
         this.forward = new THREE.Vector3();
         this.right = new THREE.Vector3();
@@ -25,6 +26,7 @@ class CameraControls {
         document.addEventListener('click', () => {
             const menu = document.getElementById('main-menu');
             if (menu && !menu.classList.contains('invisible')) return;
+            if (this.isMobile) return;
             this.lock();
         });
         document.addEventListener('mousemove', this.onMouseMove);
@@ -53,7 +55,7 @@ class CameraControls {
         this.euler.set(this.pitch, this.yaw, 0);
         this.camera.quaternion.setFromEuler(this.euler);
 
-        if (!this.isLocked || !this.canMove) return;
+        if ((!this.isLocked && !this.isMobile) || !this.canMove) return;
 
         // Use yaw-only movement to avoid pitch affecting speed.
         this.yawEuler.set(0, this.yaw, 0);
@@ -63,10 +65,10 @@ class CameraControls {
         let moveForward = 0;
         let moveRight = 0;
 
-        if (inputManager.keyPressed("KeyW")) moveForward += 1;
-        if (inputManager.keyPressed("KeyS")) moveForward -= 1;
-        if (inputManager.keyPressed("KeyD")) moveRight += 1;
-        if (inputManager.keyPressed("KeyA")) moveRight -= 1;
+        if (inputManager.keyPressed("KeyW") || inputManager.keyPressed("ArrowUp"))    moveForward += 1;
+        if (inputManager.keyPressed("KeyS") || inputManager.keyPressed("ArrowDown"))  moveForward -= 1;
+        if (inputManager.keyPressed("KeyD") || inputManager.keyPressed("ArrowRight")) moveRight += 1;
+        if (inputManager.keyPressed("KeyA") || inputManager.keyPressed("ArrowLeft"))  moveRight -= 1;
 
         let movSpeed = this.speed;
         if (inputManager.keyPressed("ShiftLeft")) {

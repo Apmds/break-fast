@@ -25,6 +25,17 @@ class InputManager {
     keyPressed(key) {
         return this.pressedKeys[key] ?? false;
     }
+
+    pressVirtualKey(key) {
+        if (!this.pressedKeys[key]) {
+            this.justPressedKeys[key] = true;
+        }
+        this.pressedKeys[key] = true;
+    }
+
+    releaseVirtualKey(key) {
+        this.pressedKeys[key] = false;
+    }
 }
 
 export const inputManager = new InputManager();

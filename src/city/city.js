@@ -27,6 +27,7 @@ import Sunglasses from '../items/sunglasses.js';
 import DcMonaldsPole from './dcmonalds_pole.js';
 import DcMonaldsGroundThing from './dcmonalds_ground_thing.js';
 import isDebugMode from '../utils/debug_utils.js';
+import { mobileControls } from '../utils/mobile_controls.js';
 
 function make_park(x, y, z) {
     const park_width = 130;
@@ -599,6 +600,7 @@ class City extends Scene {
         bridge_guy.loadDialogue("bridge_start", () => {
             this.player.canMove = true;
             crosshair.classList.remove('invisible');
+            mobileControls.showAll();
         });
         this.add(bridge_guy, "bridge_guy");
 

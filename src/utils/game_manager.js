@@ -7,6 +7,7 @@ import CannonDebugger from 'cannon-es-debugger';
 import isDebugMode from "./debug_utils.js";
 import EndScene from "../city/end_scene.js";
 import UIUtils from './ui_utils.js';
+import { mobileControls } from './mobile_controls.js';
 
 const GameState = {
     MAIN_MENU: "MAIN_MENU",
@@ -34,6 +35,7 @@ class GameManager {
 
         this.scene = new City(this.camera, () => {
             this.scene.unsetAsCurrent();
+            mobileControls.hideAll();
 
             // Go to end scene
             this.scene = new EndScene(this.camera, this.player);
@@ -44,6 +46,8 @@ class GameManager {
         this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene.scene);
         this.scene.setPlayer(this.player);
         this.player.canMove = isDebugMode();
+
+        mobileControls.init(this.player.cameraControls);
 
         this.clock = new THREE.Timer();
         
@@ -75,6 +79,7 @@ class GameManager {
 
             // Engage pointer lock — player stays frozen until bridge_guy convo done
             this.player.lock();
+            mobileControls.showOnlyInteract();
         };
 
         if (isDebugMode()) {
@@ -161,11 +166,13 @@ class GameManager {
 
     goToMainMenu() {
         UIUtils.hideEndMenu();
+        mobileControls.hideAll();
 
         this.scene.unsetAsCurrent();
 
         this.scene = new City(this.camera, () => {
             this.scene.unsetAsCurrent();
+            mobileControls.hideAll();
             this.scene = new EndScene(this.camera, this.player);
             this.scene.setAsCurrent();
         });
@@ -174,6 +181,7 @@ class GameManager {
         this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene.scene);
         this.scene.setPlayer(this.player);
         this.player.canMove = false;
+        mobileControls.init(this.player.cameraControls);
 
         if (isDebugMode()) {
             this.cannonDebugger = new CannonDebugger(this.scene.scene, this.scene.physicsWorld);
