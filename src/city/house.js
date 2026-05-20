@@ -7,6 +7,15 @@ class House extends WorldObject {
 
         this.model = "house";
         this.createBasicBody();
+
+        this._model.traverse((node) => {
+            if (node.isMesh) {
+                if (node.name == 'Cube004' || node.name == 'Cube004_1') {
+                    node.castShadow = true;
+                    node.receiveShadow = false;
+                }
+            }
+        });
     }
 }
 
