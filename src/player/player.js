@@ -61,11 +61,9 @@ class Player {
             if (this.hasItem) {
                 this.hasItem = false;
                 this.canMove = true;
-            }
-
-            if (this.currentHoveredObject && this.currentHoveredObject.interactable) {
+            } else if (this.currentHoveredObject && this.currentHoveredObject.interactable) {
                 this.currentHoveredObject.onInteract(this);
-            } 
+            }
         }
     
         this.updateRaycaster();
