@@ -1,0 +1,15 @@
+import * as THREE from 'three';
+import WorldObject from '../object/world_object.js';
+
+class DcMonaldsGroundThing extends WorldObject {
+    constructor(position, rotation = new THREE.Vector3(), interactable = false) {
+        const RESTAURANT_SCALE = 2;
+
+        super(position, rotation, new THREE.Vector3(RESTAURANT_SCALE, RESTAURANT_SCALE, RESTAURANT_SCALE), interactable);
+
+        this.model = 'dcmonaldsGroundThing';
+        this.createBasicBody();
+    }
+}
+
+export default DcMonaldsGroundThing;

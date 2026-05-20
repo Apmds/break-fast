@@ -22,6 +22,8 @@ import StrawHat from '../items/straw_hat.js';
 import Parasol from '../items/parasol.js';
 import BossCitizen from '../people/boss_citizen.js';
 import Sunglasses from '../items/sunglasses.js';
+import DcMonaldsPole from './dcmonalds_pole.js';
+import DcMonaldsGroundThing from './dcmonalds_ground_thing.js';
 
 class City extends Scene {
     constructor(camera, onExit = null) {
@@ -333,8 +335,14 @@ class City extends Scene {
             this.add(moving_car, "moving_car_1");
         }
 
-        const restaurant = new DcMonalds(new THREE.Vector3(-10, -0.5, -12), new THREE.Vector3(0, 0, 0));
+        const restaurant = new DcMonalds(new THREE.Vector3(-2, -0.5, -90), new THREE.Vector3(0, 0, 0));
         this.add(restaurant, "restaurant");
+
+        const restaurant_pole = new DcMonaldsPole(new THREE.Vector3(-23, 1, -127), new THREE.Vector3(0, Math.PI/2, 0));
+        this.add(restaurant_pole, "restaurant_pole");
+
+        const restaurant_ground_thing = new DcMonaldsGroundThing(new THREE.Vector3(-50, 1, -68), new THREE.Vector3(0, 0, 0));
+        this.add(restaurant_ground_thing, "restaurant_ground_thing");
 
         const city_hall = new CityHall(new THREE.Vector3(100, -0.5, -160), new THREE.Vector3(0, Math.PI/2, 0));
         this.add(city_hall, "city_hall");

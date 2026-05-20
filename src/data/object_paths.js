@@ -32,6 +32,20 @@ const objects = [
     },
 
     {
+        "id": "dcmonaldsPole",
+        "path": "../assets/models/Buildings/dcmonaldsPole.glb",
+        "type": "gltf",
+        "material_map": null,
+    },
+
+    {
+        "id": "dcmonaldsGroundThing",
+        "path": "../assets/models/Buildings/dcmonaldsGroundThing.glb",
+        "type": "gltf",
+        "material_map": null,
+    },
+
+    {
         "id": "car",
         "path": "../assets/models/Cars/car.glb",
         "type": "gltf",
