@@ -49,18 +49,23 @@ export function make_path_parts(x, z, num_parts, gray_side) {
     return make_path(x, z, road_length, gray_side);
 }
 
+export function make_yellow_sidewalk(x, z, width, length) {
+    const geo = new THREE.BoxGeometry(width, path_height, length);
+    const mat = getSidewalkYellowMaterial(width / 5, length / 5);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(x, path_height / 2, z - length / 2);
+    return mesh;
+}
+
 export function make_path(x, z, length, gray_side) {
     const path = new THREE.Object3D();
 
     const yellow_width = path_width - path_gray_width;
 
     const grayGeo = new THREE.BoxGeometry(path_gray_width, path_height, length);
-    const grayMat = sidewalk_gray_material;
-    const grayMesh = new THREE.Mesh(grayGeo, grayMat);
+    const grayMesh = new THREE.Mesh(grayGeo, sidewalk_gray_material);
 
-    const yellowGeo = new THREE.BoxGeometry(yellow_width, path_height, length);
-    const yellowMat = getSidewalkYellowMaterial(1, length/5);
-    const yellowMesh = new THREE.Mesh(yellowGeo, yellowMat);
+    const yellowMesh = make_yellow_sidewalk(0, 0, yellow_width, length);
 
     if (gray_side === 'left') {
         grayMesh.position.x = -(path_width/2 - path_gray_width/2 + 0.01);
@@ -72,8 +77,6 @@ export function make_path(x, z, length, gray_side) {
 
     grayMesh.position.y = path_height/2 + 0.01;
     grayMesh.position.z = -length/2;
-    yellowMesh.position.y = path_height/2;
-    yellowMesh.position.z = -length/2;
 
     path.add(grayMesh);
     path.add(yellowMesh);

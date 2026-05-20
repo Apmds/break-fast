@@ -3,8 +3,9 @@ import * as CANNON from 'cannon-es';
 
 import { make_tree, make_tree_crowns, make_trees_instanced } from './trees.js';
 import { make_road, make_road_corner, make_roundabout, road_width } from './road.js';
-import { make_path_parts, make_road_paths, path_width } from './sidewalk.js';
+import { make_path_parts, make_road_paths, make_yellow_sidewalk, path_width, path_height } from './sidewalk.js';
 import { make_bridge } from './bridge.js';
+import { make_river, make_lake } from './water.js';
 import make_skybox from './skybox.js';
 import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 
@@ -24,6 +25,55 @@ import BossCitizen from '../people/boss_citizen.js';
 import Sunglasses from '../items/sunglasses.js';
 import DcMonaldsPole from './dcmonalds_pole.js';
 import DcMonaldsGroundThing from './dcmonalds_ground_thing.js';
+
+function make_park(x, y, z) {
+    const park = new THREE.Object3D();
+
+    // Green base — top surface at local y=0
+    const base = new THREE.Mesh(
+        new THREE.BoxGeometry(130, 2, 230),
+        new THREE.MeshToonMaterial({ color: 0x8f994e, fog: false })
+    );
+    base.position.y = -1;
+    park.add(base);
+
+    // Lake — sits in upper-right quadrant, clear of both paths
+    const lake = make_lake(24, 24);
+    lake.position.set(18, 0, 28);
+    park.add(lake);
+
+    // N-S main path at x=-5, spanning full park length
+    const ns_path = make_yellow_sidewalk(-5, 60, 5, 120);
+    park.add(ns_path);
+
+    // E-W cross path at z=0 — create along Z then rotate onto X axis
+    const ew_path = make_yellow_sidewalk(0, 40, 5, 80);
+    ew_path.rotation.y = Math.PI / 2;
+    park.add(ew_path);
+
+    // Trees
+    const classicPositions = [
+        new THREE.Vector3(-42, 0, -50), new THREE.Vector3(-42, 0, 10),
+        new THREE.Vector3(-42, 0, 50), new THREE.Vector3(42, 0, -50),
+        new THREE.Vector3(42, 0, 10),  new THREE.Vector3(42, 0, 50),
+        new THREE.Vector3(15, 0, -45), new THREE.Vector3(-18, 0, 45),
+    ];
+    const crownPositions = [
+        new THREE.Vector3(-36, 0, -40), new THREE.Vector3(-36, 0, 40),
+        new THREE.Vector3(36, 0, -40),  new THREE.Vector3(36, 0, 40),
+        new THREE.Vector3(20, 0, -50),  new THREE.Vector3(30, 0, 48),
+        new THREE.Vector3(-18, 0, -50),
+    ];
+
+    const makeScales = (count, min, max) =>
+        Array.from({ length: count }, () => THREE.MathUtils.randFloat(min, max));
+
+    park.add(make_trees_instanced(classicPositions, makeScales(classicPositions.length, 0.6, 0.8), make_tree));
+    park.add(make_trees_instanced(crownPositions, makeScales(crownPositions.length, 0.5, 0.7), make_tree_crowns));
+
+    park.position.set(x, y, z);
+    return park;
+}
 
 class City extends Scene {
     constructor(camera, onExit = null) {
@@ -53,25 +103,8 @@ class City extends Scene {
         base_ground_other_side.position.y = -50.1;
         cityGroup.add(base_ground_other_side);
 
-        // River (NOT good)
-        const river = new THREE.Mesh(
-            new THREE.BoxGeometry(1000, 40, 1800),
-            new THREE.MeshToonMaterial({color: 0x2ea7d3, fog: false, transparent: true, opacity: 0.6}),
-        );
-        river.name = "river";
-        river.position.x = -615;
-        river.position.y = -60;
-        river.position.z = -350;
-        cityGroup.add(river);
-
-        const bedrock = new THREE.Mesh(
-            new THREE.BoxGeometry(1000, 10, 1800),
-            new THREE.MeshToonMaterial({color: 0x2ea7d3, fog: false}),
-        );
-        bedrock.position.x = -615;
-        bedrock.position.y = -80;
-        bedrock.position.z = -350;
-        cityGroup.add(bedrock);
+        // River
+        cityGroup.add(make_river(-615, -60, -350));
 
         // Base grass
         {
@@ -288,12 +321,15 @@ class City extends Scene {
             this.add(house, `house${idx}`);
         });
 
+        // Park
+        cityGroup.add(make_park(96, 1, -475));
+
         // Add final city group to scene
         this.addModel(cityGroup);
 
         // Ensure every city mesh participates in shadow rendering.
         cityGroup.traverse((node) => {
-            if (node.isMesh && node.name != "river") {
+            if (node.isMesh && node.name != "river" && node.name != "lake") {
                 node.castShadow = true;
                 node.receiveShadow = true;
             }

@@ -6,6 +6,7 @@ import { ROAD_DIR } from '../utils/road.js';
 import make_skybox from './skybox.js';
 import Path from '../object/path.js';
 import UIUtils from '../utils/ui_utils.js';
+import { make_river } from './water.js';
 
 class EndScene extends Scene {
     constructor(camera, player) {
@@ -20,20 +21,7 @@ class EndScene extends Scene {
         this._road = road;
         this.addModel(this._road);
 
-        // River below
-        const river = new THREE.Mesh(
-            new THREE.BoxGeometry(1000, 40, 2000),
-            new THREE.MeshToonMaterial({ color: 0x2ea7d3, fog: false, transparent: true, opacity: 0.6 })
-        );
-        river.position.set(0, -25, -200);
-        this.addModel(river);
-
-        const bedrock = new THREE.Mesh(
-            new THREE.BoxGeometry(1000, 10, 2000),
-            new THREE.MeshToonMaterial({ color: 0x2ea7d3, fog: false })
-        );
-        bedrock.position.set(0, -45, -200);
-        this.addModel(bedrock);
+        this.addModel(make_river(0, -25, -200));
 
         this._car = new Car(new THREE.Vector3(100, 0, 0), new THREE.Vector3(0, Math.PI, 0));
         this._car.setPath(new Path()
