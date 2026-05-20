@@ -354,13 +354,15 @@ class City extends Scene {
 
         // Citizens
         const boss_guy = new BossCitizen(
-            new THREE.Vector3(-2, 0.4, -170),
+            new THREE.Vector3(-11, 0.4, -103),
             new THREE.Vector3(0, Math.PI/2, 0),
             true
         );
         boss_guy.setPath(new Path()
-            .addPoint(new THREE.Vector3(-2, 0.4, -170), new THREE.Vector3(0, Math.PI/2, 0))
-            .addPoint(new THREE.Vector3(-2, 0.4, -170), new THREE.Vector3(0, Math.PI, 0), 100)
+            .addPoint(new THREE.Vector3(-11, 0.4, -103), new THREE.Vector3(0, Math.PI/2, 0))
+
+            .addPoint(new THREE.Vector3(-2, 0.4, -103), new THREE.Vector3(0, Math.PI/2, 0), 20)
+            .addPoint(new THREE.Vector3(-2, 0.4, -103), new THREE.Vector3(0, Math.PI, 0), 100)
             
             .addPoint(new THREE.Vector3(-2, 0.4, -257), new THREE.Vector3(0, Math.PI, 0), 5)
             .addPoint(new THREE.Vector3(-2, 0.4, -257), new THREE.Vector3(0, Math.PI + 1.2, 0), 100)
