@@ -830,11 +830,11 @@ class City extends Scene {
         
         // Objects
         this._sunglasses = new Sunglasses(
-            new THREE.Vector3(-68.1, 3.5, -312.2),
-            new THREE.Vector3(0, Math.PI/2, Math.PI/3),
+            new THREE.Vector3(-67.5, 2.92, -312.2),
+            new THREE.Vector3(-Math.PI*0.05, Math.PI/2, 0),
             new THREE.Vector3(1, 1, 1)
         );
-        this._sunglasses.hide();
+        //this._sunglasses.hide();
         this.add(this._sunglasses, "sunglasses_item");
         
         this._parasol = new Parasol(

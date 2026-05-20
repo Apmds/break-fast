@@ -17,7 +17,7 @@ class EndScene extends Scene {
         player.canMove = false;
         player.unlock();
 
-        const [road] = make_road(50, -0.6, 0, ROAD_DIR.LEFT, 80, 0);
+        const [road] = make_road(80, -0.6, 0, ROAD_DIR.LEFT, 80, 0);
         this._road = road;
         this.addModel(this._road);
 
@@ -76,7 +76,7 @@ class EndScene extends Scene {
 
         if (this._roadMoving) {
             this._road.position.x += 30 * delta;
-            if (this._road.position.x > 50) {
+            if (this._road.position.x > 80) {
                 this._road.position.x -= 5;
             }
         }
