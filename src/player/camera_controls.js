@@ -23,6 +23,8 @@ class CameraControls {
         this.onPointerLockChange = this.onPointerLockChange.bind(this);
 
         document.addEventListener('click', () => {
+            const menu = document.getElementById('main-menu');
+            if (menu && !menu.classList.contains('invisible')) return;
             this.lock();
         });
         document.addEventListener('mousemove', this.onMouseMove);

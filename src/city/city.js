@@ -563,8 +563,8 @@ class City extends Scene {
             .addPoint(new THREE.Vector3(-41.6, 0.4, -296.1), new THREE.Vector3(0, Math.PI + 0.39, 0), 20)
             .addPoint(new THREE.Vector3(-41.6, 0.4, -296.1), new THREE.Vector3(0, Math.PI + 1.35, 0), 100)
 
-            .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI + 1.35, 0), 12)
-            .addPoint(new THREE.Vector3(-83.2, 0.4, -305.5), new THREE.Vector3(0, Math.PI - 1.09, 0), 50)
+            .addPoint(new THREE.Vector3(-83.2, 0.0, -305.5), new THREE.Vector3(0, Math.PI + 1.35, 0), 12)
+            .addPoint(new THREE.Vector3(-83.2, 0.0, -305.5), new THREE.Vector3(0, Math.PI - 1.09, 0), 50)
         );
         boss_guy.loadDialogue("boss_restaurant", () => {
             boss_guy.playAnimation("fast_run", true, true);
@@ -590,7 +590,7 @@ class City extends Scene {
         this.add(boss_guy, "boss_guy");
 
         const bridge_guy = new BuilderCitizen(
-            new THREE.Vector3(-85, 0.4, -309),
+            new THREE.Vector3(-85, 0, -309),
             new THREE.Vector3(0, Math.PI / 2, 0),
             true
         );
