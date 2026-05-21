@@ -391,19 +391,19 @@ canvas {
     html {
         font-size: 11px;
     }
+
+     .dialog-box {
+        height: auto;
+        top: auto;
+        bottom: 5%;
+        overflow: visible;
+    }
 }
 
 /* ≤768px — tablets portrait */
 @media (max-width: 768px) {
     html {
         font-size: 8px;
-    }
-
-    .dialog-box {
-        height: auto;
-        top: auto;
-        bottom: 5%;
-        overflow: visible;
     }
 }
 
