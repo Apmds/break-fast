@@ -10,6 +10,10 @@
     }
 }
 
+html {
+    font-size: 16px;
+}
+
 body {
     background-color: #ffffff;
     margin: 0px;
@@ -57,7 +61,7 @@ body {
     border-bottom: 2px solid #FED9B7;
     padding: 8px 15px;
     color: #555555;
-    font-size: 25px;
+    font-size: 1.5625rem;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -66,7 +70,7 @@ body {
     flex: 1;
     padding: 15px 20px;
     color: #555555;
-    font-size: 30px;
+    font-size: 1.875rem;
     line-height: 1.4;
     overflow-y: auto;
     display: flex;
@@ -92,7 +96,7 @@ body {
 
 .loading-text {
     color: #ffffff;
-    font-size: 24px;
+    font-size: 1.5rem;
     margin-bottom: 20px;
 }
 
@@ -144,7 +148,7 @@ canvas {
 }
 
 .menu-title {
-    font-size: 130px;
+    font-size: 8.125rem;
     font-weight: 700;
     margin: 0 0 60px 0;
     letter-spacing: 2px;
@@ -153,12 +157,12 @@ canvas {
 }
 
 #end-menu-title {
-    font-size: 100px;
+    font-size: 6.25rem;
     margin-bottom: 0px;
 }
 
 .menu-subtitle {
-    font-size: 80px;
+    font-size: 5rem;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
 }
 
@@ -168,7 +172,7 @@ canvas {
 
 .game-button {
     padding: 16px 48px;
-    font-size: 28px;
+    font-size: 1.75rem;
     font-family: "Winky Sans", sans-serif;
     background-color: #FED9B7;
     color: #333333;
@@ -206,7 +210,7 @@ canvas {
 }
 
 .item-container .title {
-    font-size: 80px;
+    font-size: 5rem;
 }
 
 .item-container .item {
@@ -225,7 +229,7 @@ canvas {
 }
 
 .item-container .description {
-    font-size: 35px;
+    font-size: 2.1875rem;
 }
 
 .ring {
@@ -302,7 +306,7 @@ canvas {
     background: rgba(255, 255, 255, 0.15);
     border: 2.5px solid rgba(255, 255, 255, 0.4);
     color: rgba(255, 255, 255, 0.85);
-    font-size: 28px;
+    font-size: 1.75rem;
     line-height: 1;
     display: flex;
     align-items: center;
@@ -373,4 +377,60 @@ canvas {
     align-items: flex-start;
     z-index: 500;
     transition: opacity 0.8s ease-out;
+}
+
+/* ≤1280px — small laptops / large tablets landscape */
+@media (max-width: 1280px) {
+    html {
+        font-size: 13px;
+    }
+}
+
+/* ≤1024px — tablets landscape / small laptops */
+@media (max-width: 1024px) {
+    html {
+        font-size: 11px;
+    }
+}
+
+/* ≤768px — tablets portrait */
+@media (max-width: 768px) {
+    html {
+        font-size: 8px;
+    }
+
+    .dialog-box {
+        height: auto;
+        top: auto;
+        bottom: 5%;
+        overflow: visible;
+    }
+}
+
+/* ≤480px — phones landscape / large phones */
+@media (max-width: 480px) {
+    html {
+        font-size: 6px;
+    }
+
+    .dialog-box {
+        height: auto;
+        top: auto;
+        bottom: 5%;
+        overflow: visible;
+    }
+}
+
+/* ≤360px — small phones */
+@media (max-width: 360px) {
+    html {
+        font-size: 5px;
+    }
+
+    .dialog-box {
+        height: auto;
+        top: auto;
+        bottom: 5%;
+        overflow: visible;
+    }
 }
