@@ -58,6 +58,7 @@ class GameManager {
             this.gameState = GameState.TRANSITIONING;
         };
         this.main_menu.onEnd = () => {
+            UIUtils.showInteractKey();
             this.gameState = GameState.PLAYING;
 
             // Snap physics body to player start (camera was free during transition)

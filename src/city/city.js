@@ -27,6 +27,7 @@ import Sunglasses from '../items/sunglasses.js';
 import DcMonaldsPole from './dcmonalds_pole.js';
 import DcMonaldsGroundThing from './dcmonalds_ground_thing.js';
 import isDebugMode from '../utils/debug_utils.js';
+import UIUtils from '../utils/ui_utils.js';
 
 function make_park(x, y, z) {
     const park_width = 130;
@@ -597,6 +598,7 @@ class City extends Scene {
 
         const crosshair = document.getElementById('crossair');
         bridge_guy.loadDialogue("bridge_start", () => {
+            UIUtils.hideInteractKey();
             this.player.canMove = true;
             crosshair.classList.remove('invisible');
         });
