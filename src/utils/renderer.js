@@ -6,7 +6,7 @@ class Renderer {
     constructor() {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setClearColor(new THREE.Color(0xffffff));
-        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.0;
@@ -70,18 +70,18 @@ class Renderer {
         return helper;
     }
 
-    syncOutlineHelpers(scene) {
+    syncOutlineHelpers(interactables) {
         const activeMeshIds = new Set();
 
-        scene.traverse((node) => {
-            if (node.userData?.outline !== true || node.userData?.isOutline === true) {
-                return;
+        for (const worldObject of interactables) {
+            const model = worldObject.model;
+            if (!model || model.userData?.outline !== true) {
+                continue;
             }
 
-            const worldObject = node.userData?.worldObject;
-            const ignoreSet = worldObject?.outlineIgnore;
+            const ignoreSet = worldObject.outlineIgnore;
 
-            node.traverse((child) => {
+            model.traverse((child) => {
                 if (!child.isMesh || child.userData?.isOutline === true) {
                     return;
                 }
@@ -98,7 +98,7 @@ class Renderer {
                 const helper = this.ensureOutlineHelper(child);
                 helper.visible = true;
             });
-        });
+        }
 
         this.outlineHelpers.forEach((helper, sourceId) => {
             if (!helper.parent) {
@@ -127,8 +127,8 @@ class Renderer {
         return this.renderer.domElement;
     }
 
-    render(scene, camera) {
-        this.syncOutlineHelpers(scene);
+    render(scene, camera, interactables = []) {
+        this.syncOutlineHelpers(interactables);
         //console.log(this.renderer.info)
         this.renderer.render(scene, camera);
     }

@@ -42,6 +42,16 @@ class Scene {
         return this.scene.getObjectByName(name);
     }
 
+    getInteractables() {
+        const result = [];
+        for (const obj of Object.values(this._objects)) {
+            if (obj.interactable) {
+                result.push(obj);
+            }
+        }
+        return result;
+    }
+
     exit() {
         if (this.onExit) {
             this.onExit();
@@ -88,7 +98,7 @@ class Scene {
     }
 
     render() {
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.camera, this.getInteractables());
     }
 
     update(delta) {

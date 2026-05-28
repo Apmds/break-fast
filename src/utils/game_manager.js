@@ -41,7 +41,7 @@ class GameManager {
         });
         this.scene.setAsCurrent();
 
-        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene.scene);
+        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene);
         this.scene.setPlayer(this.player);
         this.player.canMove = isDebugMode();
 
@@ -172,7 +172,7 @@ class GameManager {
         });
         this.scene.setAsCurrent();
 
-        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene.scene);
+        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene);
         this.scene.setPlayer(this.player);
         this.player.canMove = false;
 

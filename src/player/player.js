@@ -74,10 +74,15 @@ class Player {
             return;
         }
 
+        const interactables = this.scene.getInteractables();
+
         this.raycaster.setFromCamera(this.rayOrigin, this.camera);
         this.raycaster.far = this.raycastDistance;
 
-        const intersections = this.raycaster.intersectObjects(this.scene.children, true);
+        const intersections = this.raycaster.intersectObjects(
+            interactables.map((obj) => obj.model),
+            true
+        );
         let hitObject = null;
 
         this.currentHoveredObject = null;
@@ -90,17 +95,9 @@ class Player {
             }
         }
 
-        const interactableObjects = new Set();
-        this.scene.traverse((node) => {
-            const worldObject = node.userData?.worldObject;
-            if (worldObject?.interactable) {
-                interactableObjects.add(worldObject);
-            }
-        });
-
-        interactableObjects.forEach((worldObject) => {
+        for (const worldObject of interactables) {
             worldObject.outline = worldObject === hitObject;
-        });
+        }
     }
 
     findObjectRoot(object) {
