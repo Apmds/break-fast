@@ -18,6 +18,7 @@ class Renderer {
 
         this.outlineScale = 1.0;
         this.outlineHelpers = new Map();
+        this._lastOutlined = null;
         this.outlineMaterial = new THREE.ShaderMaterial({
             uniforms: {
                 outlineColor: { value: new THREE.Color(0xffffff) },
@@ -70,44 +71,47 @@ class Renderer {
         return helper;
     }
 
-    syncOutlineHelpers(interactables) {
-        const activeMeshIds = new Set();
-
-        for (const worldObject of interactables) {
-            const model = worldObject.model;
-            if (!model || model.userData?.outline !== true) {
-                continue;
-            }
-
-            const ignoreSet = worldObject.outlineIgnore;
-
-            model.traverse((child) => {
-                if (!child.isMesh || child.userData?.isOutline === true) {
-                    return;
-                }
-
-                if (!child.visible || (child.material && !child.material.visible)) {
-                    return;
-                }
-
-                if (ignoreSet?.has(child.name)) {
-                    return;
-                }
-
-                activeMeshIds.add(child.uuid);
-                const helper = this.ensureOutlineHelper(child);
-                helper.visible = true;
-            });
+    syncOutlineHelpers(hovered) {
+        // Outline state only changes when the hovered object changes, so skip the
+        // per-frame model traversal unless the target actually changed.
+        if (hovered === this._lastOutlined) {
+            return;
         }
 
-        this.outlineHelpers.forEach((helper, sourceId) => {
-            if (!helper.parent) {
-                this.outlineHelpers.delete(sourceId);
+        // Hide outline helpers of the previously hovered object.
+        this._lastOutlined?.model?.traverse((child) => {
+            if (child.userData?.isOutline === true) {
+                child.visible = false;
+            }
+        });
+
+        this._lastOutlined = null;
+
+        const model = hovered?.model;
+        if (!model || model.userData?.outline !== true) {
+            return;
+        }
+
+        const ignoreSet = hovered.outlineIgnore;
+
+        model.traverse((child) => {
+            if (!child.isMesh || child.userData?.isOutline === true) {
                 return;
             }
 
-            helper.visible = activeMeshIds.has(sourceId);
+            if (!child.visible || (child.material && !child.material.visible)) {
+                return;
+            }
+
+            if (ignoreSet?.has(child.name)) {
+                return;
+            }
+
+            const helper = this.ensureOutlineHelper(child);
+            helper.visible = true;
         });
+
+        this._lastOutlined = hovered;
     }
 
     addToDom() {
@@ -127,8 +131,8 @@ class Renderer {
         return this.renderer.domElement;
     }
 
-    render(scene, camera, interactables = []) {
-        this.syncOutlineHelpers(interactables);
+    render(scene, camera, hovered = null) {
+        this.syncOutlineHelpers(hovered);
         //console.log(this.renderer.info)
         this.renderer.render(scene, camera);
     }

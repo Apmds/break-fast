@@ -29,6 +29,9 @@ class Player {
         this.currentHoveredObject = null;
         this.interactionKey = 'KeyE';
 
+        this.raycastInterval = 1 / 20;
+        this._raycastAccum = this.raycastInterval;
+
         this._hasItem = false;
 
         this.inventory = [];
@@ -53,10 +56,10 @@ class Player {
             this.physicsBody.position.y + 1.2,
             this.physicsBody.position.z
         );
-        this.handleInteraction();
+        this.handleInteraction(delta);
     }
 
-    handleInteraction() {
+    handleInteraction(delta) {
         if (inputManager.keyJustPressed(this.interactionKey)) {
             if (this.hasItem) {
                 this.hasItem = false;
@@ -65,8 +68,12 @@ class Player {
                 this.currentHoveredObject.onInteract(this);
             }
         }
-    
-        this.updateRaycaster();
+
+        this._raycastAccum += delta;
+        if (this._raycastAccum >= this.raycastInterval) {
+            this._raycastAccum = 0;
+            this.updateRaycaster();
+        }
     }
 
     updateRaycaster() {

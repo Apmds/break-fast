@@ -98,7 +98,7 @@ class Scene {
     }
 
     render() {
-        this.renderer.render(this.scene, this.camera, this.getInteractables());
+        this.renderer.render(this.scene, this.camera, this.player?.currentHoveredObject ?? null);
     }
 
     update(delta) {
