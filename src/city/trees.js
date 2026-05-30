@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import objectManager from '../utils/object_manager.js';
 
-export function make_trees_instanced(positions, scales, tree_function) {
+export function make_trees_instanced(positions, scales, tree_function, rotationsY = null) {
     const trees = new THREE.Object3D();
 
     const len = positions.length <= scales.length ? positions.length : scales.length;
-    
+
     const base_tree = tree_function(0, 0, 0, 1);
     base_tree.updateMatrixWorld(true);
 
@@ -19,6 +19,7 @@ export function make_trees_instanced(positions, scales, tree_function) {
             const instanceMatrix = new THREE.Matrix4();
             for (let i = 0; i < len; i++) {
                 dummy.position.set(positions[i].x, positions[i].y, positions[i].z);
+                dummy.rotation.set(0, rotationsY ? rotationsY[i] : 0, 0);
                 dummy.scale.set(scales[i], scales[i], scales[i]);
                 dummy.updateMatrix();
 

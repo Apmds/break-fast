@@ -287,52 +287,48 @@ class City extends Scene {
 
         // Hand-placed tree scatter: very dense in the main grass area and lighter in side patches.
         {
-            const classicTreesMain = [
-                new THREE.Vector3(483, 0, -153), new THREE.Vector3(618, 0, -411), new THREE.Vector3(373, 0, -226),
-                new THREE.Vector3(585, 0, -276),
-                new THREE.Vector3(498, 0, -710), new THREE.Vector3(285, 0, -675), new THREE.Vector3(538, 0, -508), new THREE.Vector3(523, 0, -676),
-                new THREE.Vector3(430, 0, -730), new THREE.Vector3(520, 0, -443), new THREE.Vector3(590, 0, -305),
-                new THREE.Vector3(388, 0, -600), new THREE.Vector3(613, 0, -430), new THREE.Vector3(568, 0, -260),
-                new THREE.Vector3(360, 0, -495), new THREE.Vector3(448, 0, -536),
-                new THREE.Vector3(423, 0, -123), new THREE.Vector3(520, 0, -395), new THREE.Vector3(475, 0, -311),
-                new THREE.Vector3(398, 0, -300), new THREE.Vector3(443, 0, -620), new THREE.Vector3(438, 0, -206), new THREE.Vector3(510, 0, -540),
-                new THREE.Vector3(393, 0, -210),
-                new THREE.Vector3(408, 0, -555), new THREE.Vector3(573, 0, -581), new THREE.Vector3(388, 0, -200),
-                new THREE.Vector3(508, 0, -295), new THREE.Vector3(615, 0, -523),
-                new THREE.Vector3(388, 0, -438), new THREE.Vector3(463, 0, -223),
-                new THREE.Vector3(645, 0, -751), new THREE.Vector3(498, 0, -435),
-                new THREE.Vector3(508, 0, -291), new THREE.Vector3(273, 0, -548), new THREE.Vector3(645, 0, -416),
-                new THREE.Vector3(415, 0, -613), new THREE.Vector3(418, 0, -205),
-                new THREE.Vector3(333, 0, -243), new THREE.Vector3(415, 0, -541), new THREE.Vector3(310, 0, -573),
-                new THREE.Vector3(413, 0, -551), new THREE.Vector3(328, 0, -563),
-                new THREE.Vector3(498, 0, -301), new THREE.Vector3(433, 0, -170),
-                new THREE.Vector3(603, 0, -263), new THREE.Vector3(403, 0, -303), new THREE.Vector3(558, 0, -128),
-                new THREE.Vector3(298, 0, -595),
-                new THREE.Vector3(390, 0, -520), new THREE.Vector3(398, 0, -571), new THREE.Vector3(560, 0, -498),
-            ];
+            // Ring trees densely around the gray base ground, thinning fast with distance.
+            // Base ground top surface spans x[-150,270] z[-750,50]; grass underlay spans x[-100,900] z[-1050,450].
+            const groundMinX = -150, groundMaxX = 270, groundMinZ = -750, groundMaxZ = 50;
+            const grassMinX = -100, grassMaxX = 900, grassMinZ = -1050, grassMaxZ = 450;
 
-            const crownTreesMain = [
-                new THREE.Vector3(328, 0, -611), new THREE.Vector3(338, 0, -451), new THREE.Vector3(558, 0, -483),
-                new THREE.Vector3(470, 0, -291), new THREE.Vector3(543, 0, -453), new THREE.Vector3(448, 0, -730), new THREE.Vector3(498, 0, -463),
-                new THREE.Vector3(553, 0, -760), new THREE.Vector3(548, 0, -668), new THREE.Vector3(483, 0, -381),
-                new THREE.Vector3(318, 0, -748), new THREE.Vector3(303, 0, -710), new THREE.Vector3(600, 0, -235),
-                new THREE.Vector3(508, 0, -455), new THREE.Vector3(315, 0, -226),
-                new THREE.Vector3(478, 0, -356), new THREE.Vector3(498, 0, -126),
-                new THREE.Vector3(348, 0, -146), new THREE.Vector3(640, 0, -198), new THREE.Vector3(530, 0, -303),
-                new THREE.Vector3(300, 0, -320), new THREE.Vector3(523, 0, -245), new THREE.Vector3(550, 0, -601),
-                new THREE.Vector3(338, 0, -416),
-                new THREE.Vector3(638, 0, -471), new THREE.Vector3(360, 0, -123),
-                new THREE.Vector3(430, 0, -540), new THREE.Vector3(643, 0, -706),
-                new THREE.Vector3(333, 0, -376), new THREE.Vector3(273, 0, -338),
-                new THREE.Vector3(630, 0, -261), new THREE.Vector3(338, 0, -216), new THREE.Vector3(580, 0, -753), new THREE.Vector3(345, 0, -661),
-                new THREE.Vector3(390, 0, -466), new THREE.Vector3(448, 0, -713), new THREE.Vector3(473, 0, -610),
-                new THREE.Vector3(513, 0, -606), new THREE.Vector3(435, 0, -283), new THREE.Vector3(518, 0, -278),
-                new THREE.Vector3(308, 0, -445), new THREE.Vector3(353, 0, -476),
-                new THREE.Vector3(325, 0, -470),
-                new THREE.Vector3(305, 0, -475), new THREE.Vector3(400, 0, -596),
-                new THREE.Vector3(498, 0, -121),
-                new THREE.Vector3(343, 0, -716),
-            ];
+            const distToGround = (px, pz) => {
+                const dx = Math.max(groundMinX - px, 0, px - groundMaxX);
+                const dz = Math.max(groundMinZ - pz, 0, pz - groundMaxZ);
+                return Math.sqrt(dx * dx + dz * dz);
+            };
+
+            // Packed ring: dense full coverage hugging the ground, thinning with distance.
+            // Min spacing keeps trees from overlapping too heavily.
+            const minSpacing = 13;
+            const falloff = 80;
+            const maxDist = 300;
+            const targetCount = 900;
+
+            const ringPositions = [];
+            let attempts = 0;
+            while (ringPositions.length < targetCount && attempts < targetCount * 400) {
+                attempts++;
+                const px = THREE.MathUtils.randFloat(groundMinX - maxDist, groundMaxX + maxDist);
+                const pz = THREE.MathUtils.randFloat(groundMinZ - maxDist, groundMaxZ + maxDist);
+                if (px < grassMinX || px > grassMaxX || pz < grassMinZ || pz > grassMaxZ) continue;
+                const d = distToGround(px, pz);
+                if (d < 3 || d > maxDist) continue;
+                if (Math.random() >= Math.exp(-d / falloff)) continue;
+                let ok = true;
+                for (let i = 0; i < ringPositions.length; i++) {
+                    const ddx = ringPositions[i].x - px;
+                    const ddz = ringPositions[i].z - pz;
+                    if (ddx * ddx + ddz * ddz < minSpacing * minSpacing) { ok = false; break; }
+                }
+                if (ok) ringPositions.push(new THREE.Vector3(px, 0, pz));
+            }
+
+            const classicTreesMain = [];
+            const crownTreesMain = [];
+            for (let i = 0; i < ringPositions.length; i++) {
+                (Math.random() < 0.6 ? classicTreesMain : crownTreesMain).push(ringPositions[i]);
+            }
 
             const classicTreesSide = [
                 new THREE.Vector3(-138, 0, -248), new THREE.Vector3(-104, 0, -224), new THREE.Vector3(-78, 0, -188), new THREE.Vector3(-126, 0, -152), new THREE.Vector3(-92, 0, -132),
@@ -354,13 +350,18 @@ class City extends Scene {
             const classicSidePositions = classicTreesSide;
             const crownSidePositions = crownTreesSide;
 
-            const classicMainScales = makeRandomScales(classicMainPositions.length, 0.6, 0.8);
-            const crownMainScales = makeRandomScales(crownMainPositions.length, 0.5, 0.7);
+            const classicMainScales = makeRandomScales(classicMainPositions.length, 0.5, 0.8);
+            const crownMainScales = makeRandomScales(crownMainPositions.length, 0.4, 0.7);
             const classicSideScales = makeRandomScales(classicSidePositions.length, 0.6, 0.8);
             const crownSideScales = makeRandomScales(crownSidePositions.length, 0.5, 0.7);
 
-            cityGroup.add(make_trees_instanced(classicMainPositions, classicMainScales, make_tree));
-            cityGroup.add(make_trees_instanced(crownMainPositions, crownMainScales, make_tree_crowns));
+            const makeRandomRotations = (count) => Array.from(
+                { length: count },
+                () => THREE.MathUtils.randFloat(0, Math.PI * 2)
+            );
+
+            cityGroup.add(make_trees_instanced(classicMainPositions, classicMainScales, make_tree, makeRandomRotations(classicMainPositions.length)));
+            cityGroup.add(make_trees_instanced(crownMainPositions, crownMainScales, make_tree_crowns, makeRandomRotations(crownMainPositions.length)));
             cityGroup.add(make_trees_instanced(classicSidePositions, classicSideScales, make_tree));
             cityGroup.add(make_trees_instanced(crownSidePositions, crownSideScales, make_tree_crowns));
         }
