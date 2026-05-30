@@ -907,6 +907,33 @@ class City extends Scene {
         this.groundBody.position.y = 0; // Slightly below player spawn
         this.physicsWorld.addBody(this.groundBody);
 
+        // Map boundary walls ringing the gray base ground (keeps player on the map).
+        // Ground top surface spans x[-150, 270], z[-750, 50].
+        const wallMinX = -150, wallMaxX = 270, wallMinZ = -750, wallMaxZ = 50;
+        const wallHeight = 50;
+        const wallThickness = 2;
+        const wallCenterX = (wallMinX + wallMaxX) / 2;
+        const wallCenterZ = (wallMinZ + wallMaxZ) / 2;
+        const wallHalfX = (wallMaxX - wallMinX) / 2;
+        const wallHalfZ = (wallMaxZ - wallMinZ) / 2;
+
+        const boundaryWalls = [
+            // North (z = wallMaxZ) and South (z = wallMinZ): run along X
+            { x: wallCenterX, z: wallMaxZ, hx: wallHalfX + wallThickness, hz: wallThickness },
+            { x: wallCenterX, z: wallMinZ, hx: wallHalfX + wallThickness, hz: wallThickness },
+            // East (x = wallMaxX) and West (x = wallMinX): run along Z
+            { x: wallMaxX, z: wallCenterZ, hx: wallThickness, hz: wallHalfZ + wallThickness },
+            { x: wallMinX, z: wallCenterZ, hx: wallThickness, hz: wallHalfZ + wallThickness },
+        ];
+        boundaryWalls.forEach(w => {
+            const wallBody = new CANNON.Body({
+                mass: 0,
+                shape: new CANNON.Box(new CANNON.Vec3(w.hx, wallHeight, w.hz)),
+            });
+            wallBody.position.set(w.x, wallHeight, w.z);
+            this.physicsWorld.addBody(wallBody);
+        });
+
         if (bridgeBody) {
             this.physicsWorld.addBody(bridgeBody);
         }
