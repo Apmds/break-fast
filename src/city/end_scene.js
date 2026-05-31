@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import Scene from "../utils/scene.js";
-import Car from "./car.js";
+import Car from "../objects/other/car.js";
 import { make_road } from "./road.js";
 import { ROAD_DIR } from '../utils/road.js';
 import make_skybox from './skybox.js';

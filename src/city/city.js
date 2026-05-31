@@ -11,7 +11,7 @@ import make_skybox from './skybox.js';
 import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 
 import Citizen from '../people/citizen.js';
-import Car from './car.js';
+import Car from '../objects/other/car.js';
 import DcMonalds from '../objects/buildings/dcmonalds.js';
 
 import Scene from '../utils/scene.js';
