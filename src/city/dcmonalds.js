@@ -7,6 +7,8 @@ class DcMonalds extends WorldObject {
 
         super(position, rotation, new THREE.Vector3(RESTAURANT_SCALE, RESTAURANT_SCALE, RESTAURANT_SCALE), interactable);
 
+        this._static = true;
+
         this.model = 'dcmonalds';
         this.createBasicBody();
     }

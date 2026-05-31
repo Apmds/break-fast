@@ -23,6 +23,11 @@ class WorldObject {
         this._onPathEnd = null;
         this._outlineIgnore = new Set();
         this._collisionBodies = [];
+        this._static = false;
+    }
+
+    get isStatic() {
+        return this._static;
     }
 
     addOutlineIgnore(meshName) {

@@ -5,6 +5,8 @@ class House extends WorldObject {
     constructor(position, rotation = new THREE.Vector3()) {
         super(position, rotation, new THREE.Vector3(1, 1, 1), false);
 
+        this._static = true;
+
         this.model = "house";
         this.createBasicBody();
 

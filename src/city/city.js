@@ -863,26 +863,51 @@ class City extends Scene {
 
         // Position of the sun (keylight)
         this.sunpos = new THREE.Vector3(150, 300, 150);
-    
-        const keyLight = new THREE.DirectionalLight(0xfff3dc, 2.2);
-        keyLight.position.copy(this.sunpos);
-        keyLight.lookAt(this.scene.position)
+        
+        const sunTarget = new THREE.Vector3(60, 0, -350);
+
+        // Static sun
+        const keyLight = new THREE.DirectionalLight(0xfff3dc, 1.1);
+        keyLight.position.copy(sunTarget).addScaledVector(this.sunpos, 3);
+        keyLight.target.position.copy(sunTarget);
         keyLight.castShadow = true;
-        keyLight.shadow.mapSize.set(2048, 2048);
-    
+        keyLight.shadow.mapSize.set(4096, 4096);
+
         keyLight.shadow.camera.near = 10;
-        keyLight.shadow.camera.far = 1200;
-        keyLight.shadow.camera.left = -200;
-        keyLight.shadow.camera.right = 200;
-        keyLight.shadow.camera.top = 200;
-        keyLight.shadow.camera.bottom = -200;
-    
+        keyLight.shadow.camera.far = 3000;
+        keyLight.shadow.camera.left = -800;
+        keyLight.shadow.camera.right = 800;
+        keyLight.shadow.camera.top = 800;
+        keyLight.shadow.camera.bottom = -800;
+
         // Adjust biases
-        keyLight.shadow.bias = -0.001;
+        keyLight.shadow.bias = -0.0005;
         keyLight.shadow.normalBias = 0.05;
-    
+
+        // Only render once
+        keyLight.shadow.autoUpdate = false;
+
         keyLight.name = "keyLight";
         this.addModel(keyLight);
+        this.addModel(keyLight.target);
+
+        // Light that moves with the player to render dynamic objects
+        const moverLight = new THREE.DirectionalLight(0xfff3dc, 1.1);
+        moverLight.castShadow = true;
+        moverLight.shadow.mapSize.set(2048, 2048);
+        moverLight.shadow.camera.near = 1;
+        moverLight.shadow.camera.far = 700;
+        moverLight.shadow.camera.left = -70;
+        moverLight.shadow.camera.right = 70;
+        moverLight.shadow.camera.top = 70;
+        moverLight.shadow.camera.bottom = -70;
+        moverLight.shadow.bias = -0.0005;
+        moverLight.shadow.normalBias = 0.05;
+        moverLight.name = "moverLight";
+        this.addModel(moverLight);
+        this.addModel(moverLight.target);
+
+        this._shadowBakeState = 0;
     
         const fillLight = new THREE.DirectionalLight(0xbfd9ff, 0.55);
         fillLight.position.set(-180, 120, -220);
@@ -966,8 +991,47 @@ class City extends Scene {
         this.debug_ui.add('Lighting', 'rim intensity', rimLight, 'intensity', 0, 2, 0.01);
     }
 
+    _setCastShadow(model, value) {
+        if (!model) return;
+        model.traverse((node) => {
+            if (node.isMesh) node.castShadow = value;
+        });
+    }
+
+    _setDynamicCastShadow(value) {
+        Object.values(this._objects).forEach((obj) => {
+            if (!obj.isStatic) this._setCastShadow(obj.model, value);
+        });
+        if (this.player) this._setCastShadow(this.player.model, value);
+    }
+
+    _updateShadows() {
+        const moverLight = this.getObject("moverLight");
+        if (moverLight && this.player) {
+            moverLight.position.copy(this.player.position).add(this.sunpos);
+            moverLight.target.position.copy(this.player.position);
+            moverLight.target.updateMatrixWorld();
+        }
+
+        // Bake static shadow
+        if (this._shadowBakeState === 0) {
+            this._setDynamicCastShadow(false);
+            const keyLight = this.getObject("keyLight");
+            if (keyLight) keyLight.shadow.needsUpdate = true;
+            this._shadowBakeState = 1;
+        } else if (this._shadowBakeState === 1) { // Turn on dynamic light and dynamic objects
+            this.scene.traverse((node) => {
+                if (node.isMesh) node.castShadow = false;
+            });
+            this._setDynamicCastShadow(true);
+            this._shadowBakeState = 2;
+        }
+    }
+
     update(delta) {
         super.update(delta);
+
+        this._updateShadows();
 
         if (isDebugMode()) {
             if (this.player) {
@@ -981,13 +1045,6 @@ class City extends Scene {
                 console.log(`new THREE.Vector3(${this._relToPark.x}, ${this._relToPark.y}, ${this._relToPark.z}),`)
             }
         }
-
-
-        const keyLight = this.getObject("keyLight");
-        keyLight.position.copy(new THREE.Vector3().addVectors(this.player.position, this.sunpos));
-
-        keyLight.target.position.copy(this.player.position);
-        keyLight.target.updateMatrixWorld();
 
         if (!this._cityHallEntered && this.player) {
             const px = this.player.position.x;

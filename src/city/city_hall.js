@@ -7,6 +7,8 @@ class CityHall extends WorldObject {
         
         super(position, rotation, new THREE.Vector3(SCALE, SCALE, SCALE), true);
         
+        this._static = true;
+
         this.model = 'city_hall';
 
         this.addOutlineIgnore("Stadhuis_blinn1_0");
