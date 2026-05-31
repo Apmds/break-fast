@@ -24,6 +24,7 @@ class WorldObject {
         this._outlineIgnore = new Set();
         this._collisionBodies = [];
         this._static = false;
+        this._sceneName = null;
     }
 
     get isStatic() {

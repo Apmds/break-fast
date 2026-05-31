@@ -66,6 +66,7 @@ class Scene {
         }
 
         this._objects[name] = obj;
+        obj._sceneName = name;
     }
 
     addModel(model) {

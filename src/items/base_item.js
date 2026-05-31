@@ -22,8 +22,8 @@ class BaseItem extends WorldObject {
 
         player.inventory.push(this);
 
-        if (this._model && player.scene) {
-            player.scene.remove(this._model);
+        if (this._sceneName && player.scene) {
+            player.scene.remove(this._sceneName);
         }
     }
 }
