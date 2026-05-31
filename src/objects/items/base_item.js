@@ -1,5 +1,5 @@
-import WorldObject from "../object/world_object.js";
-import UIUtils from "../utils/ui_utils.js";
+import WorldObject from "../world_object.js";
+import UIUtils from "../../utils/ui_utils.js";
 
 class BaseItem extends WorldObject {
     constructor(title, description, position, rotation, scale) {

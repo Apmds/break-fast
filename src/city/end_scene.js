@@ -4,7 +4,7 @@ import Car from "./car.js";
 import { make_road } from "./road.js";
 import { ROAD_DIR } from '../utils/road.js';
 import make_skybox from './skybox.js';
-import Path from '../object/path.js';
+import Path from '../objects/path.js';
 import UIUtils from '../utils/ui_utils.js';
 import { make_river } from './water.js';
 

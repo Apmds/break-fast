@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import WorldObject from '../object/world_object.js';
+import WorldObject from '../objects/world_object.js';
 import Conversation from './conversation.js';
 import objectManager from '../utils/object_manager.js';
 import { MeshBasicMaterial } from 'three';

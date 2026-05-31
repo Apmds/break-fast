@@ -12,20 +12,20 @@ import { ROAD_DIR, ROAD_CORNER_DIR } from '../utils/road.js';
 
 import Citizen from '../people/citizen.js';
 import Car from './car.js';
-import DcMonalds from './dcmonalds.js';
+import DcMonalds from '../objects/buildings/dcmonalds.js';
 
 import Scene from '../utils/scene.js';
-import PlaceHolderItem from '../items/placeholder.js';
-import House from './house.js';
-import Path from '../object/path.js';
-import CityHall from './city_hall.js';
+import PlaceHolderItem from '../objects/items/placeholder.js';
+import House from '../objects/buildings/house.js';
+import Path from '../objects/path.js';
+import CityHall from '../objects/buildings/city_hall.js';
 import BuilderCitizen from '../people/builder_citizen.js';
-import StrawHat from '../items/straw_hat.js';
-import Parasol from '../items/parasol.js';
+import StrawHat from '../objects/items/straw_hat.js';
+import Parasol from '../objects/items/parasol.js';
 import BossCitizen from '../people/boss_citizen.js';
-import Sunglasses from '../items/sunglasses.js';
-import DcMonaldsPole from './dcmonalds_pole.js';
-import DcMonaldsGroundThing from './dcmonalds_ground_thing.js';
+import Sunglasses from '../objects/items/sunglasses.js';
+import DcMonaldsPole from '../objects/buildings/dcmonalds_pole.js';
+import DcMonaldsGroundThing from '../objects/buildings/dcmonalds_ground_thing.js';
 import isDebugMode from '../utils/debug_utils.js';
 import UIUtils from '../utils/ui_utils.js';
 
