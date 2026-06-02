@@ -19,39 +19,39 @@ Developed as the final project for the [Introduction to Computer Graphics](https
 
 You've waited ages for a vacation. The only road out of town crosses a bridge that's *just* finished construction. BUT it can't open until "The Boss" of the construction crew signs off, and nobody knows where he is. So you set off through the small city on foot to track him down, chatting with its inhabitants along the way, before finally getting in your car and driving off into your well-earned break.
 
-> **Screenshot:** wide establishing shot of the toon-shaded city seen from near the bridge — sells the art style and scale at a glance.
+![City screenshot](docs/media/city_shot.png)
 
 ## Features
 
 **Rendering & art style**
-- Cel / toon shading driven by gradient ramp textures (`threeTone`, `fiveTone`).
+- Cel/toon shading style.
 - Custom outline shader (`assets/shaders/outline/`) that highlights interactable objects on hover.
-- Stylised toon **water shader** for the river, cubemap **skybox**, and distance fog.
-- Baked static shadows plus a player-following light for dynamic shadows (see [CHANGELOG.md](CHANGELOG.md)).
+- Skybox and distance fog.
+- Both baked static and dynamic shadows (see [CHANGELOG.md](CHANGELOG.md)).
 
-> **Screenshot:** an interactable object with the white hover outline active, next to the on-screen `E` interact prompt — shows the interaction feedback.
+![Outline and tooltip](docs/media/highlight_tooltip.png)
 
 **World & physics**
-- Hand-built city: city hall, a "DcMonalds" restaurant, houses, roads, sidewalks and a bridge.
-- [cannon-es](https://github.com/pmndrs/cannon-es) physics for player movement, collisions and map boundary walls.
-- Hundreds of procedurally placed, instanced trees ringing the playable area.
-- Path-following objects — a self-driving car loops the city, NPCs walk set routes.
+- (mostly) Hand-built city: houses, roads, sidewalks, trees, park and a bridge. City hall and restaurant are models from sketchfab.
+- Physics for player movement, collisions and map boundary walls.
+- Hundreds of procedurally placed, instanced trees making a big forest around the city.
+- Path-following objects: objects that walk along predefined paths (a self-driving car loops the city, NPCs walk set routes)
 
-> **Screenshot:** the self-driving car on the road with trees in the background — highlights instancing and path-following.
+![Car](docs/media/car_shot.png)
 
 **Characters & dialogue**
-- NPCs with a scripted, branching **dialogue system**: typewriter text, per-line speed, triggered animations, and Animal-Crossing-style grunt "speech" with a per-character voice pitch.
-- A cast of characters with their own quirks (The Boss, Rofi the hat salesman, talking kitchen appliances...) and side quests.
+- NPCs with a scripted, branching **dialogue system**: typewriter text, per-line speed, triggered animations, and Animal-Crossing-style grunt "speech" with different pitch per-character.
+- Multiple characters roaming around the city or waiting to give out quests, each able to have custom outfits.
 - Player model rigged and animated via Mixamo; every world object can play actions through its own animation mixer.
 
-> **Screenshot:** an open dialogue box mid-conversation showing the speaker name and styled text.
+![Conversation](docs/media/conversation.png)
 
 **Items & progression**
-- Pick-up items (straw hat, sunglasses, parasol) with an inventory and an animated "item get" reveal UI.
-- Quests gate items — e.g. find Rofi's hidden straw hat.
-- An end scene where you drive off and the items you collected are shown.
+- Items can be picked up in the world (there's multiple, not just the glasses)
+- Some NPC quests are required for some items.
+- After completing the game, there's an end scene showing all items collected..
 
-> **Screenshot:** the "item get" reveal with the animated pulsing ring around the item icon.
+![Item pickup](item_pickup.png)
 
 **Platform & UX**
 - Loading screen with a progress bar while assets stream in.
