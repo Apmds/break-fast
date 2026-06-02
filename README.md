@@ -60,46 +60,59 @@ You've waited ages for a vacation. The only road out of town crosses a bridge th
 
 ## Controls
 
+The game features both desktop (**recommended**) and mobile controls.
+
+### Desktop:
+
 - **WASD**: Move character
 - **Mouse**: Move camera
+- **Space**: Jump
 - **Shift**: Run
 - **E**: Interact
 - **Esc**: Unlock mouse
 
-## Running locally
+### Mobile:
 
-```bash
-npm install
-npm run dev      # start the dev server (Vite)
-npm run build    # production build
-npm run preview  # preview the production build
-```
+- **Left joystick**: Move character
+- **Right joystick**: Move camera
+- **Up arrow button**: Jump
+- **Dot button**: Interact
+
+
+## Running
+
+This project was created with Vscode [live server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension, so using it is the most direct way of running the project.
+
+If VScode is not available or you don't like vscode, just run `python -m http.server` and open `localhost:8000` in the browser.
 
 ## Tech stack
 
-- [Three.js](https://threejs.org/) — rendering
-- [cannon-es](https://github.com/pmndrs/cannon-es) — physics / collisions
-- [lil-gui](https://lil-gui.georgealways.com/) — debug UI
-- [Vite](https://vitejs.dev/) — build tooling
+- [Three.js](https://threejs.org/): rendering
+- [cannon-es](https://github.com/pmndrs/cannon-es): physics / collisions
+- [lil-gui](https://lil-gui.georgealways.com/): debug UI
+- [blender](https://blender.org/): 3D modelling
 
 ## AI usage
 
-Where AI tools were used in the project, as documented in the final presentation.
+AI was used extensively throughout the development process for learning tools (mostly blender) and for discussing ideas such as where performance could be updated.
+
+These are some concrete examples of specific tasks that were assisted by AI:
 
 **Google Gemini**
-- Guidance for operating Blender.
-- Help writing CSS.
-- Credited conversation in [`links.txt`](links.txt): `https://gemini.google.com/share/d86d77640eaa`.
+- Guidance for operating Blender. [This conversation](https://gemini.google.com/share/d86d77640eaa) was my main source of dependen.
+- Created most of the final CSS (some of it is credited with appropriate links).
 
 **GitHub Copilot**
 - Integrating the outline shader with the bone animations.
-- Translating the camera controls into JavaScript.
+- Translating the camera controls from my original C implementation into JavaScript.
 
 **Claude**
 - Implemented the mobile controls.
-- Created the animated lines on the "item acquired" menu — see [`src/index.js`](src/index.js) (`make_item_ring_lines`) and [`src/style.css`](src/style.css) (`.line` / `@keyframes pulse`): `https://claude.ai/share/41278cda-119b-4647-9a0b-42f5d6266fd0`.
-- Debugging.
+- Created the animated lines on the "item acquired" menu (see [`src/index.js`](src/index.js) (`make_item_ring_lines`) and [`src/style.css`](src/style.css) (`.line` / `@keyframes pulse`): `https://claude.ai/share/41278cda-119b-4647-9a0b-42f5d6266fd0`).
 - Helped implement the audio system.
+- Debugging.
+
+All design decisions for the project structure and visual identity were entirely created by me.
 
 ## Repository structure
 
