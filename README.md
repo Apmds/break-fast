@@ -51,7 +51,7 @@ You've waited ages for a vacation. The only road out of town crosses a bridge th
 - Some NPC quests are required for some items.
 - After completing the game, there's an end scene showing all items collected..
 
-![Item pickup](item_pickup.png)
+![Item pickup](docs/media/item_pickup.png)
 
 **Platform & UX**
 - Loading screen with a progress bar while assets stream in.
