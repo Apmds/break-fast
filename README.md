@@ -11,13 +11,13 @@ Developed as the final project for the [Introduction to Computer Graphics](https
 | **Project** | Break Fast |
 | **Play it** | https://apmds.github.io/break-fast/ |
 | **Repository** | https://github.com/Apmds/break-fast |
-| **Demo video** | _TODO: video URL_ |
+| **Demo video** | https://youtu.be/bWgc4wmrxR8 |
 
 > The latest gameplay changes are documented in [CHANGELOG.md](CHANGELOG.md) — everything added since the release.
 
 ## About
 
-You've waited ages for a vacation. The only road out of town crosses a bridge that's *just* finished construction — but it can't open until "The Boss" of the construction crew signs off, and nobody knows where he is. So you set off through the small city on foot to track him down, chatting with its (slightly unhinged) inhabitants along the way, before finally getting in your car and driving off into your well-earned break.
+You've waited ages for a vacation. The only road out of town crosses a bridge that's *just* finished construction. BUT it can't open until "The Boss" of the construction crew signs off, and nobody knows where he is. So you set off through the small city on foot to track him down, chatting with its inhabitants along the way, before finally getting in your car and driving off into your well-earned break.
 
 > **Screenshot:** wide establishing shot of the toon-shaded city seen from near the bridge — sells the art style and scale at a glance.
 
