@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import WorldObject from "../object/world_object.js";
+import WorldObject from "../world_object.js";
 
 class CityHall extends WorldObject {
     constructor(position, rotation = new THREE.Vector3()) {
@@ -7,6 +7,8 @@ class CityHall extends WorldObject {
         
         super(position, rotation, new THREE.Vector3(SCALE, SCALE, SCALE), true);
         
+        this._static = true;
+
         this.model = 'city_hall';
 
         this.addOutlineIgnore("Stadhuis_blinn1_0");

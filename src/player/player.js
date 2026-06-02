@@ -29,6 +29,9 @@ class Player {
         this.currentHoveredObject = null;
         this.interactionKey = 'KeyE';
 
+        this.raycastInterval = 1 / 20;
+        this._raycastAccum = this.raycastInterval;
+
         this._hasItem = false;
 
         this.inventory = [];
@@ -53,10 +56,10 @@ class Player {
             this.physicsBody.position.y + 1.2,
             this.physicsBody.position.z
         );
-        this.handleInteraction();
+        this.handleInteraction(delta);
     }
 
-    handleInteraction() {
+    handleInteraction(delta) {
         if (inputManager.keyJustPressed(this.interactionKey)) {
             if (this.hasItem) {
                 this.hasItem = false;
@@ -65,8 +68,12 @@ class Player {
                 this.currentHoveredObject.onInteract(this);
             }
         }
-    
-        this.updateRaycaster();
+
+        this._raycastAccum += delta;
+        if (this._raycastAccum >= this.raycastInterval) {
+            this._raycastAccum = 0;
+            this.updateRaycaster();
+        }
     }
 
     updateRaycaster() {
@@ -74,10 +81,15 @@ class Player {
             return;
         }
 
+        const interactables = this.scene.getInteractables();
+
         this.raycaster.setFromCamera(this.rayOrigin, this.camera);
         this.raycaster.far = this.raycastDistance;
 
-        const intersections = this.raycaster.intersectObjects(this.scene.children, true);
+        const intersections = this.raycaster.intersectObjects(
+            interactables.map((obj) => obj.model),
+            true
+        );
         let hitObject = null;
 
         this.currentHoveredObject = null;
@@ -90,17 +102,9 @@ class Player {
             }
         }
 
-        const interactableObjects = new Set();
-        this.scene.traverse((node) => {
-            const worldObject = node.userData?.worldObject;
-            if (worldObject?.interactable) {
-                interactableObjects.add(worldObject);
-            }
-        });
-
-        interactableObjects.forEach((worldObject) => {
+        for (const worldObject of interactables) {
             worldObject.outline = worldObject === hitObject;
-        });
+        }
     }
 
     findObjectRoot(object) {

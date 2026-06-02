@@ -63,6 +63,15 @@ class UIUtils {
     static getEndMenuButton() {
         return document.getElementById("end-button");
     }
+
+    static showInteractKey() {
+        if (document.body.classList.contains('touch-device')) return;
+        document.getElementById('interact-key-tooltip')?.classList.remove('invisible');
+    }
+
+    static hideInteractKey() {
+        document.getElementById('interact-key-tooltip')?.classList.add('invisible');
+    }
 }
 
 export default UIUtils;

@@ -1,5 +1,5 @@
-import WorldObject from "../object/world_object.js";
-import UIUtils from "../utils/ui_utils.js";
+import WorldObject from "../world_object.js";
+import UIUtils from "../../utils/ui_utils.js";
 
 class BaseItem extends WorldObject {
     constructor(title, description, position, rotation, scale) {
@@ -22,8 +22,8 @@ class BaseItem extends WorldObject {
 
         player.inventory.push(this);
 
-        if (this._model && player.scene) {
-            player.scene.remove(this._model);
+        if (this._sceneName && player.scene) {
+            player.scene.remove(this._sceneName);
         }
     }
 }

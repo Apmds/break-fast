@@ -41,7 +41,7 @@ class GameManager {
         });
         this.scene.setAsCurrent();
 
-        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene.scene);
+        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene);
         this.scene.setPlayer(this.player);
         this.player.canMove = isDebugMode();
 
@@ -58,6 +58,7 @@ class GameManager {
             this.gameState = GameState.TRANSITIONING;
         };
         this.main_menu.onEnd = () => {
+            UIUtils.showInteractKey();
             this.gameState = GameState.PLAYING;
 
             // Snap physics body to player start (camera was free during transition)
@@ -171,7 +172,7 @@ class GameManager {
         });
         this.scene.setAsCurrent();
 
-        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene.scene);
+        this.player = new Player(this.camera, this.scene.domElement, this.scene.physicsWorld, this.scene);
         this.scene.setPlayer(this.player);
         this.player.canMove = false;
 
