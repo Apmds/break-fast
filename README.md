@@ -182,3 +182,28 @@ break-fast/
 ├── mockups/                    # Early design mockups
 └── proj_files/                 # Source art — Blender (.blend), Mixamo anims, raw textures
 ```
+
+## References
+
+**Tutorials & documentation**
+- [mojoGameDev — *Simple Blender Clothing Tutorial That Actually Works!*](https://www.youtube.com/watch?v=FdD-wY_-s2w)
+- [Joey Carlino — *Rigging for impatient people* (Blender)](https://www.youtube.com/watch?v=DDeB4tDVCGY)
+- [Joey Carlino — *Character animation for impatient people* (Blender)](https://www.youtube.com/watch?v=GAIZkIfXXjQ)
+- [Blender reference manual](https://docs.blender.org/manual/en/latest/)
+- [Three.js documentation](https://threejs.org/docs/)
+- [Learn OpenGL](https://learnopengl.com/)
+
+**Models**
+- [novusod — McDonalds model (Sketchfab)](https://sketchfab.com/3d-models/mcdonalds-a72810b3252e47ee9072d8fa34599379)
+- [Dybo — Utrecht Stadhuis / City Hall (Sketchfab)](https://sketchfab.com/3d-models/utrecht-stadhuiscity-hall-4853a41f3ef4437d812bd80571fc4d67)
+
+**Materials & textures**
+- [Skybox — sky_14 (freestylized)](https://freestylized.com/skybox/sky_14/)
+- [Pavement — PavingStones145 (ambientCG)](https://ambientcg.com/view?id=PavingStones145)
+- [Tire material (texturecan)](https://www.texturecan.com/details/575/)
+- [Wheel rim texture (Freepik)](https://www.freepik.com/free-psd/sleek-black-alloy-wheel-3d-render-modern-car-rim_409843455.htm)
+- [Straw texture — by freestockcenter (Magnific)](https://www.magnific.com/free-photo/horizontal-yellow-close-up-geometric-macro_1066043.htm)
+
+**Visual references**
+- [rotblush — Stylized Trees Bundle 01 (Sketchfab)](https://sketchfab.com/3d-models/stylized-trees-bundle-01-984279c90ffb46ed8c1ecccbacfd0ae8)
+- [House model reference image](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flovehomedesigns.com%2Fwp-content%2Fuploads%2F2022%2F08%2FOpen-3-Bed-New-American-Farmhouse-with-3-Car-Garage-325902800-1-1.jpg.webp&f=1&nofb=1&ipt=1b987b8cfab4d677ee0a447d294e50d98c5f27ded01c52e9823480c36bf3eb26)
